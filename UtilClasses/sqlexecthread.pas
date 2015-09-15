@@ -165,8 +165,7 @@ var
   affected:Integer;
 begin
   //FLock.Acquire; //fails with zeos components
-   FIsSelect:=AnsiContainsText(Lowercase(FCommand),'select') or AnsiContainsText(Lowercase(FCommand),'call') or
-   AnsiContainsText(Lowercase(FCommand),'exec');
+   FIsSelect:=AnsiContainsText(Lowercase(FCommand),'select') or AnsiContainsText(Lowercase(FCommand),'call');
    try
      FLastError := '';
      Sleep(300);
@@ -175,12 +174,15 @@ begin
     begin
       FQuery.Close;
       FQuery.SQL.Text:=FCommand;
-      FQuery.PacketRecords:=-1;
+      FQuery.PacketRecords:=500;
       try
        if FIsSelect then
          FQuery.Open
        else
+       begin
          FQuery.ExecSQL;
+
+       end;
       except on E:Exception do
        begin
          if (E.Message=ErrorMsg_ZeosNoResultSet) or (E.Message=ErrorMsg_SqlDBNoResultSet) then

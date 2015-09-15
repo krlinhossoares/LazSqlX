@@ -63,7 +63,7 @@ type
 
   TAsDbConnectionInfo = class(TPersistent)
   private
-    FAliasName: String;
+   FAliasName: String;
    FDatabase: string;
    FDbEngine: TAsDatabaseEngineType;
    FDbType: TAsDatabaseType;
@@ -1184,6 +1184,7 @@ begin
   query := TAsQuery.Create(DbInfo);
   try
     query.SQL.Text:=SqlQuery;
+    query.SQL.SaveToFile('Log.sql');
     query.ExecSQL;
   finally
     query.Free;

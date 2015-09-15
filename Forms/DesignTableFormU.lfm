@@ -1,7 +1,7 @@
 object DesignTableForm: TDesignTableForm
-  Left = 345
+  Left = 221
   Height = 544
-  Top = 134
+  Top = 233
   Width = 708
   BorderIcons = [biSystemMenu, biMaximize]
   Caption = 'Design Table'
@@ -63,10 +63,10 @@ object DesignTableForm: TDesignTableForm
     Height = 478
     Top = 37
     Width = 692
-    ActivePage = tabTriggers
+    ActivePage = tabFields
     Anchors = [akTop, akLeft, akRight, akBottom]
     Images = ilTableInfoImages
-    TabIndex = 2
+    TabIndex = 0
     TabOrder = 0
     object tabFields: TTabSheet
       Caption = 'Fields'
@@ -390,8 +390,8 @@ object DesignTableForm: TDesignTableForm
   end
   object ilTableInfoImages: TImageList
     DrawingStyle = dsTransparent
-    left = 128
-    top = 248
+    left = 160
+    top = 240
     Bitmap = {
       4C690E0000001000000010000000FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
@@ -846,8 +846,8 @@ object DesignTableForm: TDesignTableForm
   end
   object EditActions: TActionList
     Images = MainForm.ApplicationImages
-    left = 290
-    top = 254
+    left = 160
+    top = 168
     object actNewColumn: TAction
       Category = 'Columns'
       Caption = 'New'

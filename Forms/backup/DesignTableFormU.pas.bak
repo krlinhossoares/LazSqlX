@@ -430,9 +430,10 @@ begin
      dbcloner := TAsDatabaseCloner.Create(FDbInfo,FDbInfo.Database);
      dbcloner.MakeTable(FWorkingTableInfo);
 
-     case FDbInfo.DbType of
-       dtOracle,dtFirebirdd: if FWorkingTableInfo.Identities.Count>0 then dbcloner.MakeAutonumber(FWorkingTableInfo);
-     end;
+     {case FDbInfo.DbType of Criava Triggers e generators.
+       dtOracle,dtFirebirdd: if FWorkingTableInfo.Identities.Count>0 then
+         dbcloner.MakeAutonumber(FWorkingTableInfo);
+     end;}
 
     except on e:Exception do
       begin

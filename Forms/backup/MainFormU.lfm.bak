@@ -7056,4 +7056,10 @@ object MainForm: TMainForm
       FF00FFFFFF00FFFFFF00FFFFFF00
     }
   end
+  object ZSQLProcessor1: TZSQLProcessor
+    Params = <>
+    Delimiter = ';'
+    left = 551
+    top = 111
+  end
 end

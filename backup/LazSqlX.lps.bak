@@ -3,16 +3,15 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="Win32"/>
+    <BuildModes Active="Win64"/>
     <Units Count="106">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos Y="51"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="Forms\BlobFieldFormU.pas"/>
@@ -41,8 +40,8 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="291"/>
-        <CursorPos X="15" Y="310"/>
+        <TopLine Value="232"/>
+        <CursorPos X="15" Y="253"/>
         <UsageCount Value="206"/>
         <Bookmarks Count="1">
           <Item0 X="3" Y="2434" ID="1"/>
@@ -56,8 +55,10 @@
         <ComponentName Value="SqlConnBuilderForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="520"/>
-        <CursorPos X="9" Y="538"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="215"/>
+        <CursorPos X="3" Y="218"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -76,9 +77,8 @@
       <Unit6>
         <Filename Value="DbInfo\AsDbType.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="305"/>
-        <CursorPos X="14" Y="325"/>
+        <TopLine Value="1146"/>
+        <CursorPos X="3" Y="1150"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -118,10 +118,9 @@
         <Filename Value="UtilClasses\sqlexecthread.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SqlExecThread"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="173"/>
-        <CursorPos X="24" Y="182"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="4"/>
+        <CursorPos X="52" Y="17"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit11>
@@ -280,8 +279,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="340"/>
-        <CursorPos X="49" Y="352"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="277"/>
+        <CursorPos X="35" Y="287"/>
         <UsageCount Value="206"/>
       </Unit27>
       <Unit28>
@@ -327,9 +327,8 @@
       <Unit33>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="785"/>
-        <CursorPos X="31" Y="812"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="25" Y="9"/>
         <UsageCount Value="286"/>
         <Loaded Value="True"/>
       </Unit33>
@@ -425,11 +424,10 @@
       <Unit45>
         <Filename Value="DbInfo\AsDbFormUtils.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1241"/>
         <CursorPos X="38" Y="1263"/>
         <UsageCount Value="250"/>
-        <Loaded Value="True"/>
       </Unit45>
       <Unit46>
         <Filename Value="Resources\ReportTemplate.lrf"/>
@@ -484,14 +482,14 @@
         <WindowIndex Value="1"/>
         <TopLine Value="194"/>
         <CursorPos X="18" Y="229"/>
-        <UsageCount Value="126"/>
+        <UsageCount Value="132"/>
       </Unit52>
       <Unit53>
         <Filename Value="Resources\PostgreSqlDataTypes.dt"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
         <CursorPos Y="8"/>
-        <UsageCount Value="118"/>
+        <UsageCount Value="124"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit53>
       <Unit54>
@@ -830,133 +828,133 @@
       </Unit104>
       <Unit105>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\strutils.pp"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="252"/>
         <CursorPos X="30" Y="254"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit105>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="708" Column="13" TopLine="688"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="173" TopLine="160"/>
       </Position1>
       <Position2>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="709" Column="13" TopLine="688"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="175" TopLine="160"/>
       </Position2>
       <Position3>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="711" Column="13" TopLine="697"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="176" TopLine="160"/>
       </Position3>
       <Position4>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="712" Column="13" TopLine="697"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="177" TopLine="160"/>
       </Position4>
       <Position5>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="714" Column="15" TopLine="697"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="482" TopLine="462"/>
       </Position5>
       <Position6>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="716" Column="15" TopLine="697"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="483" TopLine="462"/>
       </Position6>
       <Position7>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="718" Column="13" TopLine="697"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="10" Column="30"/>
       </Position7>
       <Position8>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="45" Column="15" TopLine="25"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2084" Column="3" TopLine="2082"/>
       </Position8>
       <Position9>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
+        <Caret Line="731" Column="3" TopLine="726"/>
       </Position9>
       <Position10>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="335" Column="32" TopLine="319"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="1150" Column="3" TopLine="1146"/>
       </Position10>
       <Position11>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="339" Column="37" TopLine="310"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="168" TopLine="160"/>
       </Position11>
       <Position12>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="321" Column="43" TopLine="318"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="170" TopLine="160"/>
       </Position12>
       <Position13>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="173" TopLine="160"/>
       </Position13>
       <Position14>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="54" Column="30" TopLine="22"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="177" TopLine="160"/>
       </Position14>
       <Position15>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="95" Column="57" TopLine="75"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="178" TopLine="160"/>
       </Position15>
       <Position16>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="321" Column="43" TopLine="310"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="179" TopLine="160"/>
       </Position16>
       <Position17>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="54" Column="30" TopLine="36"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="183" TopLine="160"/>
       </Position17>
       <Position18>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="95" Column="27" TopLine="63"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="168" TopLine="160"/>
       </Position18>
       <Position19>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="170" TopLine="160"/>
       </Position19>
       <Position20>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="54" Column="30" TopLine="22"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="173" TopLine="160"/>
       </Position20>
       <Position21>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="95" Column="57" TopLine="69"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="177" TopLine="160"/>
       </Position21>
       <Position22>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="321" Column="43" TopLine="313"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="170" Column="16" TopLine="160"/>
       </Position22>
       <Position23>
-        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
       </Position23>
       <Position24>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="54" Column="30" TopLine="33"/>
+        <Caret Line="731" Column="3" TopLine="720"/>
       </Position24>
       <Position25>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="95" Column="27" TopLine="69"/>
       </Position25>
       <Position26>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="624" Column="48" TopLine="607"/>
+        <Caret Line="1489" TopLine="1468"/>
       </Position26>
       <Position27>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
       </Position27>
       <Position28>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="95" Column="28" TopLine="64"/>
+        <Caret Line="1617" Column="43" TopLine="1578"/>
       </Position28>
       <Position29>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
-        <Caret Line="812" Column="31" TopLine="785"/>
       </Position29>
       <Position30>
-        <Filename Value="UtilClasses\sqlexecthread.pas"/>
-        <Caret Line="244" Column="13" TopLine="216"/>
+        <Filename Value="Forms\SqlConnBuilderFormU.pas"/>
+        <Caret Line="538" Column="9" TopLine="520"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="4">
+    <BreakPoints Count="9">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -982,9 +980,44 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="DbInfo\AsDbType.pas"/>
-        <Line Value="1648"/>
+        <Source Value="UtilClasses\sqlexecthread.pas"/>
+        <Line Value="168"/>
       </Item4>
+      <Item5>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="UtilClasses\sqlexecthread.pas"/>
+        <Line Value="170"/>
+      </Item5>
+      <Item6>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="UtilClasses\sqlexecthread.pas"/>
+        <Line Value="173"/>
+      </Item6>
+      <Item7>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="UtilClasses\sqlexecthread.pas"/>
+        <Line Value="177"/>
+      </Item7>
+      <Item8>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="UtilClasses\sqlexecthread.pas"/>
+        <Line Value="179"/>
+      </Item8>
+      <Item9>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="Forms\SqlConnBuilderFormU.pas"/>
+        <Line Value="218"/>
+      </Item9>
     </BreakPoints>
     <Watches Count="1">
       <Item1>

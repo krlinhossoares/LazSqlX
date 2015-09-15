@@ -446,7 +446,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="7">
+    <Exceptions Count="12">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -468,6 +468,21 @@
       <Item7>
         <Name Value="EInOutError"/>
       </Item7>
+      <Item8>
+        <Name Value="RunError(217)"/>
+      </Item8>
+      <Item9>
+        <Name Value="EControlC"/>
+      </Item9>
+      <Item10>
+        <Name Value="EPrinter"/>
+      </Item10>
+      <Item11>
+        <Name Value="RunError(216)"/>
+      </Item11>
+      <Item12>
+        <Name Value="EZDatabaseError"/>
+      </Item12>
     </Exceptions>
   </Debugging>
 </CONFIG>

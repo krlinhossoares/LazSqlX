@@ -13,7 +13,7 @@ interface
 uses
   Classes, SysUtils, DB, FileUtil, DividerBevel, Forms, Controls,
   Graphics, Dialogs, Buttons, StdCtrls, EditBtn, Spin, ComCtrls, DBGrids, Menus,
-  ExtCtrls, AsTableInfo, AsDbType, fileimport;
+  ExtCtrls, ZConnection, ZDataset, AsTableInfo, AsDbType, fileimport;
 
 type
 
