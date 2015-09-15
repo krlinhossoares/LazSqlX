@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="Win64"/>
+    <BuildModes Active="Win32"/>
     <Units Count="106">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
