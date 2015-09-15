@@ -248,7 +248,6 @@ type
     PageControlPopupMenu: TPopupMenu;
     SaveDialog: TSaveDialog;
     SqlSyntax: TSynSQLSyn;
-    ZSQLProcessor1: TZSQLProcessor;
     procedure actAboutExecute(Sender: TObject);
     procedure actCheckSyntaxExecute(Sender: TObject);
     procedure actClearSessionHistoryExecute(Sender: TObject);
