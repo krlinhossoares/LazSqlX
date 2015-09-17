@@ -1175,12 +1175,14 @@ begin
     lst := TAsDbUtils.GetTablenames(FDbInfo);
 
 
+
     if QueryDesignerTables = nil then
     QueryDesignerTables := TQueryDesignerTables.Create(Self);
 
     with QueryDesignerTables do
     begin
       chkTables.Clear;
+      lst.Sort;
       for I:=0 to lst.Count-1 do
       begin
         chkTables.Items.Add(lst[I]);

@@ -40,6 +40,7 @@ object QueryDesigner: TQueryDesigner
     end
     object ToolButton1: TToolButton
       Left = 214
+      Height = 22
       Top = 2
       Width = 10
       Caption = 'ToolButton1'

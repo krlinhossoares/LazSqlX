@@ -190,8 +190,16 @@ begin
 
   for I := 0 to info.AllFields.Count - 1 do
   begin
+    len := info.AllFields[I].Length;
     if not OverrideDefaultTypes then
-      sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
+    begin
+     if (UpperCase(info.AllFields[I].FieldType) = 'VARCHAR') or (UpperCase(info.AllFields[I].FieldType) = UpperCase('nvarchar')) or (UpperCase(info.AllFields[I].FieldType) = UpperCase('varchar2')) or
+          (UpperCase(info.AllFields[I].FieldType) = UpperCase('nvarchar2')) or (UpperCase(info.AllFields[I].FieldType) = UpperCase('character varying')) then
+       sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
+     else
+       sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType + '('+IntToStr(Len)+')';
+
+    end
     else
       sql := sql + info.AllFields[I].GetCompatibleFieldName(FDbInfo.DbType)+ ' ' +  GetFieldTypeAs(info.AllFields[I].DataType);
 
@@ -206,8 +214,8 @@ begin
     else
       strNewType:=strDefaulType;
 
-    if (strNewType = 'varchar') or (strNewType = 'nvarchar') or (strNewType = 'varchar2') or
-      (strNewType = 'nvarchar2') or (strNewType='character varying') then
+    if (UpperCase(strNewType) = 'VARCHAR') or (UpperCase(strNewType) = UpperCase('nvarchar')) or (UpperCase(strNewType) = UpperCase('varchar2')) or
+       (UpperCase(strNewType) = UpperCase('nvarchar2')) or (UpperCase(strNewType)=UpperCase('character varying')) then
       begin
         if len>0 then
           sql := sql + '(' + IntToStr(len) + ')'

@@ -586,7 +586,7 @@ begin
   FQueryEditor.Name := 'txtSyn' + FNumbering;
   FQueryEditor.Font.Pitch := fpFixed;
   FQueryEditor.Font.Quality := fqDraft;
-  FQueryEditor.Font.Size:=8;
+  FQueryEditor.Font.Size:=10;
   if Screen.Fonts.IndexOf(lucidaFont)>-1 then
   begin
     FQueryEditor.Font.Name:=lucidaFont;

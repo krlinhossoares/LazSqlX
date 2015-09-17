@@ -750,7 +750,6 @@ var
   I: integer;
   CommandExecutor: TSqlExecThread;
   c:Integer;
-  SQLProcessor: TZSQLProcessor;
 begin
   if ExecutionInProgress then
   begin

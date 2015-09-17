@@ -1,0 +1,6 @@
+ - Tela para solicitar valores de parametros.
+ - Geração do Script da Criação da Table, Procedure, Trigger. (Hoje está com Problema)
+ - Tela de Script Executive, para execução de Scripts.
+ - Geração de Data Acess Object (DAO)
+ - Geração de Classe Model 
+ - Tela para Geração de Modelagem de Dados. Estilo IBExpert.

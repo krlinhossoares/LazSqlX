@@ -212,7 +212,7 @@ object SqlConnBuilderForm: TSqlConnBuilderForm
   object btnAccept: TBitBtn
     Left = 396
     Height = 22
-    Top = 362
+    Top = 360
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'

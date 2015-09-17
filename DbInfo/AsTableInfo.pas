@@ -740,7 +740,8 @@ end;
 
 procedure TAsFieldInfo.SetLength(AValue: Integer);
 begin
- if FLength=AValue then Exit;
+ if FLength=AValue then
+   Exit;
  FLength:=AValue;
 end;
 
@@ -1496,7 +1497,7 @@ var
 begin
 
    try
-    Screen.Cursor:=crHourGlass;
+     Screen.Cursor:=crHourGlass;
      table := TAsTableInfo(inherited Add);
      table.Tablename := Tablename;
      table.TableNameAsControlName:=GetTableNameAsControl(Tablename);
@@ -1532,9 +1533,9 @@ begin
       field.FieldType := LowerCase(c.Data_Type);
       if field.FieldType='int identity' then field.FieldType:='int';
       if FDBinfo.DbType in [dtOracle,dtMySql] then
-      field.Length := (c.Max_Length DIV 4 )
+        field.Length := (c.Max_Length DIV 4 )
       else
-      field.Length := c.Max_Length;
+        field.Length := c.Max_Length;
 
       field.Precision := c.Data_Precision;
 
@@ -1589,6 +1590,7 @@ begin
           idField.Assign(field);
         end;
         field.FieldDbType:=FDBinfo.DbType;
+        Application.MessageBox(PChar(Field.FieldType + ' - Len: '+IntToStr(field.Length)),'');
       except
         if Assigned(field) then
         field.Free;
