@@ -73,6 +73,8 @@ type
     actClearSessionHistory: TAction;
     actAbout: TAction;
     actChmHelp: TAction;
+    actCreateModel: TAction;
+    actCreateDAO: TAction;
     actPdfHelp: TAction;
     actRefreshProcedures: TAction;
     actOpen: TAction;
@@ -94,6 +96,8 @@ type
     CsvExporter: TCSVExporter;
     FindDialog1: TFindDialog;
     GridPrinter: TFrPrintGrid;
+    MenuItem1: TMenuItem;
+    MenuItem3: TMenuItem;
     trvProcedures: TTreeView;
     TreeViewImages: TImageList;
     imgLogo: TImage;
@@ -252,6 +256,8 @@ type
     procedure actCheckSyntaxExecute(Sender: TObject);
     procedure actClearSessionHistoryExecute(Sender: TObject);
     procedure actCopyRunProcedureTextExecute(Sender: TObject);
+    procedure actCreateDAOExecute(Sender: TObject);
+    procedure actCreateModelExecute(Sender: TObject);
     procedure actDatabaseClonerExecute(Sender: TObject);
     procedure actCloseAllButThisExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
@@ -324,6 +330,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure GridPrinterGetValue(const ParName: String; var ParValue: Variant);
     procedure lstTablesDblClick(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
     procedure mitOpenDataClick(Sender: TObject);
     procedure mitRefreshTablesClick(Sender: TObject);
     procedure OnCaretPosition(Line, Pos: Integer);
@@ -2108,6 +2116,16 @@ begin
   end;
 end;
 
+procedure TMainForm.actCreateDAOExecute(Sender: TObject);
+begin
+  //
+end;
+
+procedure TMainForm.actCreateModelExecute(Sender: TObject);
+begin
+  //
+end;
+
 procedure TMainForm.actCloseExecute(Sender: TObject);
 begin
   Close;
@@ -2566,6 +2584,16 @@ end;
 
 procedure TMainForm.lstTablesDblClick(Sender: TObject);
 begin
+end;
+
+procedure TMainForm.MenuItem1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TMainForm.MenuItem4Click(Sender: TObject);
+begin
+
 end;
 
 

@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="Win64"/>
+    <BuildModes Active="Win32"/>
     <Units Count="107">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
@@ -39,12 +39,13 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="2180"/>
-        <CursorPos X="15" Y="2195"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="2119"/>
+        <CursorPos X="5" Y="2121"/>
         <UsageCount Value="206"/>
-        <Bookmarks Count="1">
-          <Item0 X="3" Y="2434" ID="1"/>
+        <Bookmarks Count="2">
+          <Item0 X="3" Y="2452" ID="1"/>
+          <Item1 X="5" Y="2121" ID="8"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -55,10 +56,8 @@
         <ComponentName Value="SqlConnBuilderForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="Forms\DesignTableFormU.pas"/>
@@ -66,20 +65,18 @@
         <ComponentName Value="DesignTableForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="422"/>
         <CursorPos X="30" Y="435"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="DbInfo\AsDbType.pas"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="214"/>
         <CursorPos X="13" Y="231"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="DbInfo\AsProcedureInfo.pas"/>
@@ -92,11 +89,10 @@
       <Unit8>
         <Filename Value="DbInfo\AsTableInfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="150"/>
         <CursorPos X="28" Y="119"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="FileTypeDetector\FtDetector.pas"/>
@@ -118,11 +114,10 @@
         <Filename Value="UtilClasses\sqlexecthread.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SqlExecThread"/>
-        <EditorIndex Value="11"/>
-        <TopLine Value="154"/>
-        <CursorPos Y="179"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="155"/>
+        <CursorPos X="82" Y="159"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="UtilClasses\Utils.pas"/>
@@ -215,12 +210,10 @@
         <ComponentName Value="QueryDesignerDialog"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="222"/>
         <CursorPos X="46" Y="236"/>
         <UsageCount Value="240"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit21>
       <Unit22>
         <Filename Value="QueryDesigner\QueryDesignerU.pas"/>
@@ -228,13 +221,10 @@
         <ComponentName Value="QueryDesigner"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="1166"/>
-        <CursorPos X="25" Y="1174"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1173"/>
+        <CursorPos X="31" Y="1179"/>
         <UsageCount Value="240"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit22>
       <Unit23>
         <Filename Value="QueryDesigner\QueryDesignerTablesU.pas"/>
@@ -250,11 +240,10 @@
       <Unit24>
         <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="188"/>
         <CursorPos X="109" Y="200"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit24>
       <Unit25>
         <Filename Value="Forms\DatabaseClonerFormU.pas"/>
@@ -333,11 +322,10 @@
       <Unit33>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="566"/>
         <CursorPos X="29" Y="588"/>
         <UsageCount Value="286"/>
-        <Loaded Value="True"/>
       </Unit33>
       <Unit34>
         <Filename Value="QueryDesigner\QueryDesignerPropertyGridU.pas"/>
@@ -470,11 +458,10 @@
       <Unit50>
         <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="170"/>
-        <CursorPos Y="151"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="94"/>
+        <CursorPos X="45" Y="124"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit50>
       <Unit51>
         <Filename Value="DbInfo\DbMetadata\AsSqliteMetadata.pas"/>
@@ -490,14 +477,14 @@
         <WindowIndex Value="1"/>
         <TopLine Value="194"/>
         <CursorPos X="18" Y="229"/>
-        <UsageCount Value="136"/>
+        <UsageCount Value="138"/>
       </Unit52>
       <Unit53>
         <Filename Value="Resources\PostgreSqlDataTypes.dt"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
         <CursorPos Y="8"/>
-        <UsageCount Value="128"/>
+        <UsageCount Value="130"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit53>
       <Unit54>
@@ -843,138 +830,61 @@
       </Unit105>
       <Unit106>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\packages\fcl-db\src\base\db.pas"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="371"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="350"/>
         <CursorPos X="3" Y="261"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
       </Unit106>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="11" HistoryIndex="10">
       <Position1>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="198" Column="124" TopLine="183"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2195" Column="15" TopLine="2180"/>
       </Position1>
       <Position2>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="159" Column="12" TopLine="140"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2196" Column="15" TopLine="2181"/>
       </Position2>
       <Position3>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="198" Column="124" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2197" Column="15" TopLine="2182"/>
       </Position3>
       <Position4>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="195" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="1968" Column="3" TopLine="1966"/>
       </Position4>
       <Position5>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="204" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="1919" Column="3" TopLine="1917"/>
       </Position5>
       <Position6>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="215" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2582" Column="3" TopLine="2580"/>
       </Position6>
       <Position7>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="195" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2577" Column="3" TopLine="2575"/>
       </Position7>
       <Position8>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="199" Column="103" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2578" Column="3" TopLine="2576"/>
       </Position8>
       <Position9>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2579" Column="3" TopLine="2577"/>
       </Position9>
       <Position10>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="205" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="1998" Column="3" TopLine="1996"/>
       </Position10>
       <Position11>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="216" TopLine="186"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2126" Column="5" TopLine="2124"/>
       </Position11>
-      <Position12>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" TopLine="186"/>
-      </Position12>
-      <Position13>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="205" TopLine="186"/>
-      </Position13>
-      <Position14>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="216" TopLine="186"/>
-      </Position14>
-      <Position15>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" Column="9" TopLine="186"/>
-      </Position15>
-      <Position16>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="199" Column="49" TopLine="186"/>
-      </Position16>
-      <Position17>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" TopLine="186"/>
-      </Position17>
-      <Position18>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="205" TopLine="186"/>
-      </Position18>
-      <Position19>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="216" TopLine="186"/>
-      </Position19>
-      <Position20>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" TopLine="186"/>
-      </Position20>
-      <Position21>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="199" TopLine="186"/>
-      </Position21>
-      <Position22>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="205" TopLine="186"/>
-      </Position22>
-      <Position23>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="216" TopLine="186"/>
-      </Position23>
-      <Position24>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" TopLine="186"/>
-      </Position24>
-      <Position25>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="205" TopLine="186"/>
-      </Position25>
-      <Position26>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="216" TopLine="186"/>
-      </Position26>
-      <Position27>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="196" TopLine="186"/>
-      </Position27>
-      <Position28>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="199" TopLine="186"/>
-      </Position28>
-      <Position29>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="205" TopLine="186"/>
-      </Position29>
-      <Position30>
-        <Filename Value="QueryDesigner\QueryDesignerU.pas"/>
-        <Caret Line="1175" Column="44" TopLine="1160"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="11">
+    <BreakPoints Count="6">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
@@ -995,73 +905,33 @@
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
-        <Source Value="UtilClasses\sqlexecthread.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="168"/>
-      </Item3>
-      <Item4>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="UtilClasses\sqlexecthread.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="170"/>
-      </Item4>
-      <Item5>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="UtilClasses\sqlexecthread.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="173"/>
-      </Item5>
-      <Item6>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="UtilClasses\sqlexecthread.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="177"/>
-      </Item6>
-      <Item7>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="UtilClasses\sqlexecthread.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="179"/>
-      </Item7>
-      <Item8>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
         <Source Value="Forms\SqlConnBuilderFormU.pas"/>
         <InitialEnabled Value="False"/>
         <Line Value="462"/>
-      </Item8>
-      <Item9>
+      </Item3>
+      <Item4>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="DbInfo\AsDbType.pas"/>
         <InitialEnabled Value="False"/>
         <Line Value="1493"/>
-      </Item9>
-      <Item10>
+      </Item4>
+      <Item5>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="Forms\SqlConnBuilderFormU.pas"/>
         <InitialEnabled Value="False"/>
         <Line Value="469"/>
-      </Item10>
-      <Item11>
+      </Item5>
+      <Item6>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="DbInfo\AsDatabaseCloner.pas"/>
         <Line Value="219"/>
-      </Item11>
+      </Item6>
     </BreakPoints>
     <Watches Count="2">
       <Item1>
