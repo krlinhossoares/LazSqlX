@@ -46,7 +46,6 @@ begin
   Application.CreateForm(TDatabaseClonerForm, DatabaseClonerForm);
   Application.CreateForm(TDataImporterForm,DataImporterForm);
   Application.CreateForm(TDataImporterDialog,DataImporterDialog);
-
   Application.Run;
 end.
 

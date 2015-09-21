@@ -1590,7 +1590,7 @@ begin
           idField.Assign(field);
         end;
         field.FieldDbType:=FDBinfo.DbType;
-        Application.MessageBox(PChar(Field.FieldType + ' - Len: '+IntToStr(field.Length)),'');
+        //Application.MessageBox(PChar(Field.FieldType + ' - Len: '+IntToStr(field.Length)),'');
       except
         if Assigned(field) then
         field.Free;

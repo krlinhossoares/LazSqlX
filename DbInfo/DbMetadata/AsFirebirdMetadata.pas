@@ -161,7 +161,7 @@ begin
                 ' WHEN 27 THEN ''DOUBLE'' '+
                 ' WHEN 10 THEN ''FLOAT'' '+
                 ' WHEN 16 THEN ''INT64'' '+
-                ' WHEN 8 THEN ''INTEGER'' '+
+                ' WHEN 8 THEN ''LONG'' '+
                 ' WHEN 9 THEN ''QUAD'''+
                 ' WHEN 7 THEN ''SMALLINT'' '+
                 ' WHEN 12 THEN ''DATE'' '+
@@ -187,22 +187,45 @@ begin
 
          c := TAsColumn.Create;
          c.Column_Name:=Trim(ds.FieldByName('COLUMN_NAME').AsString);
-         c.Data_Type:=Trim(ds.FieldByName('DATA_TYPE').AsString);
+         if (Trim(ds.FieldByName('DATA_TYPE').AsString) = 'LONG') OR (Trim(ds.FieldByName('DATA_TYPE').AsString) = 'INT64') Then
+         begin
+           IF ds.FieldByName('DATA_PRECISION').AsInteger > 0 THEN
+             c.Data_Type:=Trim('NUMERIC')
+           else
+             c.Data_Type:=Trim('INTEGER');
 
-         if not ds.FieldByName('MAX_LENGTH').IsNull then
-           if Trim(ds.FieldByName('MAX_LENGTH').AsString)<>'' then
-             c.Max_Length:=ds.FieldByName('MAX_LENGTH').AsInteger;
+           if not ds.FieldByName('MAX_LENGTH').IsNull then
+             if Trim(ds.FieldByName('MAX_LENGTH').AsString)<>'' then
+               c.Max_Length:=ds.FieldByName('MAX_LENGTH').AsInteger;
 
-         if not ds.FieldByName('DATA_PRECISION').IsNull then
-           if Trim(ds.FieldByName('DATA_PRECISION').AsString)<>'' then
-             c.Data_Precision:=ds.FieldByName('DATA_PRECISION').AsInteger;
+           if not ds.FieldByName('DATA_PRECISION').IsNull then
+             if Trim(ds.FieldByName('DATA_PRECISION').AsString)<>'' then
+               c.Data_Precision:=ds.FieldByName('DATA_PRECISION').AsInteger;
 
-         if not ds.FieldByName('DATA_SCALE').IsNull then
-           if Trim(ds.FieldByName('DATA_SCALE').AsString)<>'' then
-             c.Data_Scale:=ds.FieldByName('DATA_SCALE').AsInteger;
+           if not ds.FieldByName('DATA_SCALE').IsNull then
+             if Trim(ds.FieldByName('DATA_SCALE').AsString)<>'' then
+               c.Data_Scale:=ds.FieldByName('DATA_SCALE').AsInteger * (-1);
 
-         c.Allow_Null:=ds.FieldByName('ALLOW_NULL').AsBoolean;
+           c.Allow_Null:=ds.FieldByName('ALLOW_NULL').AsBoolean;
+         end
+         else
+         begin
+           c.Data_Type:=Trim(ds.FieldByName('DATA_TYPE').AsString);
 
+           if not ds.FieldByName('MAX_LENGTH').IsNull then
+             if Trim(ds.FieldByName('MAX_LENGTH').AsString)<>'' then
+               c.Max_Length:=ds.FieldByName('MAX_LENGTH').AsInteger;
+
+           if not ds.FieldByName('DATA_PRECISION').IsNull then
+             if Trim(ds.FieldByName('DATA_PRECISION').AsString)<>'' then
+               c.Data_Precision:=ds.FieldByName('DATA_PRECISION').AsInteger;
+
+           if not ds.FieldByName('DATA_SCALE').IsNull then
+             if Trim(ds.FieldByName('DATA_SCALE').AsString)<>'' then
+               c.Data_Scale:=ds.FieldByName('DATA_SCALE').AsInteger;
+
+           c.Allow_Null:=ds.FieldByName('ALLOW_NULL').AsBoolean;
+         end;
 
          Result.Add(c);
          ds.Next;

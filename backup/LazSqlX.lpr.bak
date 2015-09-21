@@ -33,7 +33,7 @@ begin
   Application.CreateForm(TSqlConnBuilderForm, SqlConnBuilderForm);
   Application.CreateForm(TBlobFieldForm, BlobFieldForm);
   Application.CreateForm(TEditMemoForm, EditMemoForm);
- Application.CreateForm(TDesignTableForm, DesignTableForm);
+  Application.CreateForm(TDesignTableForm, DesignTableForm);
   Application.CreateForm(TAboutForm,AboutForm);
   Application.CreateForm(TEditColumnForm,EditColumnForm);
   Application.CreateForm(TEditConstraintForm,EditConstraintForm);
@@ -46,7 +46,6 @@ begin
   Application.CreateForm(TDatabaseClonerForm, DatabaseClonerForm);
   Application.CreateForm(TDataImporterForm,DataImporterForm);
   Application.CreateForm(TDataImporterDialog,DataImporterDialog);
-
   Application.Run;
 end.
 
