@@ -184,7 +184,7 @@ var
   len, precision, scale:Integer;
   strDefaulType,strNewType:string;
 begin
-
+  scale := 0;
   sql := 'CREATE TABLE ' + info.Tablename + ' (' ;
 
 
@@ -200,7 +200,6 @@ begin
        if (UpperCase(info.AllFields[I].FieldType) = 'NUMERIC') THEN
        begin
          Precision := info.AllFields[I].Precision;
-         scale     := info.AllFields[I].
         sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType + '('+IntToStr(precision)+','+IntToStr(scale)+')'
        end
        ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'INTEGER') OR (UpperCase(info.AllFields[I].FieldType) = 'SMALLINT'))
