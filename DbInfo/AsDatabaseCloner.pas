@@ -131,13 +131,13 @@ begin
   dtFirebirdd:
              begin
               case ftype of
-               ftCurrency,ftBCD,ftFloat: Result:='decimal';
+               ftCurrency,ftBCD,ftFloat: Result:='numeric';
                ftWideMemo: Result := 'text';
                ftWideString: Result:='varchar';
                ftBlob,ftOraBlob: Result:='blob';
-               ftBoolean:Result:='int';
+               ftBoolean:Result:='integer';
                ftDate,ftDateTime:Result:='varchar';
-               ftInteger,ftAutoInc, ftSmallint: Result:='int' ;
+               ftInteger,ftAutoInc, ftSmallint: Result:='integer' ;
                ftBytes,ftVarBytes: Result:='blob';
                else
                Result:='varchar';
@@ -256,7 +256,7 @@ begin
       sql := sql + ' NOT NULL';
     end;
 
-    sql := sql + LoopSeperator[integer(I < info.AllFields.Count - 1)];
+    sql := sql + LoopSeperator[integer(I < info.AllFields.Count - 1)] + #13;
 
   end;
 
@@ -267,7 +267,6 @@ begin
     if FDbInfo.DbType in [dtSQLite, dtOracle, dtMySql,dtFirebirdd] then
     begin
       sql := sql + ',';
-
     end;
 
     if FDbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd] then
@@ -288,14 +287,14 @@ begin
         //end;
       end;
     end;
-    sql := sql + ' )';
+    sql := sql + ' )' + #13 ;
 
     if FDbInfo.DbType=dtPostgreSql then
     begin
       sql := sql +';' + LineEnding;
       for I:= 0 to info.PrimaryKeys.Count-1 do
       begin
-        sql := sql + ' ALTER TABLE ONLY '+Info.Tablename+' ADD CONSTRAINT '+ info.Tablename+'_'+info.PrimaryKeys[I].FieldName+' PRIMARY KEY ('+Info.PrimaryKeys[I].FieldName+');'+LineEnding;
+        sql := sql + ' ALTER TABLE ONLY '+Info.Tablename+' ADD CONSTRAINT '+ info.Tablename+'_'+info.PrimaryKeys[I].FieldName+' PRIMARY KEY ('+Info.PrimaryKeys[I].FieldName+');'+LineEnding + #13;
         break;//only one primary key
       end;
     end;
@@ -308,7 +307,7 @@ begin
     begin
       if FDbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd,dtSQLite] then
       begin
-        sql := sql + ',';
+        sql := sql + ',' + #13;
       end;
       case FDbInfo.DbType of
       dtMsSql,dtOracle,dtMySql,dtFirebirdd:

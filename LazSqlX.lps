@@ -241,8 +241,8 @@
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
-        <TopLine Value="182"/>
-        <CursorPos X="14" Y="187"/>
+        <TopLine Value="257"/>
+        <CursorPos X="44" Y="315"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit24>
@@ -853,7 +853,7 @@
         <Loaded Value="True"/>
       </Unit108>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
         <Caret Line="204" Column="75" TopLine="187"/>
@@ -970,10 +970,6 @@
         <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
         <Caret Line="208" Column="61" TopLine="188"/>
       </Position29>
-      <Position30>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="190" Column="7" TopLine="267"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
@@ -984,7 +980,7 @@
         <WatchKind Value="wpkWrite"/>
         <Source Value="DbInfo\AsDatabaseCloner.pas"/>
         <InitialEnabled Value="False"/>
-        <Line Value="480"/>
+        <Line Value="479"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>

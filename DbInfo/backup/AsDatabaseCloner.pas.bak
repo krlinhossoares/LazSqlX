@@ -131,13 +131,13 @@ begin
   dtFirebirdd:
              begin
               case ftype of
-               ftCurrency,ftBCD,ftFloat: Result:='decimal';
+               ftCurrency,ftBCD,ftFloat: Result:='numeric';
                ftWideMemo: Result := 'text';
                ftWideString: Result:='varchar';
                ftBlob,ftOraBlob: Result:='blob';
-               ftBoolean:Result:='int';
+               ftBoolean:Result:='integer';
                ftDate,ftDateTime:Result:='varchar';
-               ftInteger,ftAutoInc, ftSmallint: Result:='int' ;
+               ftInteger,ftAutoInc, ftSmallint: Result:='integer' ;
                ftBytes,ftVarBytes: Result:='blob';
                else
                Result:='varchar';
@@ -184,7 +184,7 @@ var
   len, precision, scale:Integer;
   strDefaulType,strNewType:string;
 begin
-
+  scale := 0;
   sql := 'CREATE TABLE ' + info.Tablename + ' (' ;
 
 
