@@ -2270,7 +2270,8 @@ begin
   t := ti.Add(cmbSchema.Text, trvTables.Selected.Text);
   try
     if actNewTab.Execute then
-      FPageControl.ActiveTab.QueryEditor.Lines.Add(dbc.GetCreateScript(t, True, False));
+      FPageControl.ActiveTab.QueryEditor.Text := dbc.GetCreateScript(t, True, False);
+      //FPageControl.ActiveTab.QueryEditor.Lines.Add(dbc.GetCreateScript(t, True, False));
   finally
     dbc.Free;
     ti.Free;
