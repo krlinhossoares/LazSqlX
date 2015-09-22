@@ -98,6 +98,7 @@ type
     GridPrinter: TFrPrintGrid;
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
+    timerSearch: TTimer;
     trvProcedures: TTreeView;
     TreeViewImages: TImageList;
     imgLogo: TImage;
@@ -344,11 +345,13 @@ type
     procedure ReplaceDialog1Replace(Sender: TObject);
     procedure sbMainDrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel;
       const Rect: TRect);
+    procedure timerSearchTimer(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
     procedure trvTablesChange(Sender: TObject; Node: TTreeNode);
     procedure trvTablesExpanding(Sender: TObject; Node: TTreeNode;
      var AllowExpansion: Boolean);
+    procedure trvTablesKeyPress(Sender: TObject; var Key: char);
     procedure txtSearchprocChange(Sender: TObject);
     procedure txtSearchprocEnter(Sender: TObject);
     procedure txtSearchprocExit(Sender: TObject);
@@ -390,6 +393,13 @@ type
 
     {This is used for QuickSearch for Tables and procedures}
     FQuickSearchLastWord: string;
+
+    {This is used to search for tables and procedures in TreeView}
+    FTableSearch: String;
+    FContTimeSearch: Word;
+
+    {Ativa a pesquisa }
+    Procedure SearchActive;
 
     {disconnectes sqldb/zeos}
     procedure DoDisconnect;
@@ -449,6 +459,9 @@ type
     {QuickSearch table list}
     procedure QuickSearchTables(StartIndex: Integer=0);
 
+    {Search table list}
+    procedure SearchTables(aText: string; StartIndex: Integer=0);
+
     {QuickSearch Procedures}
     procedure QuickSearchProcedure(StartIndex: Integer=0);
 
@@ -488,6 +501,7 @@ type
 
 const
   LazSqlXSessionFile = 'LazSqlX.sess';
+  SEARCH_DELAY = 2; {Tempo em segundos entre um KeyPress e outro para considerar na pesquisa de tabelas}
 
 
 
@@ -974,6 +988,24 @@ begin
   end;
 end;
 
+procedure TMainForm.SearchTables(aText: string; StartIndex: Integer);
+var
+ I: Integer;
+begin
+
+  if Trim(FTableSearch) = '' then
+     Exit;
+
+  for I:=StartIndex to trvTables.Items.Count -1 do
+  begin
+    if Pos(UPPERCASE(FTableSearch), UPPERCASE(trvTables.Items[I].Text)) > 0 then
+    begin
+     trvTables.Items[I].Selected:= True;
+     Break;
+    end;
+  end;
+end;
+
 procedure TMainForm.QuickSearchProcedure(StartIndex:Integer=0);
 var
  I: Integer;
@@ -1061,6 +1093,17 @@ begin
   begin
     StatusBar.Canvas.Brush.Style := bsClear;
     StatusBar.Canvas.TextOut(Rect.Left + 18, Rect.Top + 1, Panel.Text);
+  end;
+end;
+
+procedure TMainForm.timerSearchTimer(Sender: TObject);
+begin
+  Inc(FContTimeSearch);
+
+  if FContTimeSearch >= SEARCH_DELAY then
+  begin
+    FTableSearch        := '';
+    timerSearch.Enabled := False;
   end;
 end;
 
@@ -1181,6 +1224,14 @@ begin
  end;
 end;
 
+
+procedure TMainForm.trvTablesKeyPress(Sender: TObject; var Key: char);
+begin
+  FTableSearch := FTableSearch + Key;
+  SearchTables(FTableSearch);
+  SearchActive;
+end;
+
 procedure TMainForm.txtSearchprocChange(Sender: TObject);
 begin
   QuickSearchProcedure;
@@ -1225,6 +1276,12 @@ procedure TMainForm.txtSearchTableKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
     QuickSearchTables;
+end;
+
+procedure TMainForm.SearchActive;
+begin
+  FContTimeSearch     := 0;
+  timerSearch.Enabled := True;
 end;
 
 
