@@ -3,8 +3,8 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="Win64"/>
-    <Units Count="109">
+    <BuildModes Active="Win32"/>
+    <Units Count="110">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -38,11 +38,11 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <TopLine Value="2191"/>
-        <CursorPos Y="2202"/>
+        <TopLine Value="2123"/>
+        <CursorPos X="48" Y="2128"/>
         <UsageCount Value="206"/>
         <Bookmarks Count="1">
-          <Item0 X="3" Y="2446" ID="1"/>
+          <Item0 X="3" Y="2448" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -70,7 +70,7 @@
       <Unit6>
         <Filename Value="DbInfo\AsDbType.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="286"/>
         <CursorPos X="3" Y="300"/>
         <UsageCount Value="223"/>
@@ -87,7 +87,7 @@
       <Unit8>
         <Filename Value="DbInfo\AsTableInfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="1534"/>
         <CursorPos X="11" Y="1593"/>
         <UsageCount Value="223"/>
@@ -104,10 +104,11 @@
       <Unit10>
         <Filename Value="DbInfo\AsSqlGenerator.pas"/>
         <IsPartOfProject Value="True"/>
-        <WindowIndex Value="1"/>
-        <TopLine Value="340"/>
-        <CursorPos X="2" Y="315"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="511"/>
+        <CursorPos X="20" Y="381"/>
         <UsageCount Value="223"/>
+        <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="UtilClasses\sqlexecthread.pas"/>
@@ -239,10 +240,9 @@
       <Unit24>
         <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="257"/>
-        <CursorPos X="44" Y="315"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="15"/>
+        <CursorPos X="14" Y="49"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit24>
@@ -459,9 +459,9 @@
       <Unit50>
         <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="202"/>
-        <CursorPos X="44" Y="214"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="5"/>
+        <CursorPos X="14" Y="23"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit50>
@@ -479,14 +479,14 @@
         <WindowIndex Value="1"/>
         <TopLine Value="194"/>
         <CursorPos X="18" Y="229"/>
-        <UsageCount Value="139"/>
+        <UsageCount Value="140"/>
       </Unit52>
       <Unit53>
         <Filename Value="Resources\PostgreSqlDataTypes.dt"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
         <CursorPos Y="8"/>
-        <UsageCount Value="131"/>
+        <UsageCount Value="132"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit53>
       <Unit54>
@@ -846,141 +846,158 @@
       </Unit107>
       <Unit108>
         <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\classes\stringl.inc"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="607"/>
         <CursorPos X="3" Y="610"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit108>
+      <Unit109>
+        <Filename Value="Forms\modelformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ModelForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ModelFormU"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="10" Y="6"/>
+        <UsageCount Value="21"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+      </Unit109>
     </Units>
-    <JumpHistory Count="29" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
-        <Caret Line="204" Column="75" TopLine="187"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="404" TopLine="377"/>
       </Position1>
       <Position2>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="188" TopLine="179"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="405" TopLine="377"/>
       </Position2>
       <Position3>
-        <Filename Value="Forms\MainFormU.pas"/>
-        <Caret Line="2199" TopLine="2191"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="404" TopLine="377"/>
       </Position3>
       <Position4>
-        <Filename Value="Forms\MainFormU.pas"/>
-        <Caret Line="2202" TopLine="2191"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="405" TopLine="377"/>
       </Position4>
       <Position5>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="1505" TopLine="1489"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="404" TopLine="377"/>
       </Position5>
       <Position6>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="1516" TopLine="1489"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="405" TopLine="377"/>
       </Position6>
       <Position7>
-        <Filename Value="DbInfo\AsDbType.pas"/>
-        <Caret Line="1280" TopLine="1257"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="404" TopLine="377"/>
       </Position7>
       <Position8>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="334" Column="25" TopLine="299"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="408" TopLine="380"/>
       </Position8>
       <Position9>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="203" Column="135" TopLine="178"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="407" TopLine="380"/>
       </Position9>
       <Position10>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="180" Column="30" TopLine="179"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="408" TopLine="380"/>
       </Position10>
       <Position11>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="200" Column="12" TopLine="181"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="407" TopLine="380"/>
       </Position11>
       <Position12>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="203" Column="33" TopLine="184"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="408" TopLine="380"/>
       </Position12>
       <Position13>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="281" Column="12" TopLine="262"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="407" TopLine="380"/>
       </Position13>
       <Position14>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="250" Column="3" TopLine="230"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="355" TopLine="338"/>
       </Position14>
       <Position15>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="170" Column="2" TopLine="150"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="357" TopLine="338"/>
       </Position15>
       <Position16>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="160" Column="58" TopLine="138"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="359" TopLine="338"/>
       </Position16>
       <Position17>
-        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
-        <Caret Line="219" Column="24" TopLine="202"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="360" TopLine="338"/>
       </Position17>
       <Position18>
-        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
-        <Caret Line="227" Column="18" TopLine="202"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="364" TopLine="338"/>
       </Position18>
       <Position19>
-        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
-        <Caret Line="146" Column="69" TopLine="126"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="369" TopLine="341"/>
       </Position19>
       <Position20>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="203" Column="54" TopLine="184"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="388" TopLine="371"/>
       </Position20>
       <Position21>
-        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
-        <Caret Line="195" Column="40" TopLine="178"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="387" TopLine="371"/>
       </Position21>
       <Position22>
-        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
-        <Caret Line="214" Column="44" TopLine="184"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="388" TopLine="371"/>
       </Position22>
       <Position23>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="207" Column="87" TopLine="190"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="387" TopLine="371"/>
       </Position23>
       <Position24>
-        <Filename Value="Forms\MainFormU.pas"/>
-        <Caret Line="2202" TopLine="2191"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="388" TopLine="371"/>
       </Position24>
       <Position25>
-        <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\classes\stringl.inc"/>
-        <Caret Line="610" Column="3" TopLine="607"/>
+        <Filename Value="DbInfo\AsSqlGenerator.pas"/>
+        <Caret Line="387" TopLine="371"/>
       </Position25>
       <Position26>
         <Filename Value="Forms\MainFormU.pas"/>
-        <Caret Line="2202" TopLine="2191"/>
+        <Caret Line="687" Column="53" TopLine="636"/>
       </Position26>
       <Position27>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="203" Column="58" TopLine="187"/>
+        <Filename Value="Forms\modelformu.pas"/>
+        <Caret Line="6" Column="10"/>
       </Position27>
       <Position28>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="207" Column="65" TopLine="188"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret TopLine="22"/>
       </Position28>
       <Position29>
-        <Filename Value="DbInfo\AsDatabaseCloner.pas"/>
-        <Caret Line="208" Column="61" TopLine="188"/>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2127" Column="22" TopLine="2124"/>
       </Position29>
+      <Position30>
+        <Filename Value="Forms\modelformu.pas"/>
+        <Caret Line="6" Column="10"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="5">
+    <BreakPoints Count="6">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="DbInfo\AsDatabaseCloner.pas"/>
         <InitialEnabled Value="False"/>
-        <Line Value="479"/>
+        <Line Value="478"/>
       </Item1>
       <Item2>
         <Kind Value="bpkSource"/>
@@ -1014,6 +1031,13 @@
         <InitialEnabled Value="False"/>
         <Line Value="469"/>
       </Item5>
+      <Item6>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="DbInfo\AsSqlGenerator.pas"/>
+        <Line Value="316"/>
+      </Item6>
     </BreakPoints>
     <Watches Count="2">
       <Item1>
