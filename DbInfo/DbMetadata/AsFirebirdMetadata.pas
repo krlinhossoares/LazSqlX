@@ -190,7 +190,7 @@ begin
          if (Trim(ds.FieldByName('DATA_TYPE').AsString) = 'LONG') OR (Trim(ds.FieldByName('DATA_TYPE').AsString) = 'INT64') Then
          begin
            IF ds.FieldByName('DATA_PRECISION').AsInteger > 0 THEN
-             c.Data_Type:=Trim('NUMERIC')
+             c.Data_Type:=Trim('NUMERIC(' + ds.FieldByName('DATA_PRECISION').AsString+','+IntToStr(ds.FieldByName('DATA_SCALE').AsInteger * (-1))+')' )
            else
              c.Data_Type:=Trim('INTEGER');
 

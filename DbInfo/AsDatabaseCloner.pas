@@ -197,10 +197,9 @@ begin
           (UpperCase(info.AllFields[I].FieldType) = UpperCase('nvarchar2')) or (UpperCase(info.AllFields[I].FieldType) = UpperCase('character varying')) then
        sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
      else
-       if (UpperCase(info.AllFields[I].FieldType) = 'NUMERIC') THEN
+       if Pos('NUMERIC', UpperCase(info.AllFields[I].FieldType)) > 0 THEN
        begin
-         Precision := info.AllFields[I].Precision;
-        sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType + '('+IntToStr(precision)+','+IntToStr(scale)+')'
+         sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
        end
        ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'INTEGER') OR (UpperCase(info.AllFields[I].FieldType) = 'SMALLINT'))
        OR (UpperCase(info.AllFields[I].FieldType) = 'TIMESTAMP') OR (UpperCase(info.AllFields[I].FieldType) = 'DATE')

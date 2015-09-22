@@ -140,7 +140,7 @@
         <PackageName Value="LCL"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="54">
+    <Units Count="55">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -412,6 +412,13 @@
         <Filename Value="Resources\PostgreSqlDataTypes.dt"/>
         <IsPartOfProject Value="True"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="Forms\modelformu.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ModelForm"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ModelFormU"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
