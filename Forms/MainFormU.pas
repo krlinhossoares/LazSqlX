@@ -16,7 +16,7 @@ uses
   BlobFieldFormU, Clipbrd, types, EditMemoFormU, DesignTableFormU, AsTableInfo,
   AsDbType, AsProcedureInfo, AsSqlGenerator, FtDetector, SqlExecThread, AsSqlParser,
   LazSqlXResources, RegExpr, Regex, versionresource,
-  UnitGetSetText, QueryDesignerFormU, LoadingIndicator,
+  UnitGetSetText, QueryDesignerFormU, UFrmModel, LoadingIndicator,
   SynEditMarkupSpecialLine, SynEditTypes, SynEditKeyCmds, fpsqlparser,LazSqlXCtrls,
   fpsqltree,LR_PGrid,AsDbFormUtils, LR_Class,DOM,XMLRead,XMLWrite;
 
@@ -2179,8 +2179,33 @@ begin
 end;
 
 procedure TMainForm.actCreateModelExecute(Sender: TObject);
+var
+  dbC: TAsDatabaseCloner;
+  ti: TAsTableInfos;
+  t: TAsTableInfo;
 begin
+
+ if trvTables.Selected=nil then
+ Exit;
+
+ if trvTables.Selected.Level>0 then
+ Exit;
+
+  dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
+  ti := TAsTableInfos.Create(nil,FDBInfo);
+  t := ti.Add(cmbSchema.Text, trvTables.Selected.Text);
+  try
+    if not Assigned(FrmModel) then
+      FrmModel := TFrmModel.Create(Application);
+    FrmModel.InfoTable := t;
+    FrmModel.ShowModal;
+  finally
+    dbc.Free;
+    ti.Free;
+    FreeAndNil(FrmModel);
+  end;
   //
+
 end;
 
 procedure TMainForm.actCloseExecute(Sender: TObject);

@@ -140,7 +140,7 @@
         <PackageName Value="LCL"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="55">
+    <Units Count="56">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -419,6 +419,12 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ModelFormU"/>
       </Unit54>
+      <Unit55>
+        <Filename Value="Forms\UFrmModel.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrmModel"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit55>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
