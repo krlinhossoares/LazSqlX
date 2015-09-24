@@ -430,6 +430,7 @@
         <Filename Value="Forms\UFrmCfgCRUD.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FrmCfgCRUD"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit56>
       <Unit57>

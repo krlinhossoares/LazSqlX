@@ -23,7 +23,9 @@ type
   private
     FConnection: string;
     FCopyTableName: integer;
-    FExceptionCode: String;
+    FDirDAO: String;
+    FDirModel: String;
+    FExceptionCode: TStringList;
     FProcDelete: TCRUDProc;
     FProcGetRecord: TCRUDProc;
     FProcInsert: TCRUDProc;
@@ -40,7 +42,9 @@ type
     property UsesDefault: string read FUsesDefault write FUsesDefault;
     property Connection: string read FConnection write FConnection;
     property ReturnException: string read FReturnException write FReturnException;
-    property ExceptionCode: String read FExceptionCode write FExceptionCode;
+    property ExceptionCode: TStringList read FExceptionCode write FExceptionCode;
+    property DirModel: String read FDirModel write FDirModel;
+    property DirDAO: String read FDirDAO write FDirDAO;
 
     property ProcInsert: TCRUDProc read FProcInsert write FProcInsert;
     property ProcUpdate: TCRUDProc read FProcUpdate write FProcUpdate;
@@ -62,6 +66,7 @@ begin
   ProcDelete := TCRUDProc.Create;
   ProcGetRecord := TCRUDProc.Create;
   ProcListRecords := TCRUDProc.Create;
+  ExceptionCode := TStringList.Create;
 end;
 
 procedure TCRUDInfo.SaveToFile(FileName: String);
@@ -84,7 +89,10 @@ begin
   CrudFile.WriteString('CRUD','PROCNAMEGETRECORD', ProcGetRecord.ProcName);
   CrudFile.WriteBool('CRUD','CREATELISTRECORDS',ProcListRecords.Enable);
   CrudFile.WriteString('CRUD','PROCNAMELISTRECORDS', ProcListRecords.ProcName);
-  CrudFile.WriteString('CRUD','EXCEPTIONCODE', ExceptionCode);
+  ExceptionCode.SaveToFile(GetCurrentDir+ PathDelim+'CodeException.ini');
+  CrudFile.WriteString('CRUD','EXCEPTIONCODE', GetCurrentDir+ PathDelim+'CodeException.ini');
+  CrudFile.WriteString('CRUD','DIRMODEL',DirModel);
+  CrudFile.WriteString('CRUD','DIRDAO',DirDAO);
   CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);
@@ -101,6 +109,8 @@ begin
   UsesDefault  := CrudFile.ReadString('CRUD','USES', 'System, Controls, Variants, DB;');
   Connection  := CrudFile.ReadString('CRUD','CLASSCONNECTION', 'TZConnection');
   ReturnException := CrudFile.ReadString('CRUD','RETURNEXCEPTION','Erro: String' );
+  DirModel:= CrudFile.ReadString('CRUD','DIRMODEL',GetCurrentDir+ PathDelim);
+  DirDAO:= CrudFile.ReadString('CRUD','DIRDAO',GetCurrentDir+ PathDelim);
 
   ProcInsert.Enable  := CrudFile.ReadBool('CRUD','CREATEINSERT',True);
   ProcInsert.ProcName:= CrudFile.ReadString('CRUD','PROCNAMEINSERT', 'Insert');
@@ -117,12 +127,8 @@ begin
   ProcListRecords.Enable := CrudFile.ReadBool('CRUD','CREATELISTRECORDS',True);
   ProcListRecords.ProcName := CrudFile.ReadString('CRUD','PROCNAMELISTRECORDS', 'ListRecords');
 
-  ExceptionCode := CrudFile.ReadString('CRUD','EXCEPTIONCODE',
-   '  On E:Exception do   '+ #13 +
-   '  begin               '+ #13 +
-   '    Result := False;  '+ #13 +
-   '    Erro := E.Message;'+ #13 +
-   '  end;                ');
+  if FileExists(GetCurrentDir+ PathDelim+'CodeException.ini') then
+    ExceptionCode.LoadFromFile(GetCurrentDir+ PathDelim+'CodeException.ini');
   CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);

@@ -1,7 +1,7 @@
 object SqlConnBuilderForm: TSqlConnBuilderForm
-  Left = 262
+  Left = 392
   Height = 389
-  Top = 271
+  Top = 241
   Width = 563
   BorderStyle = bsDialog
   Caption = 'Connect to server'

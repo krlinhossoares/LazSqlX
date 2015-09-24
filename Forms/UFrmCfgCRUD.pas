@@ -5,8 +5,8 @@ unit UFrmCfgCRUD;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  Spin, Buttons, IniFiles, AsCrudInfo;
+  Classes, SysUtils, FileUtil, SynHighlighterPas, SynEdit, Forms, Controls,
+  Graphics, Dialogs, StdCtrls, Spin, Buttons, EditBtn, IniFiles, AsCrudInfo;
 
 type
 
@@ -20,6 +20,8 @@ type
     ChCkInsert: TCheckBox;
     ChCkDelete: TCheckBox;
     ChCkUpdate: TCheckBox;
+    EdtDirModel: TDirectoryEdit;
+    EdtDirDAO: TDirectoryEdit;
     EdtException: TEdit;
     EdtProcNameInsert: TEdit;
     EdtConnection: TEdit;
@@ -37,6 +39,8 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label7: TLabel;
+    Label8: TLabel;
     LbProcListRecord: TLabel;
     LbProcInsert: TLabel;
     LbProcDelete: TLabel;
@@ -45,7 +49,8 @@ type
     LbTable: TLabel;
     LbClassExemple: TLabel;
     MmUses: TMemo;
-    MmExceptionCode: TMemo;
+    MmExceptionCode: TSynEdit;
+    SynPasSyn1: TSynPasSyn;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -73,27 +78,30 @@ end;
 procedure TFrmCfgCRUD.FormShow(Sender: TObject);
 begin
   EdtCopyTableName.Value:= CrudInfo.CopyTableName;
+
   MmUses.Lines.Clear;
   MmUses.Lines.Text := CrudInfo.UsesDefault;
   EdtConnection.Text:= CrudInfo.Connection;
   EdtException.Text := CrudInfo.ReturnException;
+  EdtDirModel.Text  := CrudInfo.DirModel;
+  EdtDirDAO.Text    := CrudInfo.DirDAO;
 
-  ChCkInsert.Checked:= CrudInfo.ProcInsert.Enable;
+  ChCkInsert.Checked    := CrudInfo.ProcInsert.Enable;
   EdtProcNameInsert.Text:= CrudInfo.ProcInsert.ProcName;
 
-  ChCkUpdate.Checked:= CrudInfo.ProcUpdate.Enable;
+  ChCkUpdate.Checked    := CrudInfo.ProcUpdate.Enable;
   EdtProcNameUpdate.Text:= CrudInfo.ProcUpdate.ProcName;
 
-  ChCkDelete.Checked:= CrudInfo.ProcDelete.Enable;
+  ChCkDelete.Checked    := CrudInfo.ProcDelete.Enable;
   EdtProcNameDelete.Text:= CrudInfo.ProcDelete.ProcName;
 
-  ChCkGetRecord.Checked:= CrudInfo.ProcGetRecord.Enable;
+  ChCkGetRecord.Checked    := CrudInfo.ProcGetRecord.Enable;
   EdtProcNameGetRecord.Text:= CrudInfo.ProcGetRecord.ProcName;
 
-  ChCkListRecords.Checked:= CrudInfo.ProcListRecords.Enable;
+  ChCkListRecords.Checked    := CrudInfo.ProcListRecords.Enable;
   EdtProcNameListRecords.Text:= CrudInfo.ProcListRecords.ProcName;
 
-  MmExceptionCode.Text := CrudInfo.ExceptionCode;
+  MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
 end;
 
 procedure TFrmCfgCRUD.btnCancelClick(Sender: TObject);
@@ -123,7 +131,10 @@ begin
   CrudInfo.ProcListRecords.Enable := ChCkListRecords.Checked;
   CrudInfo.ProcListRecords.ProcName := EdtProcNameListRecords.Text;
 
-  CrudInfo.ExceptionCode := MmExceptionCode.Text;
+  CrudInfo.ExceptionCode.Text := MmExceptionCode.Lines.Text;
+  CrudInfo.DirModel := EdtDirModel.Text;
+  CrudInfo.DirDAO   := EdtDirDAO.Text;
+
   CrudInfo.SaveToFile(GetCurrentDir+ PathDelim+'CRUD.ini');
   Close;
 end;

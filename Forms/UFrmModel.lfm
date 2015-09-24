@@ -27,6 +27,7 @@ object FrmModel: TFrmModel
       Top = 2
       Caption = 'ToolButton2'
       ImageIndex = 19
+      OnClick = ToolButton2Click
     end
   end
   object PageControl1: TPageControl
