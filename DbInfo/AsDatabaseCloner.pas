@@ -185,11 +185,13 @@ var
   strDefaulType,strNewType:string;
 begin
   scale := 0;
-  sql := 'CREATE TABLE ' + info.Tablename + ' (' ;
+  sql := 'CREATE TABLE ' + info.Tablename + ' ('#13;
 
 
   for I := 0 to info.AllFields.Count - 1 do
   begin
+    sql := sql + '    ';
+
     len := info.AllFields[I].Length;
     if not OverrideDefaultTypes then
     begin
@@ -269,7 +271,7 @@ begin
     end;
 
     if FDbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd] then
-      sql := sql + ' CONSTRAINT ' + info.Tablename + '_PK ';
+      sql := sql + '    CONSTRAINT ' + info.Tablename + '_PK ';
 
     if FDbInfo.DbType<>dtPostgreSql then
     begin
@@ -311,7 +313,7 @@ begin
       case FDbInfo.DbType of
       dtMsSql,dtOracle,dtMySql,dtFirebirdd:
         begin
-        Sql := Sql + ' CONSTRAINT ' + TAsDbUtils.SafeWrap(FDbInfo.DbType,'fk_'+ info.ImportedKeys[I].ForeignTableName + info.ImportedKeys[I].ForeignColumnName) +
+        Sql := Sql + '    CONSTRAINT ' + TAsDbUtils.SafeWrap(FDbInfo.DbType,'fk_'+ info.ImportedKeys[I].ForeignTableName + info.ImportedKeys[I].ForeignColumnName) +
           ' FOREIGN KEY (' + info.ImportedKeys[I].GetCompatibleColumnName(FDbInfo.DbType) + ') ' +
           ' REFERENCES ' + info.ImportedKeys[I].ForeignTableName +
           '(' + info.ImportedKeys[I].GetCompatibleForeignColumnName(FDbInfo.DbType) + ') ';
