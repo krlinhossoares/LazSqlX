@@ -140,7 +140,7 @@
         <PackageName Value="LCL"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="56">
+    <Units Count="58">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -423,8 +423,19 @@
         <Filename Value="Forms\UFrmModel.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FrmModel"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit55>
+      <Unit56>
+        <Filename Value="Forms\UFrmCfgCRUD.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrmCfgCRUD"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="DbInfo\AsCrudInfo.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit57>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -459,7 +470,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="12">
+    <Exceptions Count="13">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -496,6 +507,9 @@
       <Item12>
         <Name Value="EZDatabaseError"/>
       </Item12>
+      <Item13>
+        <Name Value="EAccessViolation"/>
+      </Item13>
     </Exceptions>
   </Debugging>
 </CONFIG>

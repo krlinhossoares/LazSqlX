@@ -16,9 +16,9 @@ uses
   BlobFieldFormU, Clipbrd, types, EditMemoFormU, DesignTableFormU, AsTableInfo,
   AsDbType, AsProcedureInfo, AsSqlGenerator, FtDetector, SqlExecThread, AsSqlParser,
   LazSqlXResources, RegExpr, Regex, versionresource,
-  UnitGetSetText, QueryDesignerFormU, UFrmModel, LoadingIndicator,
+  UnitGetSetText, QueryDesignerFormU, UFrmModel, UFrmCfgCRUD, LoadingIndicator,
   SynEditMarkupSpecialLine, SynEditTypes, SynEditKeyCmds, fpsqlparser,LazSqlXCtrls,
-  fpsqltree,LR_PGrid,AsDbFormUtils, LR_Class,DOM,XMLRead,XMLWrite;
+  fpsqltree,LR_PGrid,AsDbFormUtils, LR_Class,DOM,XMLRead,XMLWrite, AsCrudInfo;
 
 var
   AppVersion: string = '';
@@ -73,8 +73,7 @@ type
     actClearSessionHistory: TAction;
     actAbout: TAction;
     actChmHelp: TAction;
-    actCreateModel: TAction;
-    actCreateDAO: TAction;
+    actCreateCRUD: TAction;
     actPdfHelp: TAction;
     actRefreshProcedures: TAction;
     actOpen: TAction;
@@ -98,6 +97,7 @@ type
     GridPrinter: TFrPrintGrid;
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
     timerSearch: TTimer;
     trvProcedures: TTreeView;
     TreeViewImages: TImageList;
@@ -106,7 +106,6 @@ type
     mitSep13: TMenuItem;
     mitHelpPDF: TMenuItem;
     mitHelpCHM: TMenuItem;
-    MenuItem4: TMenuItem;
     mitClearSession: TMenuItem;
     mitPrint: TMenuItem;
     Sep13: TMenuItem;
@@ -258,7 +257,7 @@ type
     procedure actClearSessionHistoryExecute(Sender: TObject);
     procedure actCopyRunProcedureTextExecute(Sender: TObject);
     procedure actCreateDAOExecute(Sender: TObject);
-    procedure actCreateModelExecute(Sender: TObject);
+    procedure actCreateCRUDExecute(Sender: TObject);
     procedure actDatabaseClonerExecute(Sender: TObject);
     procedure actCloseAllButThisExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
@@ -330,6 +329,7 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure GridPrinterGetValue(const ParName: String; var ParValue: Variant);
+    procedure imgLogoClick(Sender: TObject);
     procedure lstTablesDblClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
@@ -364,6 +364,7 @@ type
 
 
   private
+    FCrudInfo: TCRUDInfo;
 
     {Used in FPageControl for Autocomplete usage}
     FtableIcon: TBitmap;
@@ -485,6 +486,8 @@ type
     {Saves queries in tabs to file called before disconnect, MainForm.OnClose, ApplicationProperties.OnException}
     procedure SaveSession;
 
+
+
   public
 
 
@@ -494,6 +497,8 @@ type
     ArrowImageRight: TBitmap;
     {Image used for QueryDesigner}
     RectImage: TBitmap;
+    {Configuration CRUD}
+    property CrudInfo: TCRUDInfo read FCrudInfo write FCrudInfo;
 
     property DbInfo:TAsDbConnectionInfo read GetDbInfo;
 
@@ -1849,6 +1854,8 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDBInfo := TAsDbConnectionInfo.Create;
+  FCrudInfo := TCRUDInfo.Create;
+  FCrudInfo.LoadFromFile(GetCurrentDir+ PathDelim+'CRUD.ini');
 
   AppVersion := TFileUtils.GetApplicationVersion;
 
@@ -2178,13 +2185,12 @@ begin
   //
 end;
 
-procedure TMainForm.actCreateModelExecute(Sender: TObject);
+procedure TMainForm.actCreateCRUDExecute(Sender: TObject);
 var
   dbC: TAsDatabaseCloner;
   ti: TAsTableInfos;
   t: TAsTableInfo;
 begin
-
  if trvTables.Selected=nil then
  Exit;
 
@@ -2198,6 +2204,7 @@ begin
     if not Assigned(FrmModel) then
       FrmModel := TFrmModel.Create(Application);
     FrmModel.InfoTable := t;
+    FrmModel.InfoCrud:= Self.CrudInfo;
     FrmModel.ShowModal;
   finally
     dbc.Free;
@@ -2664,6 +2671,11 @@ begin
  if ParName='title' then ParValue:=GridPrinter.Caption;
 end;
 
+procedure TMainForm.imgLogoClick(Sender: TObject);
+begin
+
+end;
+
 
 procedure TMainForm.lstTablesDblClick(Sender: TObject);
 begin
@@ -2676,7 +2688,14 @@ end;
 
 procedure TMainForm.MenuItem4Click(Sender: TObject);
 begin
-
+ try
+  if not Assigned(FrmCfgCRUD) then
+    FrmCfgCRUD := TFrmCFGCrud.Create(Application);
+  FrmCfgCRUD.CrudInfo := Self.CrudInfo;
+  FrmCfgCRUD.ShowModal;
+  Finally
+    FreeAndNil(FrmCfgCRUD);
+  end;
 end;
 
 

@@ -663,7 +663,7 @@ begin
   imgDbEngines.GetBitmap(1,bmpZeosEngine);
 
   RecentConnections:=TAsDbConnectionInfos.Create;
-  RecentConnectionsFilename := GetTempDir+ ExtractFileName(ChangeFileExt(Application.ExeName,'.ini'))
+  RecentConnectionsFilename := GetCurrentDir+ PathDelim+ExtractFileName(ChangeFileExt(Application.ExeName,'.ini'))
 end;
 
 procedure TSqlConnBuilderForm.FormDestroy(Sender: TObject);

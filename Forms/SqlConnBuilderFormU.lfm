@@ -1,7 +1,7 @@
 object SqlConnBuilderForm: TSqlConnBuilderForm
-  Left = 168
+  Left = 262
   Height = 389
-  Top = 387
+  Top = 271
   Width = 563
   BorderStyle = bsDialog
   Caption = 'Connect to server'
@@ -212,7 +212,7 @@ object SqlConnBuilderForm: TSqlConnBuilderForm
   object btnAccept: TBitBtn
     Left = 396
     Height = 22
-    Top = 360
+    Top = 362
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
