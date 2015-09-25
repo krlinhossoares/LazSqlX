@@ -390,9 +390,9 @@ begin
 
     if (not AsTableInfo.AllFields[I].IsIdentity) then
     begin
-      tmpInsert.Add(strIdent + '    ' + SqlParamChar +
+      tmpInsert.Add(strIdent + ' ' + SqlParamChar +
         AsTableInfo.AllFields[I].CSharpName + seperator);
-      tmpSelectInsert.Add(strIdent + '    ' + fieldName + seperator);
+      tmpSelectInsert.Add(strIdent + ' ' + fieldName + seperator);
 
       //this check will prevent some unwanted stuff like : (..set Status=@Status, where.. )
       if (I + 1) = AsTableInfo.AllFields.Count - 1 then
@@ -401,7 +401,7 @@ begin
           seperator := '';
 
       if not AsTableInfo.AllFields[I].IsPrimaryKey then
-        tmpUpdate.Add(strIdent + '    ' + fieldName+ '=' + SqlParamChar + AsTableInfo.AllFields[I].CSharpName +
+        tmpUpdate.Add(strIdent + ' ' + fieldName+ '=' + SqlParamChar + AsTableInfo.AllFields[I].CSharpName +
           seperator);
 
       tmpUpdateAll.Add(strIdent + '    ' +  fieldName + '=' +

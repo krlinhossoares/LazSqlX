@@ -20,21 +20,31 @@ type
     ChCkInsert: TCheckBox;
     ChCkDelete: TCheckBox;
     ChCkUpdate: TCheckBox;
+    EdtConTransaction: TEdit;
+    EdtQryPropDatabase: TEdit;
+    EdtConDatabase: TEdit;
     EdtDirModel: TDirectoryEdit;
     EdtDirDAO: TDirectoryEdit;
     EdtException: TEdit;
+    EdtClassQuery: TEdit;
     EdtProcNameInsert: TEdit;
     EdtConnection: TEdit;
     EdtProcNameUpdate: TEdit;
     EdtProcNameDelete: TEdit;
     EdtProcNameGetRecord: TEdit;
     EdtProcNameListRecords: TEdit;
+    EdtQryPropTransaction: TEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     Label1: TLabel;
     EdtCopyTableName: TSpinEdit;
     Label16: TLabel;
+    Label17: TLabel;
+    Label18: TLabel;
+    Label19: TLabel;
     Label2: TLabel;
+    Label20: TLabel;
+    Label21: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -100,6 +110,11 @@ begin
 
   ChCkListRecords.Checked    := CrudInfo.ProcListRecords.Enable;
   EdtProcNameListRecords.Text:= CrudInfo.ProcListRecords.ProcName;
+  EdtConDatabase.Text:= CrudInfo.QueryConDatabase;
+  EdtQryPropDatabase.Text:= CrudInfo.QueryPropDatabase;
+  EdtConTransaction.Text:= CrudInfo.QueryConTransaction;
+  EdtQryPropTransaction.Text:= CrudInfo.QueryPropTransaction;
+  EdtClassQuery.Text:= CrudInfo.ClassQuery;;
 
   MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
 end;
@@ -134,6 +149,12 @@ begin
   CrudInfo.ExceptionCode.Text := MmExceptionCode.Lines.Text;
   CrudInfo.DirModel := EdtDirModel.Text;
   CrudInfo.DirDAO   := EdtDirDAO.Text;
+
+  CrudInfo.QueryPropTransaction := EdtQryPropTransaction.Text;
+  CrudInfo.QueryConTransaction  := EdtConTransaction.Text;
+  CrudInfo.QueryPropDatabase    := EdtQryPropDatabase.Text;
+  CrudInfo.QueryConDatabase     := EdtConDatabase.Text;
+  CrudInfo.ClassQuery:= EdtClassQuery.Text;
 
   CrudInfo.SaveToFile(GetCurrentDir+ PathDelim+'CRUD.ini');
   Close;

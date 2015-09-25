@@ -1,22 +1,22 @@
 object FrmCfgCRUD: TFrmCfgCRUD
-  Left = 445
-  Height = 610
+  Left = 373
+  Height = 662
   Top = 194
-  Width = 683
+  Width = 755
   Caption = 'Configuration CRUD'
-  ClientHeight = 610
-  ClientWidth = 683
+  ClientHeight = 662
+  ClientWidth = 755
   OnCreate = FormCreate
   OnShow = FormShow
   LCLVersion = '1.4.2.0'
   object GroupBox1: TGroupBox
     Left = 8
-    Height = 512
+    Height = 564
     Top = 64
-    Width = 664
+    Width = 728
     Caption = 'Model'
-    ClientHeight = 492
-    ClientWidth = 660
+    ClientHeight = 544
+    ClientWidth = 724
     TabOrder = 0
     object Label1: TLabel
       Left = 8
@@ -89,7 +89,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     object GroupBox2: TGroupBox
       Left = 8
       Height = 179
-      Top = 136
+      Top = 184
       Width = 640
       Caption = 'Functions and Procedures CRUD '
       ClientHeight = 159
@@ -251,7 +251,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     object Label6: TLabel
       Left = 8
       Height = 15
-      Top = 320
+      Top = 368
       Width = 82
       Caption = 'Exception Code'
       ParentColor = False
@@ -259,7 +259,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     inline MmExceptionCode: TSynEdit
       Left = 8
       Height = 150
-      Top = 336
+      Top = 384
       Width = 640
       Font.Height = -13
       Font.Name = 'Courier New'
@@ -752,11 +752,91 @@ object FrmCfgCRUD: TFrmCfgCRUD
         end
       end
     end
+    object Label17: TLabel
+      Left = 461
+      Height = 15
+      Top = 114
+      Width = 65
+      Caption = 'Class Query:'
+      ParentColor = False
+    end
+    object EdtClassQuery: TEdit
+      Left = 534
+      Height = 23
+      Top = 110
+      Width = 146
+      TabOrder = 6
+      Text = 'TzQuery'
+    end
+    object Label18: TLabel
+      Left = 17
+      Height = 15
+      Top = 140
+      Width = 35
+      Caption = 'Query.'
+      ParentColor = False
+    end
+    object EdtQryPropDatabase: TEdit
+      Left = 58
+      Height = 23
+      Top = 136
+      Width = 102
+      TabOrder = 7
+      Text = 'Connection'
+    end
+    object Label19: TLabel
+      Left = 163
+      Height = 15
+      Top = 140
+      Width = 11
+      Caption = ':='
+      ParentColor = False
+    end
+    object EdtConDatabase: TEdit
+      Left = 176
+      Height = 23
+      Top = 136
+      Width = 102
+      TabOrder = 8
+      Text = 'Con'
+    end
+    object Label20: TLabel
+      Left = 288
+      Height = 15
+      Top = 140
+      Width = 35
+      Caption = 'Query.'
+      ParentColor = False
+    end
+    object EdtQryPropTransaction: TEdit
+      Left = 329
+      Height = 23
+      Top = 136
+      Width = 102
+      TabOrder = 9
+      Text = 'Transaction'
+    end
+    object Label21: TLabel
+      Left = 434
+      Height = 15
+      Top = 140
+      Width = 11
+      Caption = ':='
+      ParentColor = False
+    end
+    object EdtConTransaction: TEdit
+      Left = 447
+      Height = 23
+      Top = 136
+      Width = 102
+      TabOrder = 10
+      Text = 'Con.Transaction'
+    end
   end
   object btnAccept: TBitBtn
-    Left = 511
+    Left = 583
     Height = 22
-    Top = 582
+    Top = 634
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -767,9 +847,9 @@ object FrmCfgCRUD: TFrmCfgCRUD
     TabOrder = 1
   end
   object btnCancel: TBitBtn
-    Left = 597
+    Left = 669
     Height = 22
-    Top = 582
+    Top = 634
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -822,6 +902,6 @@ object FrmCfgCRUD: TFrmCfgCRUD
     CompilerMode = pcmDelphi
     NestedComments = False
     left = 392
-    top = 352
+    top = 400
   end
 end

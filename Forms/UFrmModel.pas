@@ -6,7 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, SynHighlighterAny,
-  Forms, Controls, Graphics, Dialogs, ComCtrls, AsTableInfo, AsCrudInfo;
+  SynCompletion, Forms, Controls, Graphics, Dialogs, ComCtrls, ZDataset,
+  AsTableInfo, AsCrudInfo, AsSqlGenerator;
 
 type
 
@@ -16,6 +17,8 @@ type
     ApplicationImages: TImageList;
     PageControl1: TPageControl;
     PascalSyntax: TSynPasSyn;
+    SynAutoComplete1: TSynAutoComplete;
+    SynCompletion1: TSynCompletion;
     SynEditModel: TSynEdit;
     SynEditDAO: TSynEdit;
     TabSheet1: TTabSheet;
@@ -23,17 +26,25 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
+    ZQuery1: TZQuery;
     procedure FormShow(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
   private
     { private declarations }
     UnitNameDAO, ClassNameDAO, VarDAO,UnitNameModel, ClassNameModel, VarModel: String;
 
+    function GenerateSqlQuery(queryType: TQueryType):TStringList;
+    procedure GeneratorCodeProcDelete;
+    procedure GeneratorCodeProcGetItem;
+    procedure GeneratorCodeProcInsert;
+    procedure GeneratorCodeProcList;
+    procedure GeneratorCodeProcUpdate;
     procedure GeneratorDAOClass;
     procedure GeneratorPascalClass;
     function LPad(S: string; Ch: Char; Len: Integer): string;
     function RPad(S: string; Ch: Char; Len: Integer): string;
     function TypeDBToTypePascal(S: String): String;
+    procedure WriteCreateQuery;
   public
     { public declarations }
     InfoTable: TAsTableInfo;
@@ -44,6 +55,8 @@ var
   FrmModel: TFrmModel;
 
 implementation
+
+uses MainFormU;
 
 Const
   Ident = '  ';
@@ -121,10 +134,10 @@ begin
   SynEditModel.Lines.Clear;
   SynEditModel.Lines.Add('Unit ' + UnitNameModel + ';');
   SynEditModel.Lines.Add('');
+  SynEditModel.Lines.Add('interface');
+  SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('uses ');
   SynEditModel.Lines.Add(Ident + InfoCrud.UsesDefault);
-  SynEditModel.Lines.Add('');
-  SynEditModel.Lines.Add('interface;');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('type');
   SynEditModel.Lines.Add(ident + ClassNameModel +'= class');
@@ -243,15 +256,28 @@ begin
     SynEditModel.Lines.Add('begin');
     SynEditModel.Lines.Add(Ident + 'Result := '+ VarDAO+'.'+InfoCrud.ProcListRecords.ProcName+'('+ Copy(InfoCrud.Connection, 1, Pos(':',InfoCrud.Connection) -1) + ', '+
     'ObjLst, ' +
-    VarModel +', ' + Copy(InfoCrud.ReturnException, 1, Pos(':',InfoCrud.ReturnException) -1)+ ');');
-    SynEditModel.Lines.Add('End');
+    VarModel +', WhereSQL, ' + Copy(InfoCrud.ReturnException, 1, Pos(':',InfoCrud.ReturnException) -1)+ ');');
+    SynEditModel.Lines.Add('End;');
   end;
+  SynEditModel.Lines.Add(ident+ '');
+  SynEditModel.Lines.Add('end.');
+end;
+
+procedure TFrmModel.WriteCreateQuery;
+begin
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry := ' + InfoCrud.ClassQuery +'.Create(Nil);');
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry.'+InfoCrud.QueryPropDatabase+':= ' + InfoCrud.QueryConDatabase +';');
+  if Trim(InfoCrud.QueryPropTransaction) <> '' then
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry.'+InfoCrud.QueryPropTransaction+':= ' + InfoCrud.QueryConTransaction +';');
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry.SQL.Clear;');
 end;
 
 procedure TFrmModel.GeneratorDAOClass;
 Var
   I, J: Integer;
   MaxField, MaxType, MaxVar: Integer;
+  S: String;
+  SQL: TStringList;
 begin
   MaxField := 0;
   MaxType  := 0;
@@ -277,10 +303,10 @@ begin
   SynEditDAO.Lines.Clear;
   SynEditDAO.Lines.Add('Unit ' + UnitNameDAO + ';');
   SynEditDAO.Lines.Add('');
+  SynEditDAO.Lines.Add('interface');
+  SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('uses ');
   SynEditDAO.Lines.Add(Ident + UnitNameModel+','+InfoCrud.UsesDefault);
-  SynEditDAO.Lines.Add('');
-  SynEditDAO.Lines.Add('interface;');
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('type');
   SynEditDAO.Lines.Add(ident + ClassNameDAO +'= class');
@@ -324,57 +350,222 @@ begin
   SynEditDAO.Lines.Add(ident+ '');
   SynEditDAO.Lines.Add(ident+ '');
   //Gerando Functions Code
+  GeneratorCodeProcInsert;
+  GeneratorCodeProcUpdate;
+  GeneratorCodeProcDelete;
+  GeneratorCodeProcGetItem;
+  GeneratorCodeProcList;
+  SynEditDAO.Lines.Add(ident+ '');
+  SynEditDAO.Lines.Add('end.');
+end;
+
+
+function TFrmModel.GenerateSqlQuery(queryType: TQueryType): TStringList;
+Var
+  I: Integer;
+begin
+  try
+    Result := TStringList.Create;
+    Case queryType of
+      qtSelect: Begin
+        Result.Add('SELECT * FROM ' + InfoTable.Tablename+' ');
+      end;
+      qtSelectItem: begin
+        Result.Add('SELECT * FROM ' + InfoTable.Tablename);
+        For I:=0 to InfoTable.PrimaryKeys.Count-1 do
+        begin
+          if I = 0 then
+            Result.Add(#9+'WHERE (' + InfoTable.PrimaryKeys.Items[I].FieldName + ' = :' +InfoTable.PrimaryKeys.Items[I].FieldName + ')')
+          else
+            Result.Add(#9+'AND (' + InfoTable.PrimaryKeys.Items[I].FieldName + ' = :' +InfoTable.PrimaryKeys.Items[I].FieldName + ')');
+        end;
+      end;
+      qtInsert: begin
+        Result.Add('INSERT INTO (' + InfoTable.Tablename);
+        For I:=0 to InfoTable.AllFields.Count-1 do
+        begin
+          if I = InfoTable.AllFields.Count-1 then
+            Result.Add(#9+InfoTable.AllFields[I].FieldName+')')
+          else
+            Result.Add(#9+InfoTable.AllFields[I].FieldName+', ')
+        end;
+        Result.Add(' VALUES (');
+        For I:=0 to InfoTable.AllFields.Count-1 do
+        begin
+          if I = InfoTable.AllFields.Count-1 then
+            Result.Add(#9+':'+InfoTable.AllFields[I].FieldName+')')
+          else
+            Result.Add(#9+':'+InfoTable.AllFields[I].FieldName+', ')
+        end;
+      end;
+      qtUpdate: begin
+        Result.Add('UPDATE ' + InfoTable.Tablename + ' SET ' );
+        For I:=0 to InfoTable.AllFields.Count-1 do
+        begin
+          if InfoTable.PrimaryKeys.GetIndex(InfoTable.AllFields[I].FieldName) = -1 then
+          begin
+            if I = InfoTable.AllFields.Count-1 then
+              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+')')
+            else
+              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+', ')
+          end;
+        end;
+        For I:=0 to InfoTable.PrimaryKeys.Count-1 do
+        begin
+          if I = 0 then
+            Result.Add(#9+' WHERE (' + InfoTable.PrimaryKeys.Items[I].FieldName + ' = :' +InfoTable.PrimaryKeys.Items[I].FieldName + ')')
+          else
+            Result.Add(#9+'AND (' + InfoTable.PrimaryKeys.Items[I].FieldName + ' = :' +InfoTable.PrimaryKeys.Items[I].FieldName + ')');
+        end;
+      end;
+      qtDelete: begin
+        Result.Add('DELETE FROM ' + InfoTable.Tablename);
+        For I:=0 to InfoTable.PrimaryKeys.Count-1 do
+        begin
+          if I = 0 then
+             Result.Add(#9+'WHERE (' + InfoTable.PrimaryKeys.Items[I].FieldName + ' = :' +InfoTable.PrimaryKeys.Items[I].FieldName + ')')
+          else
+             Result.Add(#9+'AND (' + InfoTable.PrimaryKeys.Items[I].FieldName + ' = :' +InfoTable.PrimaryKeys.Items[I].FieldName + ')');
+        end;
+      end;
+    end;
+  finally
+
+  end;
+end;
+
+procedure TFrmModel.GeneratorCodeProcInsert;
+Var
+  SQL: TStringList;
+  S:String;
+  J:Integer;
+begin
   if InfoCrud.ProcInsert.Enable then
   begin
     SynEditDAO.Lines.Add( 'function '+ClassNameDAO+'.'+InfoCrud.ProcInsert.ProcName+'('+ InfoCrud.Connection + '; '+
     VarModel + ':' + ClassNameModel +'; ' +
     InfoCrud.ReturnException+ '):Boolean;');
+    SynEditDAO.Lines.Add('Var');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery+';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
+    WriteCreateQuery;
+    SQL := GenerateSqlQuery(qtInsert);
+    For J:= 0 to SQL.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.Sql.Add('+ QuotedStr(SQL.Strings[J])+');');
+    end;
+    //Set Values Params.
+    For J:= 0 to InfoTable.AllFields.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.ParamByName('+ QuotedStr(InfoTable.AllFields[J].FieldName)+').Value := '+VarModel+'.'+InfoTable.AllFields[J].FieldName+';');
+    end;
+
+
+
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.ExecSQL;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     For J:= 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident +Ident +InfoCrud.ExceptionCode.Strings[J]);
+      S := StringReplace(InfoCrud.ExceptionCode.Strings[J],'$UnitName', UnitNameDAO, [rfReplaceAll]);
+      S := StringReplace(S,'$ProcName', InfoCrud.ProcInsert.ProcName,[rfReplaceAll]);
+      SynEditDAO.Lines.Add(Ident +Ident +S);
     end;
     SynEditDAO.Lines.Add(Ident + 'end;');
-    SynEditDAO.Lines.Add('End');
+    SynEditDAO.Lines.Add('End;');
   end;
+end;
+
+procedure TFrmModel.GeneratorCodeProcUpdate;
+Var
+  SQL: TStringList;
+  S: String;
+  J:Integer;
+begin
   if InfoCrud.ProcUpdate.Enable then
   begin
     SynEditDAO.Lines.Add(ident+ '');
     SynEditDAO.Lines.Add('function '+ClassNameDAO+'.'+InfoCrud.ProcUpdate.ProcName+'('+ InfoCrud.Connection + '; '+
     VarModel + ':' + ClassNameModel+'; ' +
     InfoCrud.ReturnException+ '):Boolean;');
+    SynEditDAO.Lines.Add('Var');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery+';');
+
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
+    WriteCreateQuery;
+    SQL := GenerateSqlQuery(qtUpdate);
+    For J:= 0 to SQL.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.Sql.Add('+ QuotedStr(SQL.Strings[J])+');');
+    end;
+    //Set Values Params Fields and Primary Key.
+    For J:= 0 to InfoTable.AllFields.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.ParamByName('+ QuotedStr(InfoTable.AllFields[J].FieldName)+').Value := '+VarModel+'.'+InfoTable.AllFields[J].FieldName+';');
+    end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.ExecSQL;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     For J:= 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident +Ident +InfoCrud.ExceptionCode.Strings[J]);
+      S := StringReplace(InfoCrud.ExceptionCode.Strings[J],'$UnitName', UnitNameDAO,[rfReplaceAll]);
+      S := StringReplace(S,'$ProcName', InfoCrud.ProcUpdate.ProcName,[rfReplaceAll]);
+      SynEditDAO.Lines.Add(Ident +Ident +S);
     end;
     SynEditDAO.Lines.Add(Ident + 'end;');
-    SynEditDAO.Lines.Add('End');
+    SynEditDAO.Lines.Add('End;');
   end;
+end;
+
+procedure TFrmModel.GeneratorCodeProcDelete;
+Var
+  SQL: TStringList;
+  S: String;
+  J:Integer;
+begin
   if InfoCrud.ProcDelete.Enable then
   begin
     SynEditDAO.Lines.Add(ident+ '');
     SynEditDAO.Lines.Add('function '+ClassNameDAO+'.'+InfoCrud.ProcDelete.ProcName+'('+ InfoCrud.Connection + '; '+
     VarModel + ':' + ClassNameModel +'; ' +
     InfoCrud.ReturnException+ '):Boolean;');
+    SynEditDAO.Lines.Add('Var');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery+';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
+    WriteCreateQuery;
+    SQL := GenerateSqlQuery(qtDelete);
+    For J:= 0 to SQL.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.Sql.Add('+ QuotedStr(SQL.Strings[J])+');');
+    end;
+    //Set Values Params Primary Key.
+    For J:= 0 to InfoTable.PrimaryKeys.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.ParamByName('+ QuotedStr(InfoTable.PrimaryKeys[J].FieldName)+').Value := '+VarModel+'.'+InfoTable.PrimaryKeys[J].FieldName+';');
+    end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.ExecSQL;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     For J:= 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident +Ident +InfoCrud.ExceptionCode.Strings[J]);
+      S := StringReplace(InfoCrud.ExceptionCode.Strings[J],'$UnitName', UnitNameDAO,[rfReplaceAll]) ;
+      S := StringReplace(S,'$ProcName', InfoCrud.ProcDelete.ProcName,[rfReplaceAll]);
+      SynEditDAO.Lines.Add(Ident +Ident +S);
     end;
     SynEditDAO.Lines.Add(Ident + 'end;');
-    SynEditDAO.Lines.Add('End');
+    SynEditDAO.Lines.Add('End;');
   end;
+end;
 
+procedure TFrmModel.GeneratorCodeProcGetItem;
+Var
+  SQL: TStringList;
+  S: String;
+  J:Integer;
+begin
   if InfoCrud.ProcGetRecord.Enable then
   begin
     SynEditDAO.Lines.Add(ident+ '');
@@ -382,17 +573,47 @@ begin
     Trim(Copy(InfoTable.Tablename,InfoCrud.CopyTableName, Length(InfoTable.TableName))) + ':' +
     'T'+Trim(Copy(InfoTable.Tablename,InfoCrud.CopyTableName, Length(InfoTable.TableName))) +'; ' +
     InfoCrud.ReturnException+ '):Boolean;');
+    SynEditDAO.Lines.Add('Var');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery+';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
+    WriteCreateQuery;
+    SQL := GenerateSqlQuery(qtSelectItem);
+    For J:= 0 to SQL.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.Sql.Add('+ QuotedStr(SQL.Strings[J])+');');
+    end;
+    For J:= 0 to InfoTable.PrimaryKeys.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.ParamByName('+ QuotedStr(InfoTable.PrimaryKeys[J].FieldName)+').Value := '+VarModel+'.'+InfoTable.PrimaryKeys[J].FieldName+';');
+    end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.Open;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'if not Qry.isEmpty then ');
+    SynEditDAO.Lines.Add(Ident + Ident + 'begin');
+    For J:= 0 to InfoTable.AllFields.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel+'.'+InfoTable.AllFields[J].FieldName+' := '+'Qry.FieldByName('+QuotedStr(InfoTable.AllFields[J].FieldName)+').Value;');
+    end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     For J:= 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident +Ident +InfoCrud.ExceptionCode.Strings[J]);
+      S := StringReplace(InfoCrud.ExceptionCode.Strings[J],'$UnitName', UnitNameDAO,[rfReplaceAll]);
+      S := StringReplace(S,'$ProcName', InfoCrud.ProcGetRecord.ProcName,[rfReplaceAll]);
+      SynEditDAO.Lines.Add(Ident +Ident +S);
     end;
     SynEditDAO.Lines.Add(Ident + 'end;');
-    SynEditDAO.Lines.Add('End');
+    SynEditDAO.Lines.Add('End;');
   end;
+end;
+
+procedure TFrmModel.GeneratorCodeProcList;
+Var
+  SQL: TStringList;
+  S: String;
+  J:Integer;
+begin
   if InfoCrud.ProcListRecords.Enable then
   begin
     SynEditDAO.Lines.Add(ident+ '');
@@ -401,18 +622,42 @@ begin
     VarModel + ':' + ClassNameModel +'; ' +
     'WhereSQL: String; '+
     InfoCrud.ReturnException+ '):Boolean;');
+    SynEditDAO.Lines.Add('Var');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery+';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
+    WriteCreateQuery;
+    SQL := GenerateSqlQuery(qtSelect);
+    For J:= 0 to SQL.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident +'Qry.Sql.Add('+ QuotedStr(SQL.Strings[J])+');');
+    end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'if Trim(WhereSQL) <> '+QuotedStr('')+' then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(WhereSQL);');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.Open;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.First;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'While not Qry.Eof do ');
+    SynEditDAO.Lines.Add(Ident + Ident + 'begin');
+    For J:= 0 to InfoTable.AllFields.Count - 1 do
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel+'.'+InfoTable.AllFields[J].FieldName+' := '+'Qry.FieldByName('+QuotedStr(InfoTable.AllFields[J].FieldName)+').Value;');
+    end;
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Next;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     For J:= 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident +Ident +InfoCrud.ExceptionCode.Strings[J]);
+      S := StringReplace(InfoCrud.ExceptionCode.Strings[J],'$UnitName', UnitNameDAO,[rfReplaceAll]);
+      S := StringReplace(S,'$ProcName', InfoCrud.ProcListRecords.ProcName,[rfReplaceAll]);
+      SynEditDAO.Lines.Add(Ident +Ident +S);
     end;
     SynEditDAO.Lines.Add(Ident + 'end;');
-    SynEditDAO.Lines.Add('End');
+    SynEditDAO.Lines.Add('End;');
   end;
 end;
+
+
 
 end.
 

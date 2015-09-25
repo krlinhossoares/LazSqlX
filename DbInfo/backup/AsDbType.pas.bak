@@ -480,7 +480,7 @@ end;
 procedure TAsQuery.SetPackedRecord(AValue: Integer);
 begin
  case FDBInfo.DbEngineType of
-   deZeos:;
+   deZeos:FZQuery.FetchRow:= AValue;
    deSqlDB:FQuery.PacketRecords:=AValue;
  end;
 end;
@@ -590,7 +590,7 @@ end;
 function TAsQuery.GetIndexname: string;
 begin
   case FDBInfo.DbEngineType of
-   deZeos:Result := TAsStringUtils.SplitString(FZQuery.IndexFieldNames,',')[0];
+   deZeos:Result  := TAsStringUtils.SplitString(FZQuery.IndexFieldNames,',')[0];
    deSqlDB:Result := FQuery.IndexName;
   end;
 end;
@@ -1047,7 +1047,7 @@ begin
    case dbtyp of
     dtMsSql:Result:='['+TableOrField+']';
     dtMySql:Result:='`'+TableOrField+'`';
-    dtOracle,dtFirebirdd,dtPostgreSql,dtSQLite:Result:='"'+TableOrField+'"';
+    dtOracle,dtPostgreSql,dtSQLite:Result:='"'+TableOrField+'"';
    end;
 end;
 

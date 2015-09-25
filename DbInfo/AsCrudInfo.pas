@@ -21,6 +21,7 @@ type
   { TCRUDInfo }
   TCRUDInfo = class
   private
+    FClassQuery: String;
     FConnection: string;
     FCopyTableName: integer;
     FDirDAO: String;
@@ -31,6 +32,10 @@ type
     FProcInsert: TCRUDProc;
     FProcListRecords: TCRUDProc;
     FProcUpdate: TCRUDProc;
+    FQueryConDatabase: String;
+    FQueryConTransaction: String;
+    FQueryPropDatabase: String;
+    FQueryPropTransaction: String;
     FReturnException: string;
     FUsesDefault: string;
   public
@@ -45,6 +50,11 @@ type
     property ExceptionCode: TStringList read FExceptionCode write FExceptionCode;
     property DirModel: String read FDirModel write FDirModel;
     property DirDAO: String read FDirDAO write FDirDAO;
+    property ClassQuery: String read FClassQuery write FClassQuery;
+    property QueryPropDatabase: String read FQueryPropDatabase write FQueryPropDatabase;
+    property QueryConDatabase: String read FQueryConDatabase write FQueryConDatabase;
+    property QueryPropTransaction: String read FQueryPropTransaction write FQueryPropTransaction;
+    property QueryConTransaction: String read FQueryConTransaction write FQueryConTransaction;
 
     property ProcInsert: TCRUDProc read FProcInsert write FProcInsert;
     property ProcUpdate: TCRUDProc read FProcUpdate write FProcUpdate;
@@ -93,6 +103,13 @@ begin
   CrudFile.WriteString('CRUD','EXCEPTIONCODE', GetCurrentDir+ PathDelim+'CodeException.ini');
   CrudFile.WriteString('CRUD','DIRMODEL',DirModel);
   CrudFile.WriteString('CRUD','DIRDAO',DirDAO);
+  CrudFile.WriteString('CRUD','CLASSQUERY', ClassQuery);
+  CrudFile.WriteString('CRUD','QUERYCONDATABASE', QueryConDatabase);
+  CrudFile.WriteString('CRUD','QUERYPROPDATABASE', QueryPropDatabase);
+  CrudFile.WriteString('CRUD','QUERYCONTRANSACTION', QueryConTransaction);
+  CrudFile.WriteString('CRUD','QUERYPROPTRANSACTION', QueryPropTransaction);
+
+
   CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);
@@ -126,6 +143,11 @@ begin
 
   ProcListRecords.Enable := CrudFile.ReadBool('CRUD','CREATELISTRECORDS',True);
   ProcListRecords.ProcName := CrudFile.ReadString('CRUD','PROCNAMELISTRECORDS', 'ListRecords');
+  ClassQuery := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
+  QueryConDatabase:= CrudFile.ReadString('CRUD','QUERYCONDATABASE', Connection);
+  QueryPropDatabase:= CrudFile.ReadString('CRUD','QUERYPROPDATABASE', Connection);
+  QueryConTransaction:= CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');
+  QueryPropTransaction:= CrudFile.ReadString('CRUD','QUERYPROPTRANSACTION', '');
 
   if FileExists(GetCurrentDir+ PathDelim+'CodeException.ini') then
     ExceptionCode.LoadFromFile(GetCurrentDir+ PathDelim+'CodeException.ini');

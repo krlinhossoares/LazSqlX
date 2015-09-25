@@ -1047,7 +1047,8 @@ begin
    case dbtyp of
     dtMsSql:Result:='['+TableOrField+']';
     dtMySql:Result:='`'+TableOrField+'`';
-    dtOracle,dtFirebirdd,dtPostgreSql,dtSQLite:Result:='"'+TableOrField+'"';
+    dtOracle,dtPostgreSql,dtSQLite:Result:='"'+TableOrField+'"';
+    dtFirebirdd : Result  := TableOrField;
    end;
 end;
 

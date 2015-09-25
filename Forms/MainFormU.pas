@@ -377,8 +377,7 @@ type
     {Used in FPageControl for Autocomplete usage}
     FprocedureIcon: TBitmap;
 
-    {Main db connection }
-    FDBInfo: TAsDbConnectionInfo;
+
 
     {MainControl to hold all Tabs with Queries/returned results}
     FPageControl:TLazSqlXPageControl;
@@ -489,7 +488,8 @@ type
 
 
   public
-
+    {Main db connection }
+    FDBInfo: TAsDbConnectionInfo;
 
     {Image used for QueryDesigner}
     ArrowImageLeft: TBitmap;
