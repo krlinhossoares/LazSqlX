@@ -123,8 +123,8 @@ begin
   CrudFile := TIniFile.Create(FileName);
   try
   CopyTableName:= CrudFile.ReadInteger('CRUD','COPYTABLE',1);
-  UsesDefault  := CrudFile.ReadString('CRUD','USES', 'System, Controls, Variants, DB;');
-  Connection  := CrudFile.ReadString('CRUD','CLASSCONNECTION', 'TZConnection');
+  UsesDefault  := CrudFile.ReadString('CRUD','USES', 'Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ZConnection, ZDataset, ContNrs;');
+  Connection  := CrudFile.ReadString('CRUD','CLASSCONNECTION', 'Con:TZConnection');
   ReturnException := CrudFile.ReadString('CRUD','RETURNEXCEPTION','Erro: String' );
   DirModel:= CrudFile.ReadString('CRUD','DIRMODEL',GetCurrentDir+ PathDelim);
   DirDAO:= CrudFile.ReadString('CRUD','DIRDAO',GetCurrentDir+ PathDelim);

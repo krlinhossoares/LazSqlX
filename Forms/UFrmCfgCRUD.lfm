@@ -35,38 +35,6 @@ object FrmCfgCRUD: TFrmCfgCRUD
       TabOrder = 0
       Value = 1
     end
-    object LbTable: TLabel
-      Left = 208
-      Height = 15
-      Top = 4
-      Width = 56
-      Caption = 'TBARTIGO'
-      ParentColor = False
-    end
-    object LbClassExemple: TLabel
-      Left = 358
-      Height = 15
-      Top = 4
-      Width = 56
-      Caption = 'TBARTIGO'
-      ParentColor = False
-    end
-    object Label2: TLabel
-      Left = 166
-      Height = 15
-      Top = 4
-      Width = 32
-      Caption = 'Table:'
-      ParentColor = False
-    end
-    object Label3: TLabel
-      Left = 280
-      Height = 15
-      Top = 4
-      Width = 67
-      Caption = 'Class Model:'
-      ParentColor = False
-    end
     object Label4: TLabel
       Left = 8
       Height = 15
@@ -864,6 +832,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     Height = 23
     Top = 8
     Width = 504
+    OnAcceptDirectory = EdtDirModelAcceptDirectory
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -875,6 +844,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     Height = 23
     Top = 36
     Width = 504
+    OnAcceptDirectory = EdtDirModelAcceptDirectory
     ShowHidden = False
     ButtonWidth = 23
     NumGlyphs = 1
@@ -901,7 +871,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     Enabled = False
     CompilerMode = pcmDelphi
     NestedComments = False
-    left = 392
-    top = 400
+    left = 664
+    top = 464
   end
 end

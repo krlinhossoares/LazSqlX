@@ -42,10 +42,8 @@ type
     Label17: TLabel;
     Label18: TLabel;
     Label19: TLabel;
-    Label2: TLabel;
     Label20: TLabel;
     Label21: TLabel;
-    Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
@@ -56,13 +54,13 @@ type
     LbProcDelete: TLabel;
     LbProcGetRecord: TLabel;
     LbProcUpdate: TLabel;
-    LbTable: TLabel;
-    LbClassExemple: TLabel;
     MmUses: TMemo;
     MmExceptionCode: TSynEdit;
     SynPasSyn1: TSynPasSyn;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure EdtDirDAOAcceptDirectory(Sender: TObject; var Value: String);
+    procedure EdtDirModelAcceptDirectory(Sender: TObject; var Value: String);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
   private
@@ -122,6 +120,18 @@ end;
 procedure TFrmCfgCRUD.btnCancelClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TFrmCfgCRUD.EdtDirDAOAcceptDirectory(Sender: TObject;
+  var Value: String);
+begin
+
+end;
+
+procedure TFrmCfgCRUD.EdtDirModelAcceptDirectory(Sender: TObject;
+  var Value: String);
+begin
+  Value := Value + PathDelim;
 end;
 
 procedure TFrmCfgCRUD.btnAcceptClick(Sender: TObject);

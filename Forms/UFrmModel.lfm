@@ -1,11 +1,11 @@
 object FrmModel: TFrmModel
-  Left = 400
+  Left = 382
   Height = 473
-  Top = 140
-  Width = 634
+  Top = 240
+  Width = 633
   Caption = 'Create Model and DAO (CRUD)'
   ClientHeight = 473
-  ClientWidth = 634
+  ClientWidth = 633
   OnShow = FormShow
   Position = poDesktopCenter
   LCLVersion = '1.4.2.0'
@@ -14,7 +14,7 @@ object FrmModel: TFrmModel
     Left = 0
     Height = 26
     Top = 0
-    Width = 634
+    Width = 633
     Caption = 'ToolBar1'
     Images = ApplicationImages
     TabOrder = 0
@@ -36,7 +36,7 @@ object FrmModel: TFrmModel
     Left = 0
     Height = 447
     Top = 26
-    Width = 634
+    Width = 633
     ActivePage = TabSheet1
     Align = alClient
     TabIndex = 0
@@ -44,12 +44,12 @@ object FrmModel: TFrmModel
     object TabSheet1: TTabSheet
       Caption = 'Model'
       ClientHeight = 419
-      ClientWidth = 626
+      ClientWidth = 625
       inline SynEditModel: TSynEdit
         Left = 0
         Height = 419
         Top = 0
-        Width = 626
+        Width = 625
         Align = alClient
         Font.Height = -13
         Font.Name = 'Courier New'
@@ -58,7 +58,7 @@ object FrmModel: TFrmModel
         ParentColor = False
         ParentFont = False
         TabOrder = 0
-        Gutter.Width = 65
+        Gutter.Width = 57
         Gutter.MouseActions = <>
         RightGutter.Width = 0
         RightGutter.MouseActions = <>
@@ -487,191 +487,6 @@ object FrmModel: TFrmModel
         MouseActions = <>
         MouseTextActions = <>
         MouseSelActions = <>
-        Lines.Strings = (
-          'unit uREF;'
-          ''
-          'interface'
-          ''
-          'uses'
-          '  ContNrs, SysUtils,'
-          '  uConexao, uErros, uArtigo, uCol, uConta, uClasFis,'
-          '  uUnidadeMedida, uSpedItemGen, uSpedTipoItem;'
-          ''
-          'type'
-          '  TREF = class'
-          '  private'
-          '    FCDEMPRESA: Smallint;'
-          '    FREF: String;'
-          '    FDSREF: String;'
-          '    FDSREFAUX: String;'
-          '    FIDATIVO: String;'
-          '    FARTIGO: TArtigo;'
-          '    FCOLECAO: TCol;'
-          '    FCONTA: TConta;'
-          '    FCDCLIENTE: Integer;'
-          '    FREFCLI: String;'
-          '    FQTCONJ: Smallint;'
-          '    FBORDADO: String;'
-          '    FESTAMPA: String;'
-          '    FLAVANDERIA: String;'
-          '    FOUTRO: String;'
-          '    FMARCACAO: Smallint;'
-          '    FCAMADAS: Smallint;'
-          '    FARQDESENHO: String;'
-          '    FARQBORDADO: String;'
-          '    FARQESTAMPA: String;'
-          '    FPERCUTIL: Double;'
-          '    FClasFis: TClasFis;'
-          '    FCDSITRIBA: String;'
-          '    FCDSITRIBB: String;'
-          '    FCDTRIBIF: String;'
-          '    FFATORCONVDNF: Double;'
-          '    FCDGRUPOVENDA: Smallint;'
-          '    FOBSTAG1: String;'
-          '    FOBSTAG2: String;'
-          '    FOBSTAG3: String;'
-          '    FDTGERAPAMF: TDateTime;'
-          '    FDTGERAMF: TDateTime;'
-          '    FITEMGEN: TSPEDITEMGEN;'
-          '    FTIPOITEM: TSPEDTIPOITEM;'
-          '    FDTCAD: TDateTime;'
-          '    FIDREFQUILO: String;'
-          '    FTPCODEAN: String;'
-          '    FCDREFPRIORENTREGA: Smallint;'
-          '    FARQEXTERNO1: String;'
-          '    FARQEXTERNO2: String;'
-          '    FARQEXTERNO3: String;'
-          '    FARQEXTERNO4: String;'
-          '    FIDINVERTECHAVESEC: String;'
-          '    FNARRATIVA: String;'
-          '    FQTPECASOCP: Smallint;'
-          '    FUM: TUM;'
-          '  public'
-          '    property CDEMPRESA: Smallint read FCDEMPRESA write FCDEMPRESA;'
-          '    property REF: String read FREF write FREF;'
-          '    property DSREF: String read FDSREF write FDSREF;'
-          '    property DSREFAUX: String read FDSREFAUX write FDSREFAUX;'
-          '    property IDATIVO: String read FIDATIVO write FIDATIVO;'
-          '    property ARTIGO: TArtigo read FARTIGO write FARTIGO;'
-          '    property COLECAO: TCOL read FCOLECAO write FCOLECAO;'
-          '    property CONTA: TConta read FCONTA write FCONTA;'
-          '    property CDCLIENTE: Integer read FCDCLIENTE write FCDCLIENTE;'
-          '    property REFCLI: String read FREFCLI write FREFCLI;'
-          '    property QTCONJ: Smallint read FQTCONJ write FQTCONJ;'
-          '    property BORDADO: String read FBORDADO write FBORDADO;'
-          '    property ESTAMPA: String read FESTAMPA write FESTAMPA;'
-          '    property LAVANDERIA: String read FLAVANDERIA write FLAVANDERIA;'
-          '    property OUTRO: String read FOUTRO write FOUTRO;'
-          '    property MARCACAO: Smallint read FMARCACAO write FMARCACAO;'
-          '    property CAMADAS: Smallint read FCAMADAS write FCAMADAS;'
-          '    property ARQDESENHO: String read FARQDESENHO write FARQDESENHO;'
-          '    property ARQBORDADO: String read FARQBORDADO write FARQBORDADO;'
-          '    property ARQESTAMPA: String read FARQESTAMPA write FARQESTAMPA;'
-          '    property PERCUTIL: Double read FPERCUTIL write FPERCUTIL;'
-          '    property ClasFis: TClasFis read FClasFis write FClasFis;'
-          '    property CDSITRIBA: String read FCDSITRIBA write FCDSITRIBA;'
-          '    property CDSITRIBB: String read FCDSITRIBB write FCDSITRIBB;'
-          '    property CDTRIBIF: String read FCDTRIBIF write FCDTRIBIF;'
-          '    property FATORCONVDNF: Double read FFATORCONVDNF write FFATORCONVDNF;'
-          '    property CDGRUPOVENDA: Smallint read FCDGRUPOVENDA write FCDGRUPOVENDA;'
-          '    property OBSTAG1: String read FOBSTAG1 write FOBSTAG1;'
-          '    property OBSTAG2: String read FOBSTAG2 write FOBSTAG2;'
-          '    property OBSTAG3: String read FOBSTAG3 write FOBSTAG3;'
-          '    property DTGERAPAMF: TDateTime read FDTGERAPAMF write FDTGERAPAMF;'
-          '    property DTGERAMF: TDateTime read FDTGERAMF write FDTGERAMF;'
-          '    property ITEMGEN: TSPEDITEMGEN read FITEMGEN write FITEMGEN;'
-          '    property TIPOITEM: TSPEDTIPOITEM read FTIPOITEM write FTIPOITEM;'
-          '    property DTCAD: TDateTime read FDTCAD write FDTCAD;'
-          '    property IDREFQUILO: String read FIDREFQUILO write FIDREFQUILO;'
-          '    property TPCODEAN: String read FTPCODEAN write FTPCODEAN;'
-          '    property CDREFPRIORENTREGA: Smallint read FCDREFPRIORENTREGA write FCDREFPRIORENTREGA;'
-          '    property ARQEXTERNO1: String read FARQEXTERNO1 write FARQEXTERNO1;'
-          '    property ARQEXTERNO2: String read FARQEXTERNO2 write FARQEXTERNO2;'
-          '    property ARQEXTERNO3: String read FARQEXTERNO3 write FARQEXTERNO3;'
-          '    property ARQEXTERNO4: String read FARQEXTERNO4 write FARQEXTERNO4;'
-          '    property IDINVERTECHAVESEC: String read FIDINVERTECHAVESEC write FIDINVERTECHAVESEC;'
-          '    property NARRATIVA: String read FNARRATIVA write FNARRATIVA;'
-          '    property QTPECASOCP: Smallint read FQTPECASOCP write FQTPECASOCP;'
-          '    property UM: TUM read FUM write FUM;'
-          ''
-          '    Constructor Create(Con: TConexao); overload;'
-          '    Constructor Create(Con: TConexao; REF: String); overload;'
-          ''
-          '    destructor Destroy;'
-          ''
-          '    function Insere(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          '    function Atualiza(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          '    function Apaga(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          '    function Retorna(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          '    function Lista(Con: TConexao; var listaref: TObjectList; condicao: String; var Erros: TErros): Boolean;'
-          ''
-          '  end;'
-          ''
-          'implementation'
-          ''
-          'uses uREFDAO;'
-          ''
-          'var refDAO: TREFDAO;'
-          ''
-          'constructor TREF.Create(Con: TConexao);'
-          'begin'
-          '  self.CDEMPRESA := Con.CdEmpresa;'
-          '  refDAO   := TREFDAO.Create;'
-          '  ARTIGO   := TARTIGO.Create;'
-          '  CONTA    := TConta.Create;'
-          '  COLECAO  := TCOL.Create;'
-          '  ClasFis  := TClasFis.Create;'
-          '  UM       := TUM.Create;'
-          '  TIPOITEM := TSPEDTIPOITEM.Create;'
-          '  ITEMGEN  := TSPEDITEMGEN.Create;'
-          'end;'
-          ''
-          'constructor TREF.Create(Con: TConexao; ref: String);'
-          'begin'
-          '  self.CDEMPRESA := Con.CdEmpresa;'
-          '  self.REF := ref;'
-          '  refDAO   := TREFDAO.Create;'
-          '  ARTIGO   := TARTIGO.Create;'
-          '  CONTA    := TConta.Create;'
-          '  COLECAO  := TCOL.Create;'
-          '  ClasFis  := TClasFis.Create;'
-          '  UM       := TUM.Create;'
-          '  TIPOITEM := TSPEDTIPOITEM.Create;'
-          '  ITEMGEN  := TSPEDITEMGEN.Create;  '
-          'end;'
-          ''
-          'destructor TREF.Destroy;'
-          'begin'
-          '  FreeAndNil(refDAO);'
-          'end;'
-          ''
-          'function TREF.Insere(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          'begin'
-          '  Result := refDAO.Insere(Con, ref, Erros);'
-          'end;'
-          ''
-          'function TREF.Atualiza(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          'begin'
-          '  Result := refDAO.Atualiza(Con, ref, Erros);'
-          'end;'
-          ''
-          'function TREF.Apaga(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          'begin'
-          '  Result := refDAO.Apaga(Con, ref, Erros);'
-          'end;'
-          ''
-          'function TREF.Retorna(Con: TConexao; var ref: TREF; var Erros: TErros): Boolean;'
-          'begin'
-          '  Result := refDAO.Retorna(Con, ref, Erros);'
-          'end;'
-          ''
-          'function TREF.Lista(Con: TConexao; var listaref: TObjectList; condicao: String; var Erros: TErros): Boolean;'
-          'begin'
-          '  Result := refDAO.Lista(Con, listaref, condicao, Erros);'
-          'end;'
-          ''
-          'end.'
-        )
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         SelectedColor.BackPriority = 50
         SelectedColor.ForePriority = 50
@@ -697,7 +512,7 @@ object FrmModel: TFrmModel
             MouseActions = <>
           end
           object SynGutterLineNumber1: TSynGutterLineNumber
-            Width = 25
+            Width = 17
             MouseActions = <>
             MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clNone
@@ -731,12 +546,12 @@ object FrmModel: TFrmModel
     object TabSheet2: TTabSheet
       Caption = 'DAO'
       ClientHeight = 419
-      ClientWidth = 626
+      ClientWidth = 625
       inline SynEditDAO: TSynEdit
         Left = 0
         Height = 419
         Top = 0
-        Width = 626
+        Width = 625
         Align = alClient
         Font.Height = -13
         Font.Name = 'Courier New'
