@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, SynHighlighterAny,
   SynCompletion, Forms, Controls, Graphics, Dialogs, ComCtrls, ZDataset,
-  AsTableInfo, AsCrudInfo, AsSqlGenerator;
+  ZConnection, AsTableInfo, AsCrudInfo, AsSqlGenerator;
 
 type
 
@@ -26,7 +26,6 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    ZQuery1: TZQuery;
     procedure FormShow(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
   private
@@ -79,7 +78,7 @@ end;
 
 function TFrmModel.TypeDBToTypePascal(S:String):String;
 begin
-  if UpperCase(S) = 'VARCHAR' then
+  if (UpperCase(S) = 'VARCHAR') OR (UpperCase(S) = 'BLOB') then
     Result := 'String'
   else if Pos('NUMERIC', UpperCase(S)) > 0 then
     Result := 'Double'
@@ -185,7 +184,6 @@ begin
   if InfoCrud.ProcListRecords.Enable then
     SynEditModel.Lines.Add(Ident + Ident + 'function '+InfoCrud.ProcListRecords.ProcName+'('+ InfoCrud.Connection + '; ' +
     'ObjLst: TObjectList; ' +
-    VarModel + ':' + ClassNameModel +'; ' +
     'WhereSQL: String; '+
     InfoCrud.ReturnException+ '):Boolean;');
   SynEditModel.Lines.Add(ident+ 'end; ');
@@ -207,7 +205,8 @@ begin
     InfoCrud.ReturnException+ '):Boolean;');
     SynEditModel.Lines.Add('begin');
     SynEditModel.Lines.Add(Ident + 'Result := '+ VarDAO+'.'+InfoCrud.ProcInsert.ProcName+'('+ Copy(InfoCrud.Connection, 1, Pos(':',InfoCrud.Connection) -1) + ', '+
-    VarModel +', ' + Copy(InfoCrud.ReturnException, 1, Pos(':',InfoCrud.ReturnException) -1)+ ');');
+    VarModel  + ', '+
+    Copy(InfoCrud.ReturnException, 1, Pos(':',InfoCrud.ReturnException) -1)+ ');');
     SynEditModel.Lines.Add('end;');
   end;
   if InfoCrud.ProcUpdate.Enable then
@@ -250,13 +249,12 @@ begin
     SynEditModel.Lines.Add(ident+ '');
     SynEditModel.Lines.Add('function '+ClassNameModel+'.'+InfoCrud.ProcListRecords.ProcName+'('+ InfoCrud.Connection + '; ' +
     'ObjLst: TObjectList; ' +
-    VarModel + ':' + ClassNameModel +'; ' +
     'WhereSQL: String; '+
     InfoCrud.ReturnException+ '):Boolean;');
     SynEditModel.Lines.Add('begin');
     SynEditModel.Lines.Add(Ident + 'Result := '+ VarDAO+'.'+InfoCrud.ProcListRecords.ProcName+'('+ Copy(InfoCrud.Connection, 1, Pos(':',InfoCrud.Connection) -1) + ', '+
     'ObjLst, ' +
-    VarModel +', WhereSQL, ' + Copy(InfoCrud.ReturnException, 1, Pos(':',InfoCrud.ReturnException) -1)+ ');');
+    'WhereSQL, ' + Copy(InfoCrud.ReturnException, 1, Pos(':',InfoCrud.ReturnException) -1)+ ');');
     SynEditModel.Lines.Add('End;');
   end;
   SynEditModel.Lines.Add(ident+ '');
@@ -341,7 +339,6 @@ begin
   if InfoCrud.ProcListRecords.Enable then
     SynEditDAO.Lines.Add(Ident + Ident + 'function '+InfoCrud.ProcListRecords.ProcName+'('+ InfoCrud.Connection + '; ' +
     'ObjLst: TObjectList; ' +
-    VarModel + ':' + ClassNameModel +'; ' +
     'WhereSQL: String; '+
     InfoCrud.ReturnException+ '):Boolean;');
   SynEditDAO.Lines.Add(ident+ 'end; ');
@@ -381,7 +378,7 @@ begin
         end;
       end;
       qtInsert: begin
-        Result.Add('INSERT INTO (' + InfoTable.Tablename);
+        Result.Add('INSERT INTO ' + InfoTable.Tablename + '(');
         For I:=0 to InfoTable.AllFields.Count-1 do
         begin
           if I = InfoTable.AllFields.Count-1 then
@@ -405,7 +402,7 @@ begin
           if InfoTable.PrimaryKeys.GetIndex(InfoTable.AllFields[I].FieldName) = -1 then
           begin
             if I = InfoTable.AllFields.Count-1 then
-              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+')')
+              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+'')
             else
               Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+', ')
           end;
@@ -619,11 +616,11 @@ begin
     SynEditDAO.Lines.Add(ident+ '');
     SynEditDAO.Lines.Add('function '+ClassNameDAO+'.'+InfoCrud.ProcListRecords.ProcName+'('+ InfoCrud.Connection + '; ' +
     'ObjLst: TObjectList; ' +
-    VarModel + ':' + ClassNameModel +'; ' +
     'WhereSQL: String; '+
     InfoCrud.ReturnException+ '):Boolean;');
     SynEditDAO.Lines.Add('Var');
     SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery+';');
+    SynEditDAO.Lines.Add(Ident + VarModel + ':'+ClassNameModel+';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
     WriteCreateQuery;
@@ -638,10 +635,13 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + 'Qry.First;');
     SynEditDAO.Lines.Add(Ident + Ident + 'While not Qry.Eof do ');
     SynEditDAO.Lines.Add(Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel+ ':= '+ClassNameModel+'.Create;');
     For J:= 0 to InfoTable.AllFields.Count - 1 do
     begin
       SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel+'.'+InfoTable.AllFields[J].FieldName+' := '+'Qry.FieldByName('+QuotedStr(InfoTable.AllFields[J].FieldName)+').Value;');
     end;
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'ObjLst.Add('+VarModel+');');
+
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Next;');
     SynEditDAO.Lines.Add(Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');

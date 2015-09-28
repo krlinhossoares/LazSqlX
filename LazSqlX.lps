@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Active="Win64"/>
+    <BuildModes Active="Win32"/>
     <Units Count="109">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
@@ -483,14 +483,14 @@
         <WindowIndex Value="1"/>
         <TopLine Value="194"/>
         <CursorPos X="18" Y="229"/>
-        <UsageCount Value="184"/>
+        <UsageCount Value="185"/>
       </Unit52>
       <Unit53>
         <Filename Value="Resources\PostgreSqlDataTypes.dt"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
         <CursorPos Y="8"/>
-        <UsageCount Value="176"/>
+        <UsageCount Value="177"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit53>
       <Unit54>
@@ -501,7 +501,7 @@
         <UnitName Value="ModelFormU"/>
         <EditorIndex Value="-1"/>
         <CursorPos X="10" Y="6"/>
-        <UsageCount Value="65"/>
+        <UsageCount Value="66"/>
       </Unit54>
       <Unit55>
         <Filename Value="Forms\UFrmModel.pas"/>
@@ -511,11 +511,11 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="525"/>
-        <CursorPos X="174" Y="543"/>
-        <UsageCount Value="48"/>
+        <TopLine Value="366"/>
+        <CursorPos X="33" Y="381"/>
+        <UsageCount Value="49"/>
         <Bookmarks Count="1">
-          <Item0 X="25" Y="355" ID="2"/>
+          <Item0 X="25" Y="354" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -529,7 +529,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="81"/>
         <CursorPos X="63" Y="99"/>
-        <UsageCount Value="44"/>
+        <UsageCount Value="45"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit56>
@@ -539,7 +539,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="81"/>
         <CursorPos X="66" Y="110"/>
-        <UsageCount Value="41"/>
+        <UsageCount Value="42"/>
         <Loaded Value="True"/>
       </Unit57>
       <Unit58>
@@ -888,123 +888,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="438" TopLine="419"/>
+        <Caret Line="414" Column="51" TopLine="395"/>
       </Position1>
       <Position2>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="555" Column="27" TopLine="526"/>
+        <Caret Line="415" Column="51" TopLine="396"/>
       </Position2>
       <Position3>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="527" TopLine="509"/>
+        <Caret Line="414" Column="51" TopLine="395"/>
       </Position3>
       <Position4>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="475" Column="55" TopLine="459"/>
+        <Caret Line="345" Column="27" TopLine="336"/>
       </Position4>
       <Position5>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="414" Column="51" TopLine="395"/>
+        <Caret Line="548" Column="7" TopLine="536"/>
       </Position5>
       <Position6>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="415" Column="51" TopLine="396"/>
+        <Caret Line="345" Column="3" TopLine="326"/>
       </Position6>
       <Position7>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="414" Column="51" TopLine="395"/>
+        <Caret Line="572" TopLine="536"/>
       </Position7>
       <Position8>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="345" Column="27" TopLine="336"/>
+        <Caret Line="555" Column="5" TopLine="445"/>
       </Position8>
       <Position9>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="548" Column="7" TopLine="536"/>
+        <Caret Line="274" TopLine="246"/>
       </Position9>
       <Position10>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="345" Column="3" TopLine="326"/>
+        <Caret Line="546" Column="19" TopLine="537"/>
       </Position10>
       <Position11>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="572" TopLine="536"/>
+        <Caret Line="548" Column="12" TopLine="526"/>
       </Position11>
       <Position12>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="555" Column="5" TopLine="445"/>
+        <Caret Line="609" Column="42" TopLine="579"/>
       </Position12>
       <Position13>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="274" TopLine="246"/>
+        <Caret Line="348" Column="3" TopLine="341"/>
       </Position13>
       <Position14>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="546" Column="19" TopLine="537"/>
+        <Caret Line="37" Column="15" TopLine="18"/>
       </Position14>
       <Position15>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="548" Column="12" TopLine="526"/>
+        <Caret Line="353" Column="3" TopLine="345"/>
       </Position15>
       <Position16>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="609" Column="42" TopLine="579"/>
+        <Caret Line="578" Column="3" TopLine="568"/>
       </Position16>
       <Position17>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="348" Column="3" TopLine="341"/>
+        <Caret Line="352" TopLine="340"/>
       </Position17>
       <Position18>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="37" Column="15" TopLine="18"/>
+        <Caret Line="598" Column="2" TopLine="578"/>
       </Position18>
       <Position19>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="353" Column="3" TopLine="345"/>
+        <Caret Line="40" Column="15" TopLine="21"/>
       </Position19>
       <Position20>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="578" Column="3" TopLine="568"/>
+        <Caret Line="351" Column="82" TopLine="335"/>
       </Position20>
       <Position21>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="352" TopLine="340"/>
+        <Caret Line="591" Column="65" TopLine="571"/>
       </Position21>
       <Position22>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="598" Column="2" TopLine="578"/>
+        <Caret Line="635" Column="44" TopLine="621"/>
       </Position22>
       <Position23>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="40" Column="15" TopLine="21"/>
+        <Filename Value="LazSqlX.lpr"/>
+        <Caret Line="22" Column="106" TopLine="12"/>
       </Position23>
       <Position24>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="351" Column="82" TopLine="335"/>
+        <Filename Value="LazSqlX.lpr"/>
+        <Caret Line="50" TopLine="12"/>
       </Position24>
       <Position25>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="591" Column="65" TopLine="571"/>
+        <Caret Line="543" TopLine="517"/>
       </Position25>
       <Position26>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="635" Column="44" TopLine="621"/>
+        <Caret Line="502" Column="170" TopLine="483"/>
       </Position26>
       <Position27>
-        <Filename Value="LazSqlX.lpr"/>
-        <Caret Line="22" Column="106" TopLine="12"/>
+        <Filename Value="Forms\UFrmModel.pas"/>
+        <Caret Line="530" Column="101" TopLine="525"/>
       </Position27>
       <Position28>
-        <Filename Value="LazSqlX.lpr"/>
-        <Caret Line="50" TopLine="12"/>
+        <Filename Value="Forms\UFrmModel.pas"/>
+        <Caret Line="7" Column="15"/>
       </Position28>
       <Position29>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="543" TopLine="517"/>
+        <Caret Line="10" Column="15"/>
       </Position29>
       <Position30>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="502" Column="170" TopLine="483"/>
+        <Caret Line="450" Column="28" TopLine="436"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

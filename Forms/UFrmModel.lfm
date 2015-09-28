@@ -1,13 +1,15 @@
 object FrmModel: TFrmModel
-  Left = 398
+  Left = 400
   Height = 473
-  Top = 301
+  Top = 140
   Width = 634
   Caption = 'Create Model and DAO (CRUD)'
   ClientHeight = 473
   ClientWidth = 634
   OnShow = FormShow
+  Position = poDesktopCenter
   LCLVersion = '1.4.2.0'
+  WindowState = wsMaximized
   object ToolBar1: TToolBar
     Left = 0
     Height = 26
@@ -3311,10 +3313,5 @@ object FrmModel: TFrmModel
     ExecCommandID = ecSynAutoCompletionExecute
     Editor = SynEditDAO
     left = 341
-  end
-  object ZQuery1: TZQuery
-    Params = <>
-    left = 173
-    top = 101
   end
 end
