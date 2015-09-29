@@ -18,14 +18,9 @@ object FrmModel: TFrmModel
     Caption = 'ToolBar1'
     Images = ApplicationImages
     TabOrder = 0
-    object ToolButton1: TToolButton
-      Left = 1
-      Top = 2
-      Caption = 'ToolButton1'
-      ImageIndex = 7
-    end
     object ToolButton2: TToolButton
-      Left = 24
+      Left = 1
+      Hint = 'Save to Files'
       Top = 2
       Caption = 'ToolButton2'
       ImageIndex = 19
@@ -1049,8 +1044,7 @@ object FrmModel: TFrmModel
   object ApplicationImages: TImageList
     BkColor = clForeground
     DrawingStyle = dsTransparent
-    left = 240
-    top = 128
+    left = 432
     Bitmap = {
       4C69400000001000000010000000FF00FF00FF00FF00FF00FF00FF00FF00FF00
       FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
@@ -3104,29 +3098,14 @@ object FrmModel: TFrmModel
     }
   end
   object PascalSyntax: TSynPasSyn
-    Enabled = False
     CompilerMode = pcmDelphi
     NestedComments = False
     ExtendedKeywordsMode = True
-    left = 256
+    left = 352
   end
-  object SynCompletion1: TSynCompletion
-    Position = 0
-    LinesInWindow = 6
-    SelectedColor = clHighlight
-    CaseSensitive = False
-    Width = 262
-    ShortCut = 16416
-    EndOfTokenChr = '()[].'
-    ExecCommandID = ecSynCompletionExecute
-    Editor = SynEditDAO
-    left = 296
-  end
-  object SynAutoComplete1: TSynAutoComplete
-    EndOfTokenChr = '()[].'
-    ShortCut = 8224
-    ExecCommandID = ecSynAutoCompletionExecute
-    Editor = SynEditDAO
-    left = 341
+  object JavaSyntax: TSynJavaSyn
+    DefaultFilter = 'Arquivos Java (*.java)|*.java'
+    Enabled = False
+    left = 384
   end
 end

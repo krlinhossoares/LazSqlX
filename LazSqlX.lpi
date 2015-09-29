@@ -29,7 +29,7 @@
       <MajorVersionNr Value="5"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="1593"/>
+      <BuildNr Value="1594"/>
       <Language Value="0416"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
@@ -140,7 +140,7 @@
         <PackageName Value="LCL"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="58">
+    <Units Count="59">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -437,6 +437,13 @@
         <Filename Value="DbInfo\AsCrudInfo.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit57>
+      <Unit58>
+        <Filename Value="Forms\UFrmScriptExecutive.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrmScriptExecutive"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit58>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -11,14 +11,15 @@ uses
   SynCompletion, RTTIGrids, LCL, LCLType, LCLIntf, Grids, EditBtn, Spin,
   StdActns, fpDBExport, fpdbfexport, fpSQLExport, sqldb, sqldblib, IBConnection,
   FBAdmin,
-  {$ifndef win64}oracleconnection,{$endif} SdfData, sqlite3conn, mysql55conn, mysql51conn, mysql50conn,
-  mysql40conn, mysql41conn, mssqlconn, strutils, SqlConnBuilderFormU,
-  BlobFieldFormU, Clipbrd, types, EditMemoFormU, DesignTableFormU, AsTableInfo,
-  AsDbType, AsProcedureInfo, AsSqlGenerator, FtDetector, SqlExecThread, AsSqlParser,
-  LazSqlXResources, RegExpr, Regex, versionresource,
-  UnitGetSetText, QueryDesignerFormU, UFrmModel, UFrmCfgCRUD, LoadingIndicator,
-  SynEditMarkupSpecialLine, SynEditTypes, SynEditKeyCmds, fpsqlparser,LazSqlXCtrls,
-  fpsqltree,LR_PGrid,AsDbFormUtils, LR_Class,DOM,XMLRead,XMLWrite, AsCrudInfo;
+  {$ifndef win64}oracleconnection,{$endif} SdfData, sqlite3conn,
+  mysql55conn, mysql51conn, mysql50conn, mysql40conn, mysql41conn, mssqlconn,
+  strutils, SqlConnBuilderFormU, BlobFieldFormU, Clipbrd, types, EditMemoFormU,
+  DesignTableFormU, AsTableInfo, AsDbType, AsProcedureInfo, AsSqlGenerator,
+  FtDetector, SqlExecThread, AsSqlParser, LazSqlXResources, RegExpr, Regex,
+  versionresource, UnitGetSetText, QueryDesignerFormU, UFrmModel, UFrmCfgCRUD,
+  UFrmScriptExecutive, LoadingIndicator, SynEditMarkupSpecialLine, SynEditTypes,
+  SynEditKeyCmds, fpsqlparser, LazSqlXCtrls, fpsqltree, LR_PGrid, AsDbFormUtils,
+  LR_Class, DOM, XMLRead, XMLWrite, AsCrudInfo;
 
 var
   AppVersion: string = '';
@@ -73,7 +74,9 @@ type
     actClearSessionHistory: TAction;
     actAbout: TAction;
     actChmHelp: TAction;
-    actCreateCRUD: TAction;
+    actCreateCRUDDelphi: TAction;
+    ActCreateCRUDJava: TAction;
+    ActScriptExecutive: TAction;
     actPdfHelp: TAction;
     actRefreshProcedures: TAction;
     actOpen: TAction;
@@ -98,7 +101,10 @@ type
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
+    MenuItem6: TMenuItem;
     timerSearch: TTimer;
+    ToolButton3: TToolButton;
     trvProcedures: TTreeView;
     TreeViewImages: TImageList;
     imgLogo: TImage;
@@ -257,7 +263,7 @@ type
     procedure actClearSessionHistoryExecute(Sender: TObject);
     procedure actCopyRunProcedureTextExecute(Sender: TObject);
     procedure actCreateDAOExecute(Sender: TObject);
-    procedure actCreateCRUDExecute(Sender: TObject);
+    procedure actCreateCRUDDelphiExecute(Sender: TObject);
     procedure actDatabaseClonerExecute(Sender: TObject);
     procedure actCloseAllButThisExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
@@ -512,6 +518,7 @@ const
 
 var
   MainForm: TMainForm;
+
 implementation
 
 uses AboutFormU, DatabaseClonerFormU, ProgressFormU, DataImporterFormU,
@@ -2185,7 +2192,7 @@ begin
   //
 end;
 
-procedure TMainForm.actCreateCRUDExecute(Sender: TObject);
+procedure TMainForm.actCreateCRUDDelphiExecute(Sender: TObject);
 var
   dbC: TAsDatabaseCloner;
   ti: TAsTableInfos;
@@ -2538,10 +2545,12 @@ end;
 
 procedure TMainForm.actScriptExecutiveExecute(Sender: TObject);
 begin
-    if FDBInfo.Connected then
-  begin
-    FPageControl.AddTab(lzSqlScript);
-    UpdateGUI(True);
+  try
+    if not Assigned(FrmScriptExecutive) then
+      FrmScriptExecutive := TFrmScriptExecutive.Create(Application);
+    FrmScriptExecutive.ShowModal;
+  finally
+    FreeAndNil(FrmScriptExecutive);
   end;
 end;
 

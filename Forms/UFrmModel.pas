@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, SynHighlighterAny,
-  SynCompletion, Forms, Controls, Graphics, Dialogs, ComCtrls, ZDataset,
-  ZConnection, AsTableInfo, AsCrudInfo, AsSqlGenerator;
+  SynCompletion, SynHighlighterJava, Forms, Controls, Graphics, Dialogs,
+  ComCtrls, ZDataset, ZConnection, AsTableInfo, AsCrudInfo, AsSqlGenerator;
 
 type
 
@@ -17,14 +17,12 @@ type
     ApplicationImages: TImageList;
     PageControl1: TPageControl;
     PascalSyntax: TSynPasSyn;
-    SynAutoComplete1: TSynAutoComplete;
-    SynCompletion1: TSynCompletion;
     SynEditModel: TSynEdit;
     SynEditDAO: TSynEdit;
+    JavaSyntax: TSynJavaSyn;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     ToolBar1: TToolBar;
-    ToolButton1: TToolButton;
     ToolButton2: TToolButton;
     procedure FormShow(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);

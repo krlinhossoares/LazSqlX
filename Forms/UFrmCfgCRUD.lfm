@@ -8,6 +8,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   ClientWidth = 755
   OnCreate = FormCreate
   OnShow = FormShow
+  Position = poDesktopCenter
   LCLVersion = '1.4.2.0'
   object GroupBox1: TGroupBox
     Left = 8
