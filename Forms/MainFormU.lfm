@@ -7298,4 +7298,12 @@ object MainForm: TMainForm
     left = 184
     top = 472
   end
+  object ZSQLMonitor1: TZSQLMonitor
+    Active = True
+    AutoSave = True
+    FileName = 'LogSQLMonitor.txt'
+    MaxTraceCount = 100
+    left = 752
+    top = 48
+  end
 end

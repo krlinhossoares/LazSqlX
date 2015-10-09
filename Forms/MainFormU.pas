@@ -7,7 +7,7 @@ uses
   fpsimplejsonexport, fprtfexport, FileUtil, Forms, Controls, Graphics, Dialogs,
   ExtCtrls, DBGrids, DBCtrls, ComCtrls, Buttons, Menus, ActnList, StdCtrls,
   ZDataset, ZConnection, ZSqlUpdate, ZAbstractRODataset, ZStoredProcedure,
-  ZSqlMetadata, ZSqlProcessor, SynHighlighterSQL, SynMemo, SynEdit,
+  ZSqlMetadata, ZSqlProcessor, ZSqlMonitor, SynHighlighterSQL, SynMemo, SynEdit,
   SynCompletion, RTTIGrids, LCL, LCLType, LCLIntf, Grids, EditBtn, Spin,
   StdActns, fpDBExport, fpdbfexport, fpSQLExport, sqldb, sqldblib, IBConnection,
   FBAdmin,
@@ -258,6 +258,7 @@ type
     PageControlPopupMenu: TPopupMenu;
     SaveDialog: TSaveDialog;
     SqlSyntax: TSynSQLSyn;
+    ZSQLMonitor1: TZSQLMonitor;
     procedure actAboutExecute(Sender: TObject);
     procedure actCheckSyntaxExecute(Sender: TObject);
     procedure actClearSessionHistoryExecute(Sender: TObject);
