@@ -7,8 +7,8 @@ object QueryDesigner: TQueryDesigner
   ClientWidth = 858
   OnClick = FrameClick
   TabOrder = 0
-  DesignLeft = 618
-  DesignTop = 262
+  DesignLeft = 157
+  DesignTop = 263
   object Splitter1: TSplitter
     Cursor = crVSplit
     Left = 0

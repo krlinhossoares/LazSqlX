@@ -38,6 +38,7 @@ type
     procedure GeneratorCodeProcUpdate;
     procedure GeneratorDAOClass;
     procedure GeneratorPascalClass;
+    function IFNull(FieldInfo: TAsFieldInfo): String;
     function LPad(S: string; Ch: Char; Len: Integer): string;
     function RPad(S: string; Ch: Char; Len: Integer): string;
     function TypeDBToTypePascal(S: String): String;
@@ -354,6 +355,23 @@ begin
   SynEditDAO.Lines.Add('end.');
 end;
 
+function TFrmModel.IFNull(FieldInfo: TAsFieldInfo): String;
+begin
+  IF FieldInfo.AllowNull THEN
+  BEGIN
+  if UpperCase(FieldInfo.FieldType) = 'VARCHAR' then
+    Result := 'IFNull('+':'+FieldInfo.FieldName+','')'
+  else   if (UpperCase(FieldInfo.FieldType) = 'INTEGER') OR
+    (UpperCase(FieldInfo.FieldType) = 'NUMERIC') or
+    (UpperCase(FieldInfo.FieldType) = 'TIMESTAMP') OR
+    (UpperCase(FieldInfo.FieldType) = 'TIME') OR
+    (UpperCase(FieldInfo.FieldType) = 'LONGINT') OR
+    (UpperCase(FieldInfo.FieldType) = 'DATE')THEN
+    Result := 'IFNull('+':'+FieldInfo.FieldName+',0)';
+  end
+  ELSE
+    Result := ':' + FieldInfo.FieldName;
+end;
 
 function TFrmModel.GenerateSqlQuery(queryType: TQueryType): TStringList;
 Var
@@ -388,9 +406,9 @@ begin
         For I:=0 to InfoTable.AllFields.Count-1 do
         begin
           if I = InfoTable.AllFields.Count-1 then
-            Result.Add(#9+':'+InfoTable.AllFields[I].FieldName+')')
+            Result.Add(#9+IfNull(InfoTable.AllFields[I])+')')
           else
-            Result.Add(#9+':'+InfoTable.AllFields[I].FieldName+', ')
+            Result.Add(#9+IfNull(InfoTable.AllFields[I])+', ')
         end;
       end;
       qtUpdate: begin
@@ -400,9 +418,9 @@ begin
           if InfoTable.PrimaryKeys.GetIndex(InfoTable.AllFields[I].FieldName) = -1 then
           begin
             if I = InfoTable.AllFields.Count-1 then
-              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+'')
+              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = ' + IfNull(InfoTable.AllFields[I])+'')
             else
-              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = :' + InfoTable.AllFields[I].FieldName+', ')
+              Result.Add(#9+InfoTable.AllFields[I].FieldName+' = ' + IfNull(InfoTable.AllFields[I])+', ')
           end;
         end;
         For I:=0 to InfoTable.PrimaryKeys.Count-1 do

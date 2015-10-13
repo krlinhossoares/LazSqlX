@@ -1524,6 +1524,7 @@ begin
   inherited Destroy;
 end;
 
+
 function TLazSqlXPageControl.AddTab(TypeEditor: TLazSqlXTypeEditor): TLazSqlXTabSheet;
 var
   Tab: TLazSqlXTabSheet;
