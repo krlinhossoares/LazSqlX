@@ -140,7 +140,7 @@
         <PackageName Value="LCL"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="59">
+    <Units Count="60">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -444,6 +444,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit58>
+      <Unit59>
+        <Filename Value="Forms\UFrmParams.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FrmParams"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -478,7 +485,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="13">
+    <Exceptions Count="14">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -518,6 +525,9 @@
       <Item13>
         <Name Value="EAccessViolation"/>
       </Item13>
+      <Item14>
+        <Name Value="EThread"/>
+      </Item14>
     </Exceptions>
   </Debugging>
 </CONFIG>

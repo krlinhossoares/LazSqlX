@@ -7,8 +7,8 @@ interface
 uses
   Windows, Classes, SysUtils, FileUtil, SynEdit, SynHighlighterSQL, SynMemo,
   SynCompletion, Forms, Controls, Graphics, Dialogs, ComCtrls, ActnList,
-  ExtCtrls, ZSqlProcessor, ZSqlMetadata, ZConnection, ZSqlMonitor, sqldb,
-  asDBType, ZDbcIntfs;
+  ExtCtrls, ZSqlProcessor, ZSqlMetadata, ZConnection, ZSqlMonitor, ZDataset,
+  sqldb, asDBType, ZDbcIntfs;
 
 type
 
@@ -40,12 +40,16 @@ type
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     ZeosScript: TZSQLProcessor;
+    QryExecute: TZQuery;
     procedure ActLoadExecute(Sender: TObject);
     procedure ActNewExecute(Sender: TObject);
     procedure ActRunScriptExecute(Sender: TObject);
     procedure ActSaveAsExecute(Sender: TObject);
     procedure ActSaveExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ZeosScriptError(Processor: TZSQLProcessor;
+      StatementIndex: Integer; E: Exception;
+      var ErrorHandleAction: TZErrorHandleAction);
     procedure ZSQLProcessorError(Processor: TZSQLProcessor;
       StatementIndex: Integer; E: Exception;
       var ErrorHandleAction: TZErrorHandleAction);
@@ -117,16 +121,23 @@ end;
 
 procedure TFrmScriptExecutive.FormCreate(Sender: TObject);
 begin
-   if MainForm.DbInfo.DbEngineType =  deSqlDB then //SqlDB
-   begin
-     SQLScript := TSQLScript.Create(Application);
-     SQLScript.DataBase := MainForm.DbInfo.SqlConnection;
-     SQLScript.Transaction := MainForm.DbInfo.SqlConnection.Transaction;
-   end
-   else if MainForm.DbInfo.DbEngineType = deZeos then //Zeos Lib
-   begin
-     ZeosScript.Connection := MainForm.DbInfo.ZeosConnection;
-   end;
+  if MainForm.DbInfo.DbEngineType =  deSqlDB then //SqlDB
+  begin
+    SQLScript := TSQLScript.Create(Application);
+    SQLScript.DataBase := MainForm.DbInfo.SqlConnection;
+    SQLScript.Transaction := MainForm.DbInfo.SqlConnection.Transaction;
+  end
+  else if MainForm.DbInfo.DbEngineType = deZeos then //Zeos Lib
+  begin
+    QryExecute.Connection := MainForm.DbInfo.ZeosConnection;
+  end;
+end;
+
+procedure TFrmScriptExecutive.ZeosScriptError(Processor: TZSQLProcessor;
+  StatementIndex: Integer; E: Exception;
+  var ErrorHandleAction: TZErrorHandleAction);
+begin
+  MmMessages.Lines.Add(E.Message);
 end;
 
 procedure TFrmScriptExecutive.ZSQLProcessorError(Processor: TZSQLProcessor;
@@ -138,10 +149,13 @@ end;
 
 procedure TFrmScriptExecutive.RunScritpZeos;
 begin
-  MainForm.DbInfo.ZeosConnection.AutoCommit := False;
-  MainForm.DbInfo.ZeosConnection.TransactIsolationLevel:=tiReadCommitted ;
-  ZeosScript.Script := SynEditScript.Lines;
-  ZeosScript.Execute;
+  try
+    QryExecute.SQL.Text := SynEditScript.Lines.Text;
+    QryExecute.ExecSQL;
+  except
+    On e: exception do
+      ShowMessage(e.Message);
+  end;
 end;
 
 end.

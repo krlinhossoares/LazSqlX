@@ -1,7 +1,7 @@
 object FrmScriptExecutive: TFrmScriptExecutive
-  Left = 357
+  Left = 358
   Height = 606
-  Top = 207
+  Top = 286
   Width = 757
   Caption = 'Script Executive'
   ClientHeight = 606
@@ -1128,8 +1128,15 @@ object FrmScriptExecutive: TFrmScriptExecutive
   object ZeosScript: TZSQLProcessor
     ParamCheck = False
     Params = <>
+    DelimiterType = dtDelimiter
     Delimiter = ';'
+    OnError = ZeosScriptError
     left = 72
+    top = 32
+  end
+  object QryExecute: TZQuery
+    Params = <>
+    left = 113
     top = 32
   end
 end

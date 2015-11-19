@@ -18,6 +18,7 @@ uses SysUtils, Classes, Dialogs, StdCtrls, ComCtrls, ExtCtrls, DB,
 
 
 type
+  TPCreateScript = (csTable, csPrimaryKey, csForeingKey);
 
   TQueryType =
     (
@@ -83,12 +84,16 @@ TAsProcedureNames = object
 
     function GenerateQuery(Ident: integer; AsTableInfo: TAsTableInfo;
       QueryType: TQueryType): TStringList;
+
+    function GetCreateScript(DBInfo: TAsDbConnectionInfo; Info: TAsTableInfo; TypeCreate: TPCreateScript): TStringList;
+
   end;
 
 implementation
 
 uses AsStringUtils;
-
+const
+  LoopSeperator: array [0 .. 1] of char = (' ', ',');
 { TAsSqlGenerator }
 
 {$REGION 'Constructor/Destructor'}
@@ -680,6 +685,186 @@ begin
 
 end;
 
+function TAsSqlGenerator.GetCreateScript(DBInfo: TAsDbConnectionInfo; Info: TAsTableInfo;
+  TypeCreate: TPCreateScript): TStringList;
+var
+  sql: string;
+  I: integer;
+  len, precision, scale:Integer;
+  strDefaulType,strNewType:string;
+begin
+  scale := 0;
+  Result := TStringList.Create;
+  Result.Clear;
+  if TypeCreate = csTable then
+  begin
+    sql := 'CREATE TABLE ' + info.Tablename + ' ('#13;
+
+
+    for I := 0 to info.AllFields.Count - 1 do
+    begin
+      sql := sql + '    ';
+
+      len := info.AllFields[I].Length;
+      {if not OverrideDefaultTypes then
+      begin  }
+       if (UpperCase(info.AllFields[I].FieldType) = 'VARCHAR') or (UpperCase(info.AllFields[I].FieldType) = UpperCase('nvarchar')) or (UpperCase(info.AllFields[I].FieldType) = UpperCase('varchar2')) or
+            (UpperCase(info.AllFields[I].FieldType) = UpperCase('nvarchar2')) or (UpperCase(info.AllFields[I].FieldType) = UpperCase('character varying')) then
+         sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
+       else
+         if Pos('NUMERIC', UpperCase(info.AllFields[I].FieldType)) > 0 THEN
+         begin
+           sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
+         end
+         ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'INTEGER') OR (UpperCase(info.AllFields[I].FieldType) = 'SMALLINT'))
+         OR (UpperCase(info.AllFields[I].FieldType) = 'TIMESTAMP') OR (UpperCase(info.AllFields[I].FieldType) = 'DATE')
+         OR (UpperCase(info.AllFields[I].FieldType) = 'TIME') THEN
+           sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
+         ELSE
+           sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType + '('+IntToStr(Len)+')';
+      {end
+      else
+        sql := sql + info.AllFields[I].GetCompatibleFieldName(FDbInfo.DbType)+ ' ' +  GetFieldTypeAs(info.AllFields[I].DataType);
+       }
+      len := info.AllFields[I].Length;
+
+      if len >2000 then
+      len :=2000;
+
+      strDefaulType:= info.AllFields[I].FieldType;
+      {if OverrideDefaultTypes then
+        strNewType:= lowercase(GetFieldTypeAs(info.AllFields[I].DataType))
+      else}
+        strNewType:=strDefaulType;
+
+        if (UpperCase(strNewType) = 'VARCHAR') or (UpperCase(strNewType) = UpperCase('nvarchar')) or (UpperCase(strNewType) = UpperCase('varchar2')) or
+         (UpperCase(strNewType) = UpperCase('nvarchar2')) or (UpperCase(strNewType)=UpperCase('character varying')) then
+        begin
+          if len>0 then
+            sql := sql + '(' + IntToStr(len) + ')'
+          else
+            sql := sql + '(50)';
+        end;
+
+
+        if (strNewType = 'decimal') or (strNewType = 'float') then
+        begin
+
+          if info.AllFields[I].Precision=0 then
+          info.AllFields[I].Precision := 2;
+
+          if len=0 then len := 12;
+
+          if len< info.AllFields[I].Precision then
+          begin
+            len := 12;
+            info.AllFields[I].Precision := 2;
+          end;
+
+          sql := sql + '( ' + IntToStr(len) + ',' +
+          IntToStr(info.AllFields[I].Precision) + ')';
+        end;
+
+      if not info.AllFields[I].AllowNull then
+      begin
+        sql := sql + ' NOT NULL';
+      end;
+
+      sql := sql + LoopSeperator[integer(I < info.AllFields.Count - 1)] + #13;
+
+    end;
+  end;
+
+  if (TypeCreate = csPrimaryKey) and info.HasPrimaryKeys then
+  begin
+
+    {if DbInfo.DbType in [dtSQLite, dtOracle, dtMySql,dtFirebirdd] then
+    begin
+      sql := sql + ',';
+    end;
+
+    if DbInfo.DbType in [dtOracle, dtMySql] then
+      sql := sql + '    CONSTRAINT ' + info.Tablename + '_PK ';
+
+    if DbInfo.DbType<>dtPostgreSql then
+    begin
+      sql := sql + ' PRIMARY KEY (';
+
+      for I := 0 to info.PrimaryKeys.Count - 1 do
+      begin
+        sql := sql + info.PrimaryKeys[I].GetCompatibleFieldName(DbInfo.DbType) +
+          LoopSeperator[integer(I < info.PrimaryKeys.Count - 1)];
+        //if FDbInfo.DbType=dtSQLite then
+        //begin
+        //  sql[Length(sql)]:=' ';
+        //  Break;
+        //end;
+      end;
+    end;
+    sql := sql + ' )' + #13 ;
+
+    if DbInfo.DbType=dtPostgreSql then
+    begin
+      sql := sql +';' + LineEnding;
+      for I:= 0 to info.PrimaryKeys.Count-1 do
+      begin
+        sql := sql + ' ALTER TABLE ONLY '+Info.Tablename+' ADD CONSTRAINT '+ info.Tablename+'_'+info.PrimaryKeys[I].FieldName+' PRIMARY KEY ('+Info.PrimaryKeys[I].FieldName+');'+LineEnding + #13;
+        break;//only one primary key
+      end;
+    end;
+     }
+     if DbInfo.DbType=dtFirebirdd then
+    begin
+      sql := '';
+      for I:= 0 to info.PrimaryKeys.Count-1 do
+      begin
+        if Sql = '' then
+          sql := sql + Info.PrimaryKeys[I].FieldName
+        else
+          sql := sql + ','+ Info.PrimaryKeys[I].FieldName;
+      end;
+      Sql := ' ALTER TABLE '+Info.Tablename+' ADD CONSTRAINT '+ info.Tablename+'_PK PRIMARY KEY (' + SQL +');';
+    end;
+  end;
+
+  if TypeCreate = csForeingKey then
+    for I := 0 to info.ImportedKeys.Count - 1 do
+    begin
+      if DbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd,dtSQLite] then
+      begin
+        sql := sql + ',' + #13;
+      end;
+      case DbInfo.DbType of
+      dtMsSql,dtOracle,dtMySql:
+        begin
+        Sql := Sql + '    CONSTRAINT ' + TAsDbUtils.SafeWrap(DbInfo.DbType,'fk_'+ info.ImportedKeys[I].ForeignTableName + info.ImportedKeys[I].ForeignColumnName) +
+          ' FOREIGN KEY (' + info.ImportedKeys[I].GetCompatibleColumnName(DbInfo.DbType) + ') ' +
+          ' REFERENCES ' + info.ImportedKeys[I].ForeignTableName +
+          '(' + info.ImportedKeys[I].GetCompatibleForeignColumnName(DbInfo.DbType) + ') ';
+
+        end;
+      dtSQLite:
+        begin
+           Sql := Sql+' FOREIGN KEY('+info.ImportedKeys[I].GetCompatibleColumnName(DbInfo.DbType)+') REFERENCES '+
+          info.ImportedKeys[I].ForeignTableName+'('+info.ImportedKeys[I].ForeignColumnName+')';
+        end;
+      dtFirebirdd:
+        begin
+        sql :=sql+LineEnding+ ' ALTER TABLE ' +Info.Tablename + ' ADD FOREIGN KEY ('+ TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName)+') ' +
+        ' REFERENCES '+info.ImportedKeys[I].ForeignTableName+'('+TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName)+');';
+        end;
+      end;
+   end;
+                        {
+  if DbInfo.DbType <> dtPostgreSql then
+    sql := sql + ')';
+
+  if DbInfo.DbType = dtMySql then
+  begin
+    sql := sql + ';'
+  end;                   }
+  Result.Text := UpperCase(Sql)+';';
+end;
 {$ENDREGION}
 
 {$REGION 'Private Methods'}

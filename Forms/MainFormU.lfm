@@ -1947,6 +1947,10 @@ object MainForm: TMainForm
           0000000000000000000000000000000000000000000000000000
         }
       end
+      object MenuItem7: TMenuItem
+        Caption = 'Extract Metadata'
+        OnClick = MenuItem7Click
+      end
       object MenuItem4: TMenuItem
         Caption = 'CRUD Options'
         OnClick = MenuItem4Click
@@ -3266,6 +3270,7 @@ object MainForm: TMainForm
         0000000000000000000000000000000000000000000000000000
       }
       ImageIndex = 44
+      OnClick = mitQueryClick
       object mitSelectQuery: TMenuItem
         Action = actGenerateSelectQuery
         Bitmap.Data = {

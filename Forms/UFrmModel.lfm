@@ -3098,7 +3098,6 @@ object FrmModel: TFrmModel
     }
   end
   object PascalSyntax: TSynPasSyn
-    Enabled = False
     CompilerMode = pcmDelphi
     NestedComments = False
     ExtendedKeywordsMode = True

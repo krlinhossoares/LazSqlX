@@ -303,7 +303,6 @@ begin
   end;
 
   if CreateConstraints then
-
     for I := 0 to info.ImportedKeys.Count - 1 do
     begin
       if FDbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd,dtSQLite] then
@@ -339,8 +338,6 @@ begin
   begin
       sql := sql + ';'
   end;
-
-
   Result:=uppercase(Sql);
 end;
 

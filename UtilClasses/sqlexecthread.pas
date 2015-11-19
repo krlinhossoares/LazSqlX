@@ -11,7 +11,8 @@ unit SqlExecThread;
 interface
 
 uses
-  Classes, SysUtils, DB, sqldb, mssqlconn, SQLDBLaz, AsDbType, strutils,ZDataset,syncobjs;
+  Classes, SysUtils, DB, sqldb, mssqlconn, SQLDBLaz, AsDbType, UFrmParams,
+  strutils, ZDataset, syncobjs;
 
 type
 
@@ -181,7 +182,6 @@ begin
        else
        begin
          FQuery.ExecSQL;
-
        end;
       except on E:Exception do
        begin
@@ -247,7 +247,6 @@ begin
   begin
     SqlExecute;
   end;
-
 end;
 
 destructor TSqlExecThread.Destroy;

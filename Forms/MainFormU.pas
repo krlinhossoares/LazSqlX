@@ -103,6 +103,7 @@ type
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
     timerSearch: TTimer;
     ToolButton3: TToolButton;
     trvProcedures: TTreeView;
@@ -340,7 +341,9 @@ type
     procedure lstTablesDblClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
+    procedure MenuItem7Click(Sender: TObject);
     procedure mitOpenDataClick(Sender: TObject);
+    procedure mitQueryClick(Sender: TObject);
     procedure mitRefreshTablesClick(Sender: TObject);
     procedure OnCaretPosition(Line, Pos: Integer);
     procedure OnDynamicEditKeyDown(Sender: TObject; var Key: word;
@@ -2708,12 +2711,133 @@ begin
   end;
 end;
 
+procedure TMainForm.MenuItem7Click(Sender: TObject);
+var
+  infos: TAsTableInfos;
+  I: integer;
+  lstErrors: TStringList;
+  lst:TStringList;
+  s: TAsSqlGenerator;
+  StrMetaData: TStringList;
+  tab:TLazSqlXTabSheet;
+begin
+  try
+    lstErrors := TStringList.Create;
+    s := TAsSqlGenerator.Create(DbInfo);
+    StrMetaData:= TStringList.Create;
+    StrMetaData.Clear;
+    try
+      ProgressForm.Show;
+      Application.ProcessMessages;
+
+      lst := TAsDbUtils.GetTablenames(FDBInfo);
+      lst.Sort;
+
+      infos := TAsTableInfos.Create(nil,FDBInfo);
+
+      ProgressForm.MaxProgress := lst.Count;
+
+      for I := 0 to lst.Count - 1 do
+      begin
+
+        try
+          //skip sequential tables for ORA
+          if FDBInfo.DbType = dtOracle then
+            if AnsiContainsStr(lst[I], '_SEQ') then
+              Continue;
+
+          infos.AddTable(cmbSchema.Items[cmbSchema.ItemIndex], lst[I]);
+        except
+          on e: Exception do
+          begin
+            lstErrors.Add(lst[I]);
+          end;
+        end;
+
+        ProgressForm.Message :=
+          'Extracting Table Informations [' + lst[I] + '] ... ';
+        ProgressForm.StepProgress;
+        Application.ProcessMessages;
+      end;
+    finally
+      ProgressForm.Close;
+    end;
+
+    if lstErrors.Count > 0 then
+    begin
+      MessageDlg('Warning', 'The following tables could not be added' +
+        #13#10 + lstErrors.Text, mtWarning, [mbOK], 0);
+    end;
+
+    //create tables
+{    try
+      ProgressForm.Show;
+      ProgressForm.MaxProgress := infos.Count;
+      ProgressForm.Reset;
+      for I := 0 to infos.Count - 1 do
+      begin
+         StrMetaData.Add(S.GetCreateScript(DbInfo,infos[I],csTable).Text);
+         ProgressForm.Message :=
+                   'Generator Metadata Create Table [' + lst[I] + '] ... ';
+         ProgressForm.StepProgress;
+         Application.ProcessMessages;
+      end;
+    finally
+      ProgressForm.Close;
+    end;}
+    //create tables Primary Keys
+    try
+      ProgressForm.Reset;
+      ProgressForm.Show;
+      for I := 0 to infos.Count - 1 do
+      begin
+         StrMetaData.Add(S.GetCreateScript(DbInfo,infos[I],csPrimaryKey).Text);
+         ProgressForm.Message :=
+                   'Generator Metadata Tables Primary Key [' + lst[I] + '] ... ';
+         ProgressForm.StepProgress;
+         Application.ProcessMessages;
+      end;
+    finally
+      ProgressForm.Close;
+    end;
+    {//create tables Foreing Keys
+    try
+      ProgressForm.Reset;
+      ProgressForm.Show;
+      for I := 0 to infos.Count - 1 do
+      begin
+         StrMetaData.Add(S.GetCreateScript(DbInfo,infos[I],csForeingKey).Text);
+         ProgressForm.Message :=
+                   'Generator Metadata Tables Foreing Key [' + lst[I] + '] ... ';
+         ProgressForm.StepProgress;
+         Application.ProcessMessages;
+      end;
+    finally
+      ProgressForm.Close;
+    end;}
+
+    tab:=FPageControl.AddTab;
+    tab.QueryEditor.Lines.Add('');
+    tab.QueryEditor.Lines.Text := StrMetaData.Text;
+    FPageControl.ScanNeeded;
+  finally
+    lstErrors.Free;
+    infos.Free;
+    lst.Free;
+  end;
+end;
+
 
 procedure TMainForm.mitOpenDataClick(Sender: TObject);
 begin
   if trvTables.Selected<>nil then;
     if trvTables.Selected.Level=0 then
       ExecuteQuery(True);
+end;
+
+procedure TMainForm.mitQueryClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.mitRefreshTablesClick(Sender: TObject);

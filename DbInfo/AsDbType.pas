@@ -12,8 +12,8 @@ unit AsDbType;
 interface
 
 uses
-  Classes, SysUtils, typinfo, types, fgl, strutils, AsStringUtils, RegExpr,
-  ZConnection, ZDataset, sqldb, db, fpsqlparser, fpsqltree,sqldblib;
+  Classes, SysUtils, typinfo, types, fgl, strutils, AsStringUtils,
+  RegExpr, ZConnection, ZDataset, sqldb, db, fpsqlparser, fpsqltree, sqldblib;
 
 type
 
@@ -183,6 +183,7 @@ type
     function GetIndexname: string;
     function GetIsActive: Boolean;
     function GetPacketRecord: Integer;
+    function GetParams: TParams;
     function GetRecNo: Integer;
     function GetRecordCount: Integer;
     function GetRowsAffected: Integer;
@@ -231,6 +232,7 @@ type
    property Fields[Index:Integer]:TField read GetField;
    property FieldCount:Integer read GetFieldCount;
    property SQL:TStrings read GetSQL;
+   property Params: TParams read GetParams;
    property State:TDataSetState read GetState;
    property FilterOptions:TFilterOptions read GetFilterOption write SetFilterOption;
    property Filtered:Boolean read GetFiltered write SetFiltered;
@@ -608,6 +610,14 @@ begin
  case FDBInfo.DbEngineType of
    deZeos:Result := FQuery.PacketRecords;
    deSqlDB:Result := -1;
+ end;
+end;
+
+function TAsQuery.GetParams: TParams;
+begin
+ case FDBInfo.DbEngineType of
+  deZeos : Result :=  FZQuery.Params;
+  deSqlDB : Result := FQuery.Params;
  end;
 end;
 
