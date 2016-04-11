@@ -801,6 +801,16 @@ object FrmCfgCRUD: TFrmCfgCRUD
       TabOrder = 10
       Text = 'Con.Transaction'
     end
+    object Label2: TLabel
+      Left = 337
+      Height = 15
+      Top = 367
+      Width = 311
+      Caption = 'Replaces:  [$UnitName.$ProcName] = [uUnidade.Processo]'
+      Font.Color = clRed
+      ParentColor = False
+      ParentFont = False
+    end
   end
   object btnAccept: TBitBtn
     Left = 583

@@ -42,6 +42,7 @@ type
     Label17: TLabel;
     Label18: TLabel;
     Label19: TLabel;
+    Label2: TLabel;
     Label20: TLabel;
     Label21: TLabel;
     Label4: TLabel;
