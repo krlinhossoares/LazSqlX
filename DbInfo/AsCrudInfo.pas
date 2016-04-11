@@ -27,6 +27,7 @@ type
     FDirDAO: String;
     FDirModel: String;
     FExceptionCode: TStringList;
+    FHasReturnException: boolean;
     FProcDelete: TCRUDProc;
     FProcGetRecord: TCRUDProc;
     FProcInsert: TCRUDProc;
@@ -38,6 +39,7 @@ type
     FQueryPropTransaction: String;
     FReturnException: string;
     FUsesDefault: string;
+    function GetHasReturnException: boolean;
   public
     constructor Create;
     procedure SaveToFile(FileName: String);
@@ -55,6 +57,7 @@ type
     property QueryConDatabase: String read FQueryConDatabase write FQueryConDatabase;
     property QueryPropTransaction: String read FQueryPropTransaction write FQueryPropTransaction;
     property QueryConTransaction: String read FQueryConTransaction write FQueryConTransaction;
+    property HasReturnException: boolean read GetHasReturnException;
 
     property ProcInsert: TCRUDProc read FProcInsert write FProcInsert;
     property ProcUpdate: TCRUDProc read FProcUpdate write FProcUpdate;
@@ -68,6 +71,11 @@ type
 implementation
 
 { TCRUDInfo }
+
+function TCRUDInfo.GetHasReturnException: boolean;
+begin
+  Result := Length(Trim(Self.ReturnException)) > 0;
+end;
 
 constructor TCRUDInfo.Create;
 begin
