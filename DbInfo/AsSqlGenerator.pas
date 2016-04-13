@@ -56,6 +56,7 @@ TAsProcedureNames = object
     procedure DropProcedure(spName: string);
     {Used in GetCreateSql}
     function GetDataType(FieldInfo: TAsFieldInfo; AsDbType: TAsDatabaseType): string;
+    function GetPrimaryKeyName(Table: String): String;
 
     procedure WriteLog(Msg: string);
     procedure _cmdBeforeOpen(DataSet: TDataSet);
@@ -688,10 +689,10 @@ end;
 function TAsSqlGenerator.GetCreateScript(DBInfo: TAsDbConnectionInfo; Info: TAsTableInfo;
   TypeCreate: TPCreateScript): TStringList;
 var
-  sql: string;
+  bsql, asql, sql: string;
   I: integer;
   len, precision, scale:Integer;
-  strDefaulType,strNewType:string;
+  strDefaulType,strNewType,strReferences,strField, strfieldFK:string;
 begin
   scale := 0;
   Result := TStringList.Create;
@@ -699,8 +700,6 @@ begin
   if TypeCreate = csTable then
   begin
     sql := 'CREATE TABLE ' + info.Tablename + ' ('#13;
-
-
     for I := 0 to info.AllFields.Count - 1 do
     begin
       sql := sql + '    ';
@@ -716,10 +715,14 @@ begin
          begin
            sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
          end
-         ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'INTEGER') OR (UpperCase(info.AllFields[I].FieldType) = 'SMALLINT'))
-         OR (UpperCase(info.AllFields[I].FieldType) = 'TIMESTAMP') OR (UpperCase(info.AllFields[I].FieldType) = 'DATE')
-         OR (UpperCase(info.AllFields[I].FieldType) = 'TIME') THEN
+         ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'INTEGER')  OR (UpperCase(info.AllFields[I].FieldType) = 'SMALLINT'))
+              OR (UpperCase(info.AllFields[I].FieldType) = 'TIMESTAMP') OR (UpperCase(info.AllFields[I].FieldType) = 'DATE')
+              OR (UpperCase(info.AllFields[I].FieldType) = 'TIME') THEN
            sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType
+         ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'DOUBLE')) THEN
+           sql := sql + info.AllFields[I].FieldName + ' ' + 'DOUBLE PRECISION'
+         ELSE If ((UpperCase(info.AllFields[I].FieldType) = 'FLOAT')) THEN
+           sql := sql + info.AllFields[I].FieldName + ' ' + 'NUMERIC'
          ELSE
            sql := sql + info.AllFields[I].FieldName + ' ' + info.AllFields[I].FieldType + '('+IntToStr(Len)+')';
       {end
@@ -746,10 +749,8 @@ begin
             sql := sql + '(50)';
         end;
 
-
-        if (strNewType = 'decimal') or (strNewType = 'float') then
+        if (uppercase(strNewType) = uppercase('decimal')) or (uppercase(strNewType) = uppercase('float')) then
         begin
-
           if info.AllFields[I].Precision=0 then
           info.AllFields[I].Precision := 2;
 
@@ -813,7 +814,7 @@ begin
       end;
     end;
      }
-     if DbInfo.DbType=dtFirebirdd then
+    if DbInfo.DbType=dtFirebirdd then
     begin
       sql := '';
       for I:= 0 to info.PrimaryKeys.Count-1 do
@@ -823,49 +824,98 @@ begin
         else
           sql := sql + ','+ Info.PrimaryKeys[I].FieldName;
       end;
-      Sql := ' ALTER TABLE '+Info.Tablename+' ADD CONSTRAINT '+ info.Tablename+'_PK PRIMARY KEY (' + SQL +');';
+      Sql := ' ALTER TABLE '+Info.Tablename+' ADD CONSTRAINT '+ GetPrimaryKeyName(Info.TableName)+' PRIMARY KEY (' + SQL +')';
     end;
   end;
 
   if TypeCreate = csForeingKey then
+  begin
     for I := 0 to info.ImportedKeys.Count - 1 do
     begin
-      if DbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd,dtSQLite] then
+      {if DbInfo.DbType in [dtOracle, dtMySql,dtFirebirdd,dtSQLite] then
       begin
         sql := sql + ',' + #13;
-      end;
+      end;}
       case DbInfo.DbType of
-      dtMsSql,dtOracle,dtMySql:
-        begin
-        Sql := Sql + '    CONSTRAINT ' + TAsDbUtils.SafeWrap(DbInfo.DbType,'fk_'+ info.ImportedKeys[I].ForeignTableName + info.ImportedKeys[I].ForeignColumnName) +
-          ' FOREIGN KEY (' + info.ImportedKeys[I].GetCompatibleColumnName(DbInfo.DbType) + ') ' +
-          ' REFERENCES ' + info.ImportedKeys[I].ForeignTableName +
-          '(' + info.ImportedKeys[I].GetCompatibleForeignColumnName(DbInfo.DbType) + ') ';
+        dtMsSql,dtOracle,dtMySql:
+          begin
+          Sql := Sql + '    CONSTRAINT ' + TAsDbUtils.SafeWrap(DbInfo.DbType,'fk_'+ info.ImportedKeys[I].ForeignTableName + info.ImportedKeys[I].ForeignColumnName) +
+            ' FOREIGN KEY (' + info.ImportedKeys[I].GetCompatibleColumnName(DbInfo.DbType) + ') ' +
+            ' REFERENCES ' + info.ImportedKeys[I].ForeignTableName +
+            '(' + info.ImportedKeys[I].GetCompatibleForeignColumnName(DbInfo.DbType) + ') ';
 
-        end;
-      dtSQLite:
-        begin
-           Sql := Sql+' FOREIGN KEY('+info.ImportedKeys[I].GetCompatibleColumnName(DbInfo.DbType)+') REFERENCES '+
-          info.ImportedKeys[I].ForeignTableName+'('+info.ImportedKeys[I].ForeignColumnName+')';
-        end;
-      dtFirebirdd:
-        begin
-        sql :=sql+LineEnding+ ' ALTER TABLE ' +Info.Tablename + ' ADD FOREIGN KEY ('+ TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName)+') ' +
-        ' REFERENCES '+info.ImportedKeys[I].ForeignTableName+'('+TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName)+');';
-        end;
+          end;
+        dtSQLite:
+          begin
+             Sql := Sql + ' FOREIGN KEY('+info.ImportedKeys[I].GetCompatibleColumnName(DbInfo.DbType)+') REFERENCES '+
+            info.ImportedKeys[I].ForeignTableName+'('+info.ImportedKeys[I].ForeignColumnName+')';
+          end;
+        dtFirebirdd:
+          begin
+            strReferences := info.ImportedKeys[I].ForeignTableName;
+            if (aSql = '') and (strField <> TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName)) then
+            begin
+              asql := asql + TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName);
+              strField := TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName);
+            end
+            else if strField <> TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName) then
+            begin
+              asql := asql + ','+ TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName);
+              strField := TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ColumnName);
+            end;
+            if (bSql = '') and (strfieldFK <> TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName)) then
+            begin
+              bsql := bsql + TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
+              strfieldFK := TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
+            end
+            else if strfieldFK <> TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName) then
+            begin
+              bsql := bsql + ','+  TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
+              strfieldFK := TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
+            end;
+
+            if ((info.ImportedKeys.Count-1) <I+1) or (strReferences <> info.ImportedKeys[I+1].ForeignTableName) then
+            begin
+              sql := 'ALTER TABLE ' +Info.Tablename + ' ADD CONSTRAINT '+ info.ImportedKeys[I].ConstraintName +' FOREIGN KEY ('+ asql +')  REFERENCES '+strReferences+'('+bSql+');' + #13;
+              aSql := '';
+              bSql := '';
+            end;
+         end;
       end;
-   end;
-                        {
+    end;
+  end;
+  {
   if DbInfo.DbType <> dtPostgreSql then
     sql := sql + ')';
 
   if DbInfo.DbType = dtMySql then
   begin
     sql := sql + ';'
-  end;                   }
-  Result.Text := UpperCase(Sql)+';';
+  end;
+  }
+    if Trim(Sql) <> '' then
+      if TypeCreate <> csForeingKey then
+      begin
+        if TypeCreate = csTable then
+          Result.Text := Trim(UpperCase(Sql))+');'
+        else
+          Result.Text := Trim(UpperCase(Sql))+';'
+      end
+      else
+        Result.Text := Trim(UpperCase(Sql));
 end;
 {$ENDREGION}
+
+function TAsSqlGenerator.GetPrimaryKeyName(Table:String): String;
+begin
+  FAsQuery.Close;
+  FAsQuery.SQL.Clear;
+  FAsQuery.SQL.Add('SELECT RDB$CONSTRAINT_NAME FROM RDB$RELATION_CONSTRAINTS ');
+  FAsQuery.SQL.Add('WHERE (RDB$RELATION_NAME ='+QuotedStr(Table)+')');
+  FAsQuery.SQL.Add('AND (RDB$CONSTRAINT_TYPE=''PRIMARY KEY'')');
+  FAsQuery.Open;
+  Result := FAsQuery.Fields[0].AsString;
+end;
 
 {$REGION 'Private Methods'}
 
