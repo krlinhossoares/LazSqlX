@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 143
+  Left = 191
   Height = 596
-  Top = 215
+  Top = 234
   Width = 1012
   Anchors = [akTop, akLeft, akRight, akBottom]
   Caption = 'LazSQLX'
@@ -15,7 +15,7 @@ object MainForm: TMainForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.4.2.0'
+  LCLVersion = '1.6.0.4'
   WindowState = wsMaximized
   object tlbMain: TToolBar
     Left = 0
@@ -2935,8 +2935,9 @@ object MainForm: TMainForm
     FormatSettings.DecimalSeparator = #0
     FormatSettings.CurrencyDigits = 0
     FormatSettings.FieldDelimiter = ';'
-    FormatSettings.QuoteStrings = [qsAlways]
-    FormatSettings.StringQuoteChar = '"'
+    FormatSettings.IgnoreOuterWhitespace = False
+    FormatSettings.RowDelimiter = #13#10
+    FormatSettings.QuoteChar = '"'
     left = 520
     top = 232
   end

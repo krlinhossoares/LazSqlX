@@ -1169,6 +1169,7 @@ var
   I: Integer;
   fstr:string;
   f: TAsFieldInfo;
+  FieldsO, FieldsD: String;
 begin
 
  if Node.Level>0 then
@@ -1209,9 +1210,28 @@ begin
      nfkeys.SelectedIndex:=nfkeys.ImageIndex;
      for I:=0 to ti.ImportedKeys.Count-1 do
      begin
-       tn := trvTables.Items.AddChild(nfkeys,GetFieldNameForTreeView(ti.ImportedKeys[I]));
+       if FieldsO = '' then
+         FieldsO:= ti.ImportedKeys[I].ForeignColumnName // Fields FK TableName
+       else
+         IF Pos(ti.ImportedKeys[I].ForeignColumnName, FieldsO) = 0 THEN
+           FieldsO:= FieldsO + ','+ti.ImportedKeys[I].ForeignColumnName;
+
+       if FieldsD = '' then
+         FieldsD:= ti.ImportedKeys[I].ColumnName // Fields FK TableName
+       else
+         IF Pos(ti.ImportedKeys[I].ColumnName, FieldsD) = 0 THEN
+           FieldsD:= FieldsD + ','+ti.ImportedKeys[I].ColumnName;
+
+       if (I = ti.ImportedKeys.Count - 1) or
+          (ti.ImportedKeys[I].ConstraintName <> ti.ImportedKeys[I+1].ConstraintName) then
+       begin
+          tn := trvTables.Items.AddChild(nfkeys,ti.ImportedKeys[I].ConstraintName + ' - On Fields(' +FieldsD+')' + ' FK Table('+ti.ImportedKeys[I].ForeignTableName+'('+FieldsO+'))');
+          tn.ImageIndex := 2;
+          tn.SelectedIndex:=tn.ImageIndex;
+       end;
+{       tn := trvTables.Items.AddChild(nfkeys,GetFieldNameForTreeView(ti.ImportedKeys[I]));
        tn.ImageIndex:= 2;
-       tn.SelectedIndex:=tn.ImageIndex;
+       tn.SelectedIndex:=tn.ImageIndex;}
      end;
 
      nIndexes := trvTables.Items.AddChild(Node,'Indexes');
