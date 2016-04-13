@@ -762,6 +762,7 @@ procedure TDesignTableForm.PopulateInfo;
 var
   I: integer;
   lst: TStringList;
+  FieldsO, FieldsD: String;
 begin
   //refreshed
   FDbInfo.Close;
@@ -831,15 +832,30 @@ begin
     if FWorkingTableInfo.ImportedKeys <> nil then
     for I := 0 to FWorkingTableInfo.ImportedKeys.Count - 1 do
     begin
-      with lsvDependencies.Items.Add do
-      begin
-        ImageIndex := 1;
-        Caption := FWorkingTableInfo.ImportedKeys[I].ConstraintName;
-        SubItems.AddStrings(FWorkingTableInfo.ImportedKeys[I].ColumnName);
-        SubItems.Add(FWorkingTableInfo.ImportedKeys[I].ForeignTableName);
-        SubItems.Add(FWorkingTableInfo.ImportedKeys[I].ForeignColumnName);
+      if FieldsO = '' then
+        FieldsO:= FWorkingTableInfo.ImportedKeys[I].ForeignColumnName // Fields FK TableName
+      else
+        IF Pos(FWorkingTableInfo.ImportedKeys[I].ForeignColumnName, FieldsO) = 0 THEN
+        FieldsO:= FieldsO + ','+FWorkingTableInfo.ImportedKeys[I].ForeignColumnName;
 
-      end;
+      if FieldsD = '' then
+        FieldsD:= FWorkingTableInfo.ImportedKeys[I].ColumnName // Fields FK TableName
+      else
+        IF Pos(FWorkingTableInfo.ImportedKeys[I].ColumnName, FieldsD) = 0 THEN
+          FieldsD:= FieldsD + ','+FWorkingTableInfo.ImportedKeys[I].ColumnName;
+
+      if (I = FWorkingTableInfo.ImportedKeys.Count - 1) or
+         (FWorkingTableInfo.ImportedKeys[I].ConstraintName <> FWorkingTableInfo.ImportedKeys[I+1].ConstraintName) then
+        with lsvDependencies.Items.Add do
+        begin
+          ImageIndex := 1;
+          Caption := FWorkingTableInfo.ImportedKeys[I].ConstraintName;
+          SubItems.AddStrings(FieldsD);
+          SubItems.Add(FWorkingTableInfo.ImportedKeys[I].ForeignTableName);
+          SubItems.Add(FieldsO);
+          FieldsO := '';
+          FieldsD := '';
+        end;
     end;
 
     //-------Populate Triggers -----
