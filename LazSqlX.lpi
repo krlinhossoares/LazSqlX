@@ -73,7 +73,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <Libraries Value="C:\Development\FreePascal\fpc\lib\i386-linux\"/>
+            <Libraries Value="C:\lazarus\fpc\2.6.4\bin\i386-linux32\"/>
             <OtherUnitFiles Value="Forms;DbInfo;FileTypeDetector;Generators;UtilClasses;DbInfo\AsSqlKeywords;QueryDesigner;LoadingIndicator;LazSqlXCtrls;DefTypes;Resources;DbInfo\DbMetadata"/>
             <UnitOutputDirectory Value="..\build_linux\units"/>
           </SearchPaths>

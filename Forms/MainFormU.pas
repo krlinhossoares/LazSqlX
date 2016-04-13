@@ -2720,6 +2720,7 @@ var
   s: TAsSqlGenerator;
   StrMetaData: TStringList;
   tab:TLazSqlXTabSheet;
+  aux: String;
 begin
   try
     lstErrors := TStringList.Create;
@@ -2770,28 +2771,32 @@ begin
     end;
 
     //create tables
-{    try
+    try
       ProgressForm.Show;
       ProgressForm.MaxProgress := infos.Count;
       ProgressForm.Reset;
       for I := 0 to infos.Count - 1 do
       begin
-         StrMetaData.Add(S.GetCreateScript(DbInfo,infos[I],csTable).Text);
-         ProgressForm.Message :=
-                   'Generator Metadata Create Table [' + lst[I] + '] ... ';
-         ProgressForm.StepProgress;
-         Application.ProcessMessages;
+        aux := Trim(S.GetCreateScript(DbInfo,infos[I],csTable).Text);
+        if Trim(Aux) <> '' then
+          StrMetaData.Add(Trim(Aux));
+        ProgressForm.Message :=
+                  'Generator Metadata Create Table [' + lst[I] + '] ... ';
+        ProgressForm.StepProgress;
+        Application.ProcessMessages;
       end;
     finally
       ProgressForm.Close;
-    end;}
+    end;
     //create tables Primary Keys
     try
       ProgressForm.Reset;
       ProgressForm.Show;
       for I := 0 to infos.Count - 1 do
       begin
-         StrMetaData.Add(S.GetCreateScript(DbInfo,infos[I],csPrimaryKey).Text);
+         aux := Trim(S.GetCreateScript(DbInfo,infos[I],csPrimaryKey).Text);
+         if Trim(Aux) <> '' then
+           StrMetaData.Add(Trim(Aux));
          ProgressForm.Message :=
                    'Generator Metadata Tables Primary Key [' + lst[I] + '] ... ';
          ProgressForm.StepProgress;
@@ -2800,13 +2805,15 @@ begin
     finally
       ProgressForm.Close;
     end;
-    {//create tables Foreing Keys
+    //create tables Foreing Keys
     try
       ProgressForm.Reset;
       ProgressForm.Show;
       for I := 0 to infos.Count - 1 do
       begin
-         StrMetaData.Add(S.GetCreateScript(DbInfo,infos[I],csForeingKey).Text);
+         aux := Trim(S.GetCreateScript(DbInfo,infos[I],csForeingKey).Text);
+         if Trim(Aux) <> '' then
+         StrMetaData.Add(Trim(Aux));
          ProgressForm.Message :=
                    'Generator Metadata Tables Foreing Key [' + lst[I] + '] ... ';
          ProgressForm.StepProgress;
@@ -2814,7 +2821,7 @@ begin
       end;
     finally
       ProgressForm.Close;
-    end;}
+    end;
 
     tab:=FPageControl.AddTab;
     tab.QueryEditor.Lines.Add('');
