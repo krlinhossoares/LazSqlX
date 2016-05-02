@@ -31,11 +31,6 @@ type
   TMainForm = class(TForm)
     actExecute: TAction;
     actCloseTab: TAction;
-    actExportCSV: TAction;
-    actExportXML: TAction;
-    actExportSQL: TAction;
-    actExportRTF: TAction;
-    actExportJSON: TAction;
     actConnect: TAction;
     actFormatQuery: TAction;
     actCloseAllButThis: TAction;
@@ -95,7 +90,6 @@ type
     ApplicationProperties: TApplicationProperties;
     btnExportJson: TToolButton;
     cmbSchema: TComboBox;
-    CsvExporter: TCSVExporter;
     FindDialog1: TFindDialog;
     GridPrinter: TFrPrintGrid;
     MenuItem1: TMenuItem;
@@ -228,8 +222,6 @@ type
     TablesPopupMenu: TPopupMenu;
     pnlTables: TPanel;
     QueryEditorPopupMenu: TPopupMenu;
-    RtfExporter: TRTFExporter;
-    JsonExporter: TSimpleJSONExporter;
     sbMain: TStatusBar;
     Splitter2: TSplitter;
     SqlExporter: TSQLExporter;
@@ -247,7 +239,6 @@ type
     btnNew: TToolButton;
     sep5: TToolButton;
     txtSearchproc: TEdit;
-    XmlExporter: TSimpleXMLExporter;
     ApplicationMainMenu: TMainMenu;
     OpenDialog: TOpenDialog;
     pmiClose: TMenuItem;
@@ -279,7 +270,6 @@ type
     procedure actExecuteExecute(Sender: TObject);
     procedure actCloseExecute(Sender: TObject);
     procedure actCloseTabExecute(Sender: TObject);
-    procedure actExportCSVExecute(Sender: TObject);
     procedure actExportDBFExecute(Sender: TObject);
     procedure actExportSQLExecute(Sender: TObject);
     procedure actExportXMLExecute(Sender: TObject);
@@ -1357,12 +1347,6 @@ begin
   actFind.Enabled:=aIsConnected ;
   actFindReplace.Enabled:=aIsConnected;
   actOpen.Enabled:=aIsConnected;
-  actExportCSV.Enabled:=aIsConnected;
-  actExportRTF.Enabled:=aIsConnected;
-  actExportSQL.Enabled:= aIsConnected;
-  actExportRTF.Enabled:= aIsConnected;
-  actExportJSON.Enabled:=aIsConnected;
-  actExportXML.Enabled:=aIsConnected;
   actPrint.Enabled:= aIsConnected;
   actSaveAs.Enabled:=aIsConnected;
 
@@ -2256,11 +2240,6 @@ begin
   FPageControl.RemoveTab(FPageControl.ActiveTab);
 end;
 
-procedure TMainForm.actExportCSVExecute(Sender: TObject);
-begin
-  CsvExporter.Dataset := FPageControl.ActiveTab.DataSource.DataSet;
-  DoExport(CsvExporter, '.csv');
-end;
 
 procedure TMainForm.actExportDBFExecute(Sender: TObject);
 begin
@@ -2275,8 +2254,7 @@ end;
 
 procedure TMainForm.actExportXMLExecute(Sender: TObject);
 begin
-  XmlExporter.Dataset := FPageControl.ActiveTab.DataGrid.DataSource.DataSet;
-  DoExport(XmlExporter, '.xml');
+
 end;
 
 procedure TMainForm.actFindExecute(Sender: TObject);
@@ -2540,14 +2518,12 @@ end;
 
 procedure TMainForm.actExportJSONExecute(Sender: TObject);
 begin
-  JsonExporter.Dataset := FPageControl.ActiveTab.DataGrid.DataSource.DataSet;
-  DoExport(JsonExporter, '.json');
+
 end;
 
 procedure TMainForm.actExportRTFExecute(Sender: TObject);
 begin
-  RtfExporter.Dataset := FPageControl.ActiveTab.DataGrid.DataSource.DataSet;
-  DoExport(RtfExporter, '.rtf');
+
 end;
 
 procedure TMainForm.actNewTableExecute(Sender: TObject);

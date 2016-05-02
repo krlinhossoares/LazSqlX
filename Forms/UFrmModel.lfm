@@ -8,7 +8,7 @@ object FrmModel: TFrmModel
   ClientWidth = 633
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.4.4.0'
+  LCLVersion = '1.4.2.0'
   WindowState = wsMaximized
   object ToolBar1: TToolBar
     Left = 0
@@ -3099,9 +3099,12 @@ object FrmModel: TFrmModel
   end
   object PascalSyntax: TSynPasSyn
     Enabled = False
+    CommentAttri.Foreground = clGreen
+    KeyAttri.Foreground = clHotLight
+    NumberAttri.Foreground = clRed
+    StringAttri.Foreground = clBlue
     CompilerMode = pcmDelphi
     NestedComments = False
-    ExtendedKeywordsMode = True
     left = 352
   end
   object JavaSyntax: TSynJavaSyn

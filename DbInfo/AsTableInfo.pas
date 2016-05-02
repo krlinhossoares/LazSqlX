@@ -152,7 +152,7 @@ type
   property FieldRef:TField read FFieldRef write SetField;
   property CSharpType:string read FCSharpType write SetCSharpType;
   property CSharpName:string read FCSharpName write SetCSharpName;
-  property DataType:TFieldType read FDataType write SetDataType;
+  property DataType: TFieldType read FDataType write SetDataType;
   property IsPrimaryKey:Boolean read FIsPrimaryKey write SetIsPrimaryKey;
   property IsIdentity:Boolean read FIsIdentity write SetIsIdentity;
   property AllowNull:Boolean read FAllowNull write SetAllowNull;
