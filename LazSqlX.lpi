@@ -29,7 +29,7 @@
       <MajorVersionNr Value="5"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="1594"/>
+      <BuildNr Value="1595"/>
       <Language Value="0416"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
@@ -312,10 +312,12 @@
       <Unit29>
         <Filename Value="LoadingIndicator\animatedgif.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="AnimatedGif"/>
       </Unit29>
       <Unit30>
         <Filename Value="LoadingIndicator\membitmap.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="MemBitmap"/>
       </Unit30>
       <Unit31>
         <Filename Value="LoadingIndicator\LoadingIndicator.pas"/>
@@ -324,6 +326,7 @@
       <Unit32>
         <Filename Value="UtilClasses\csvdocument.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="CsvDocument"/>
       </Unit32>
       <Unit33>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
@@ -445,11 +448,12 @@
         <ResourceBaseClass Value="Form"/>
       </Unit58>
       <Unit59>
-        <Filename Value="Forms\UFrmParams.pas"/>
+        <Filename Value="Forms\ufrmparams.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FrmParams"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="uFrmParams"/>
       </Unit59>
     </Units>
   </ProjectOptions>
@@ -485,7 +489,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="14">
+    <Exceptions Count="15">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -528,6 +532,9 @@
       <Item14>
         <Name Value="EThread"/>
       </Item14>
+      <Item15>
+        <Name Value="EReadError"/>
+      </Item15>
     </Exceptions>
   </Debugging>
 </CONFIG>
