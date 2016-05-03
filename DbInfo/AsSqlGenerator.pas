@@ -879,12 +879,14 @@ begin
             end;
             if (bSql = '') and (strfieldFK <> TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName)) then
             begin
-              bsql := bsql + TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
+              if Pos(info.ImportedKeys[I].ForeignColumnName, bsql) = 0 then
+                bsql := bsql + TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
               strfieldFK := TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
             end
             else if strfieldFK <> TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName) then
             begin
-              bsql := bsql + ','+  TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
+              if Pos(info.ImportedKeys[I].ForeignColumnName, bsql) = 0 then
+                bsql := bsql + ','+  TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
               strfieldFK := TAsDbUtils.SafeWrap(DbInfo.DbType, info.ImportedKeys[I].ForeignColumnName);
             end;
 
