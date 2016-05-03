@@ -374,24 +374,26 @@ begin
 
     if AsTableInfo.AllFields[I].IsReference then
     begin
-
       oIndex := AsTableInfo.ImportedKeys.GetIndex(fieldName);
-      tmpSelect.Add(strIdent + '    ' + AsTableInfo.TableAlias + SqlDot + fieldName+ ',');
+
+      if Pos(SqlDot+fieldName,tmpSelect.Text) = 0 then
+        tmpSelect.Add(strIdent + '    ' + AsTableInfo.ImportedKeys[oIndex].ForeignTableName + SqlDot + fieldName+ ',');
 
       if AsTableInfo.ImportedKeys[oIndex]<>nil then
       if AsTableInfo.ImportedKeys[oIndex].TableName<>'' then
       for F := 0 to AsTableInfo.ImportedKeys[oIndex].SelectFields.Count-1 do
       begin
-        tmpSelect.Add(strIdent + '    ' + 't' + IntToStr(oIndex + 1) +
+        if Pos(SqlDot+AsTableInfo.ImportedKeys[oIndex].SelectFields[F],tmpSelect.Text) = 0 then
+        tmpSelect.Add(strIdent + '    ' + AsTableInfo.ImportedKeys[oIndex].ForeignTableName +
           SqlDot + SafeWrap(AsTableInfo.ImportedKeys[oIndex].SelectFields[F]) +
           seperator);
       end;
-
     end
     else
     begin
-      tmpSelect.Add(strIdent + '    ' + AsTableInfo.TableAlias +
-        SqlDot + fieldName + seperator);
+      if Pos(fieldName,tmpSelect.Text) = 0 then
+        tmpSelect.Add(strIdent + '    ' + AsTableInfo.Tablename +
+          SqlDot + fieldName + seperator);
     end;
 
     if (not AsTableInfo.AllFields[I].IsIdentity) then
@@ -419,38 +421,50 @@ begin
   //make joins for SELECTs
   for I := 0 to AsTableInfo.ImportedKeys.Count - 1 do
   begin
+    if tmpFTablename <> AsTableInfo.ImportedKeys[I].ForeignTableName then
+    begin
     tmpFTablename := AsTableInfo.ImportedKeys[I].ForeignTableName;
-    tmpTablename := AsTableInfo.ImportedKeys[i].TableAlias;
+    tmpTablename := AsTableInfo.ImportedKeys[i].Tablename;
     if trim(tmpTablename)=EmptyStr then
     tmpTablename:=AsTableInfo.ImportedKeys[i].Tablename[1];
     localColumn := SafeWrap(AsTableInfo.ImportedKeys[I].ColumnName);
     foreignColumn := SafeWrap(AsTableInfo.ImportedKeys[I].ForeignColumnName);
 
-    tmpSelectJoins.Add
-    (
-      strIdent + ' INNER JOIN  ' + tmpFTablename + ' t' +
-      IntToStr(I + 1) + ' ON ' + tmpTablename + '.' +localColumn + ' = ' +
-      't' + IntToStr(I + 1) + '.' + foreignColumn
-      );
+    if pos('.'+localColumn,tmpSelectJoins.text) = 0 then
+      tmpSelectJoins.Add
+      (
+        strIdent + ' INNER JOIN  ' + tmpFTablename +  ' ON ' + tmpTablename + '.' +localColumn + ' = ' +
+        tmpFTableName+ '.' + foreignColumn
+        );
+    end
+    else
+    begin
+      localColumn := SafeWrap(AsTableInfo.ImportedKeys[I].ColumnName);
+      foreignColumn := SafeWrap(AsTableInfo.ImportedKeys[I].ForeignColumnName);
+      if pos('.'+localColumn, tmpSelectJoins.text) = 0 then
+        tmpSelectJoins.Add
+        (
+          strIdent + ' AND ' + tmpTablename + '.' +localColumn + ' = ' +
+          tmpFTableName+ '.' + foreignColumn
+          );
+    end;
   end;
 
 
   tmpTablename:=SafeWrap(AsTableInfo.Tablename);
-
   case QueryType of
     qtSelect:
     begin
-
       r.Add(strIdent + 'SELECT ');
       r.Add(tmpSelect.Text);
-      r.Add(strIdent + 'FROM ' + tmpTablename+' '+AsTableInfo.TableAlias);
+      r.Add(strIdent + 'FROM ' + tmpTablename);
       r.Add(tmpSelectJoins.Text);
     end;
     qtSelectItem:
     begin
       r.Add(strIdent + 'SELECT ');
       r.Add(tmpSelect.Text);
-      r.Add(strIdent + 'FROM ' + tmpTablename+' '+AsTableInfo.TableAlias);
+      r.Add(strIdent + 'FROM ' + tmpTablename);
       r.Add(tmpSelectJoins.Text);
       if AsTableInfo.PrimaryKeys.Count > 0 then
       begin
