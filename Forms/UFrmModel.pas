@@ -96,10 +96,50 @@ begin
 end;
 
 function TFrmModel.TypeDBToTypePascalParams(Field: TAsFieldInfo): string;
-begin
-    Result := '';
+var aux: String;
 
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
+  function TextOnly(S: String): String;
+  var i : word;
+  begin
+    result := '';
+    for i := 0 to Length(S) do
+      if S[i] in ['a'..'z', 'A'..'Z'] then
+        result := result + S[i];
+  end;
+
+begin
+  Result := '';
+  aux := LowerCase(TAsFieldInfo(Field).FieldType);
+  aux := TextOnly(aux);
+
+  if aux = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO'
+    else if aux = 'integer'       then Result := 'AsInteger'
+      else if aux = 'smallint'      then Result := 'AsInteger'
+        else if aux = 'word'          then Result := 'AsInteger'
+          else if aux = 'string'        then Result := 'AsString'
+            else if aux = 'varchar'       then Result := 'AsString'
+              else if aux = 'char'          then Result := 'AsString'
+                else if aux = 'float'         then Result := 'AsFloat'
+                  else if aux = 'currency'      then Result := 'AsFloat'
+                    else if aux = 'date'          then Result := 'AsDate'
+                      else if aux = 'time'          then Result := 'AsTime'
+                        else if aux = 'dateTime'      then Result := 'AsDateTime'
+                          else if aux = 'blob'          then Result := 'AsString'
+                            else if aux = 'memo'          then Result := 'AsString'
+                              else if aux = 'widestring'    then Result := 'AsString'
+                                else if aux = 'widememo'      then Result := 'AsString'
+                                  else if aux = 'fixedwidechar' then Result := 'AsString'
+                                    else if aux = 'boolean'       then Result := 'AsBoolean'
+                                      else if aux = 'timestamp'     then Result := 'AsDateTime'
+                                        else if aux = 'bytes'         then Result := 'AsInteger'
+                                          else if aux = 'bcd'           then Result := 'AsBCD'
+                                            else if aux = 'fixedchar'     then Result := 'AsString'
+                                              else if aux = 'numeric'     then Result := 'AsFloat';
+
+  if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
+
+
+   {if LowerCase(TAsFieldInfo(Field).FieldType) = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
     if LowerCase(TAsFieldInfo(Field).FieldType) = 'integer'       then Result := 'AsInteger';
     if LowerCase(TAsFieldInfo(Field).FieldType) = 'smallint'      then Result := 'AsInteger';
     if LowerCase(TAsFieldInfo(Field).FieldType) = 'word'          then Result := 'AsInteger';
@@ -122,7 +162,7 @@ begin
     if LowerCase(TAsFieldInfo(Field).FieldType) = 'bcd'           then Result := 'AsBCD';
     if LowerCase(TAsFieldInfo(Field).FieldType) = 'fixedchar'     then Result := 'AsString';
 
-    if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
+    if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';      }
 
 
 end;
@@ -872,9 +912,9 @@ begin
   begin
     if J = 0 then //Primeira linha
     begin
-       if (StrList.Count > 1) then
+       if (StrList.Count > 1) then //Primeira linha de uma lista com vários registros...
          SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + '#13+')
-       else
+       else //Se tiver apenas um registro na lista, cai aqui....
          SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end
     else
@@ -1147,11 +1187,23 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + 'Qry.Open;');
     SynEditDAO.Lines.Add(Ident + Ident + 'if not Qry.isEmpty then ');
     SynEditDAO.Lines.Add(Ident + Ident + 'begin');
+
+    //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
+    IdSpace:= 0;
+    IdSpaceAux:=0;
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident + Ident +
-        VarModel + '.' + InfoTable.AllFields[J].FieldName + ' := ' + 'Qry.FieldByName(' +
-        QuotedStr(InfoTable.AllFields[J].FieldName) + ').Value;');
+      //IdSpaceAux := Length('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]));
+      IdSpaceAux := Length(VarModel + '.' + InfoTable.AllFields[J].FieldName);
+      IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
+    end;
+
+
+    for J := 0 to InfoTable.AllFields.Count - 1 do
+    begin
+//      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad(VarModel + '.' + InfoTable.AllFields[J].FieldName,' ', IdSpace) + ' := ' + 'Qry.FieldByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J])+ ';');
+
     end;
     SynEditDAO.Lines.Add(Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
@@ -1172,7 +1224,7 @@ procedure TFrmModel.GeneratorCodeProcList;
 var
   SQL: TStringList;
   S: string;
-  J: integer;
+  J, IdSpaceAux, IdSpace: integer;
   StrFunctionName: String;
 begin
   if InfoCrud.ProcListRecords.Enable then
@@ -1213,11 +1265,35 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + 'While not Qry.Eof do ');
     SynEditDAO.Lines.Add(Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create;');
+
+    {
+          //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
+          IdSpace:= 0;
+          IdSpaceAux:=0;
+          for J := 0 to InfoTable.PrimaryKeys.Count - 1 do
+          begin
+            IdSpaceAux := Length('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]));
+            IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
+          end;
+
+          for J := 0 to InfoTable.PrimaryKeys.Count - 1 do
+          begin
+            SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
+          end;
+    }
+    //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
+    IdSpace:= 0;
+    IdSpaceAux:=0;
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident + Ident +
-        VarModel + '.' + InfoTable.AllFields[J].FieldName + ' := ' + 'Qry.FieldByName(' +
-        QuotedStr(InfoTable.AllFields[J].FieldName) + ').Value;');
+      IdSpaceAux := Length(VarModel + '.' + InfoTable.AllFields[J].FieldName);
+      IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
+    end;
+
+    for J := 0 to InfoTable.AllFields.Count - 1 do
+    begin
+//      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + LPad(VarModel + '.' + InfoTable.AllFields[J].FieldName, ' ', IdSpace) + ' := ' + 'Qry.FieldByName(' +QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]) + ';');
     end;
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'ObjLst.Add(' + VarModel + ');');
 
@@ -1234,7 +1310,7 @@ begin
       SynEditDAO.Lines.Add(Ident + Ident + S);
     end;
     SynEditDAO.Lines.Add(Ident + 'end;');
-    SynEditDAO.Lines.Add('End;');
+    SynEditDAO.Lines.Add('end;');
   end;
 end;
 
