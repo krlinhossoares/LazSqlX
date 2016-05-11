@@ -15,7 +15,7 @@ object MainForm: TMainForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.4.2.0'
+  LCLVersion = '1.6.0.4'
   WindowState = wsMaximized
   object tlbMain: TToolBar
     Left = 0
@@ -6885,8 +6885,8 @@ object MainForm: TMainForm
   end
   object TreeViewImages: TImageList
     DrawingStyle = dsTransparent
-    left = 56
-    top = 320
+    left = 184
+    top = 240
     Bitmap = {
       4C690B0000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
       FF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -7247,7 +7247,7 @@ object MainForm: TMainForm
     Enabled = False
     OnTimer = timerSearchTimer
     left = 184
-    top = 472
+    top = 304
   end
   object ZSQLMonitor1: TZSQLMonitor
     Active = True
@@ -7256,5 +7256,12 @@ object MainForm: TMainForm
     MaxTraceCount = 100
     left = 752
     top = 48
+  end
+  object ZConnection1: TZConnection
+    ControlsCodePage = cCP_UTF8
+    AutoEncodeStrings = False
+    Port = 0
+    left = 369
+    top = 49
   end
 end

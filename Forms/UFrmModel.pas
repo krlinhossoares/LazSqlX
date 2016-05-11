@@ -49,6 +49,7 @@ type
     procedure WriteCreateQuery;
     function WithVar(s: string): string;
     function WithOut(s: string): string;
+    procedure WriteCreateSQL;
   public
     { public declarations }
     InfoTable: TAsTableInfo;
@@ -578,17 +579,32 @@ end;
 
 procedure TFrmModel.WriteCreateQuery;
 begin
-  SynEditDAO.Lines.Add(Ident + Ident + 'Qry := ' + InfoCrud.ClassQuery + '.Create(Master.Con);');
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry := ' + InfoCrud.ClassQuery + '.Create('+InfoCrud.AOwnerCreate+');');
 
-  {/SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropDatabase + ':= ' +
-    InfoCrud.QueryConDatabase + ';');
-  //SynEditDAO.Lines.Add(Ident + Ident + 'Qry.'+ InfoCrud.Connection. );
+  if Trim(InfoCrud.QueryPropDatabase) <> '' then
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropDatabase + ':= ' +
+      InfoCrud.QueryConDatabase + ';');
   if Trim(InfoCrud.QueryPropTransaction) <> '' then
     SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropTransaction + ':= ' +
-      InfoCrud.QueryConTransaction + ';');                                               }
+      InfoCrud.QueryConTransaction + ';');
 
   SynEditDAO.Lines.Add(Ident + Ident + 'Qry.SQL.Clear;');
 end;
+
+procedure TFrmModel.WriteCreateSQL;
+begin
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry := ' + InfoCrud.ClassSQL + '.Create('+InfoCrud.AOwnerCreate+');');
+
+  if Trim(InfoCrud.QueryPropDatabase) <> '' then
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropDatabase + ':= ' +
+      InfoCrud.QueryConDatabase + ';');
+  if Trim(InfoCrud.QueryPropTransaction) <> '' then
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropTransaction + ':= ' +
+      InfoCrud.QueryConTransaction + ';');
+
+  SynEditDAO.Lines.Add(Ident + Ident + 'Qry.SQL.Clear;');
+end;
+
 
 function TFrmModel.WithVar(s: string): string;
 begin
@@ -821,7 +837,10 @@ begin
           vAux := vAux + ifThen(I = 0, '', ', ') + InfoTable.PrimaryKeys.Items[I].FieldName;
 
         Result.Add(' SELECT ' + vAux + ' FROM ' + InfoTable.Tablename + ' ');
+        if Trim(InfoCrud.SelectWhereDefault) <> '' then
+          Result.Add(InfoCrud.SelectWhereDefault);
       end;
+
 
       qtSelectItem: //Retorna um unico registro de acordo com sua chave (Retorna todos os campos)
       begin
@@ -914,7 +933,7 @@ begin
     begin
        if (StrList.Count > 1) then //Primeira linha de uma lista com vários registros...
          SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + '#13+')
-       else //Se tiver apenas um registro na lista, cai aqui....
+       else //Se tiver apenas um registro na lista, cai aqui....     }
          SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end
     else
@@ -957,10 +976,10 @@ begin
 
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
     SynEditDAO.Lines.Add('Var');
-    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery + ';');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassSQL + ';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
-    WriteCreateQuery;
+    WriteCreateSQL;
     SQL := GenerateSqlQuery(qtInsert);
 
     EscreveSqlSynEditDao(SQL);
@@ -1026,11 +1045,11 @@ begin
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
 
     SynEditDAO.Lines.Add('Var');
-    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery + ';');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassSQL + ';');
 
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
-    WriteCreateQuery;
+    WriteCreateSQL;
     SQL := GenerateSqlQuery(qtUpdate);
     EscreveSqlSynEditDao(SQL);
 
@@ -1094,10 +1113,10 @@ begin
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
 
     SynEditDAO.Lines.Add('var');
-    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery + ';');
+    SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassSQL + ';');
     SynEditDAO.Lines.Add('begin');
     SynEditDAO.Lines.Add(Ident + 'try');
-    WriteCreateQuery;
+    WriteCreateSQL;
     SQL := GenerateSqlQuery(qtDelete);
 
     EscreveSqlSynEditDao(SQL);
@@ -1265,22 +1284,6 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + 'While not Qry.Eof do ');
     SynEditDAO.Lines.Add(Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create;');
-
-    {
-          //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
-          IdSpace:= 0;
-          IdSpaceAux:=0;
-          for J := 0 to InfoTable.PrimaryKeys.Count - 1 do
-          begin
-            IdSpaceAux := Length('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]));
-            IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
-          end;
-
-          for J := 0 to InfoTable.PrimaryKeys.Count - 1 do
-          begin
-            SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
-          end;
-    }
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace:= 0;
     IdSpaceAux:=0;
@@ -1292,7 +1295,6 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-//      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
       SynEditDAO.Lines.Add(Ident + Ident + Ident + LPad(VarModel + '.' + InfoTable.AllFields[J].FieldName, ' ', IdSpace) + ' := ' + 'Qry.FieldByName(' +QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]) + ';');
     end;
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'ObjLst.Add(' + VarModel + ');');

@@ -21,7 +21,9 @@ type
   { TCRUDInfo }
   TCRUDInfo = class
   private
+    FAOwnerCreate: String;
     FClassQuery: String;
+    FClassSQL: String;
     FConnection: string;
     FCopyTableName: integer;
     FDirDAO: String;
@@ -38,6 +40,7 @@ type
     FQueryPropDatabase: String;
     FQueryPropTransaction: String;
     FReturnException: string;
+    FSelectWhereDefault: String;
     FUsesDefault: string;
     function GetHasReturnException: boolean;
   public
@@ -53,10 +56,14 @@ type
     property DirModel: String read FDirModel write FDirModel;
     property DirDAO: String read FDirDAO write FDirDAO;
     property ClassQuery: String read FClassQuery write FClassQuery;
+    property ClassSQL: String read FClassSQL write FClassSQL;
+    property SelectWhereDefault: String read FSelectWhereDefault write FSelectWhereDefault;
     property QueryPropDatabase: String read FQueryPropDatabase write FQueryPropDatabase;
     property QueryConDatabase: String read FQueryConDatabase write FQueryConDatabase;
     property QueryPropTransaction: String read FQueryPropTransaction write FQueryPropTransaction;
     property QueryConTransaction: String read FQueryConTransaction write FQueryConTransaction;
+    property AOwnerCreate: String read FAOwnerCreate write FAOwnerCreate;
+
     property HasReturnException: boolean read GetHasReturnException;
 
     property ProcInsert: TCRUDProc read FProcInsert write FProcInsert;
@@ -64,7 +71,6 @@ type
     property ProcDelete: TCRUDProc read FProcDelete write FProcDelete;
     property ProcGetRecord: TCRUDProc read FProcGetRecord write FProcGetRecord;
     property ProcListRecords: TCRUDProc read FProcListRecords write FProcListRecords;
-
   end;
 
 
@@ -112,12 +118,13 @@ begin
   CrudFile.WriteString('CRUD','DIRMODEL',DirModel);
   CrudFile.WriteString('CRUD','DIRDAO',DirDAO);
   CrudFile.WriteString('CRUD','CLASSQUERY', ClassQuery);
+  CrudFile.WriteString('CRUD','CLASSSQL', ClassSQL);
+  CrudFile.WriteString('CRUD','AOWNERCREATE', AOwnerCreate);
   CrudFile.WriteString('CRUD','QUERYCONDATABASE', QueryConDatabase);
   CrudFile.WriteString('CRUD','QUERYPROPDATABASE', QueryPropDatabase);
   CrudFile.WriteString('CRUD','QUERYCONTRANSACTION', QueryConTransaction);
   CrudFile.WriteString('CRUD','QUERYPROPTRANSACTION', QueryPropTransaction);
-
-
+  CrudFile.WriteString('CRUD','SELECTWHEREDEFAULT', SelectWhereDefault);
   CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);
@@ -152,6 +159,9 @@ begin
   ProcListRecords.Enable := CrudFile.ReadBool('CRUD','CREATELISTRECORDS',True);
   ProcListRecords.ProcName := CrudFile.ReadString('CRUD','PROCNAMELISTRECORDS', 'ListRecords');
   ClassQuery := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
+  ClassSQL := CrudFile.ReadString('CRUD','CLASSSQL', 'TzQuery');
+  AOwnerCreate := CrudFile.ReadString('CRUD','AOWNERCREATE', 'Nil');
+  SelectWhereDefault := CrudFile.ReadString('CRUD','SELECTWHEREDEFAULT', '');
   QueryConDatabase:= CrudFile.ReadString('CRUD','QUERYCONDATABASE', Connection);
   QueryPropDatabase:= CrudFile.ReadString('CRUD','QUERYPROPDATABASE', Connection);
   QueryConTransaction:= CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');

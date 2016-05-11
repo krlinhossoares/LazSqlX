@@ -1,105 +1,72 @@
 object FrmParams: TFrmParams
-  Left = 419
-  Height = 473
-  Top = 189
-  Width = 678
-  Caption = 'FrmParams'
-  ClientHeight = 473
-  ClientWidth = 678
-  LCLVersion = '1.4.2.0'
-  object pnTitulo: TPanel
+  Left = 325
+  Height = 315
+  Top = 414
+  Width = 533
+  BorderIcons = []
+  Caption = 'Params'
+  ClientHeight = 315
+  ClientWidth = 533
+  LCLVersion = '1.6.0.4'
+  object Panel1: TPanel
     Left = 0
-    Height = 40
+    Height = 265
     Top = 0
-    Width = 678
-    Align = alTop
-    Caption = 'Titulo'
+    Width = 533
+    Align = alClient
+    ClientHeight = 265
+    ClientWidth = 533
     TabOrder = 0
+    object SgParams: TValueListEditor
+      Left = 1
+      Height = 263
+      Top = 1
+      Width = 531
+      Align = alClient
+      DefaultColWidth = 250
+      FixedCols = 0
+      RowCount = 2
+      TabOrder = 0
+      TitleStyle = tsNative
+      Strings.Strings = (
+        ''
+      )
+      TitleCaptions.Strings = (
+        'Param'
+        'Value'
+      )
+      ColWidths = (
+        250
+        277
+      )
+    end
   end
-  object pnBottons: TPanel
+  object Panel2: TPanel
     Left = 0
     Height = 50
-    Top = 423
-    Width = 678
+    Top = 265
+    Width = 533
     Align = alBottom
-    Caption = 'Botões'
     ClientHeight = 50
-    ClientWidth = 678
+    ClientWidth = 533
     TabOrder = 1
-    object btCancel: TBitBtn
-      Left = 560
-      Height = 30
+    object Button1: TButton
+      Left = 336
+      Height = 35
       Top = 8
-      Width = 100
-      Cancel = True
-      DefaultCaption = True
-      Kind = bkCancel
-      ModalResult = 2
-      TabOrder = 0
-    end
-    object btOk: TBitBtn
-      Left = 432
-      Height = 30
-      Top = 8
-      Width = 100
-      Default = True
-      DefaultCaption = True
-      Kind = bkOK
+      Width = 90
+      Caption = '&OK'
       ModalResult = 1
-      TabOrder = 1
-    end
-  end
-  object pnBody: TPanel
-    Left = 0
-    Height = 383
-    Top = 40
-    Width = 678
-    Align = alClient
-    Caption = 'Body'
-    ClientHeight = 383
-    ClientWidth = 678
-    TabOrder = 2
-    object Drw: TDrawGrid
-      Left = 1
-      Height = 381
-      Top = 1
-      Width = 676
-      Align = alClient
-      AutoFillColumns = True
-      ColCount = 3
-      Columns = <      
-        item
-          Color = clBtnFace
-          Title.Alignment = taCenter
-          Title.Caption = 'Param'
-          Width = 224
-        end      
-        item
-          Color = clBtnFace
-          MaxSize = 200
-          Title.Alignment = taCenter
-          Title.Caption = 'Type'
-          Title.Color = clBtnFace
-          Width = 224
-        end      
-        item
-          Color = clWindow
-          MaxSize = 200
-          Title.Alignment = taCenter
-          Title.Caption = 'Value'
-          Width = 224
-        end>
-      DefaultColWidth = 200
-      ExtendedSelect = False
-      FixedCols = 0
-      RowCount = 1
       TabOrder = 0
-      OnClick = DrwClick
-      ColWidths = (
-        224
-        224
-        224
-      )
+    end
+    object Button2: TButton
+      Left = 432
+      Height = 35
+      Top = 8
+      Width = 90
+      Caption = '&Cancel'
+      ModalResult = 2
+      TabOrder = 1
     end
   end
 end

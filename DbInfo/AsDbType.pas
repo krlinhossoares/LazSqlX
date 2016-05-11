@@ -1093,7 +1093,7 @@ class function TAsDbUtils.DatabaseTypeAsString(DbType: TAsDatabaseType;
  ALowerCase: Boolean): string;
 begin
   case DbType of
-    dtFirebirdd : Result := 'firebirdd-2.5';
+    dtFirebirdd : Result := 'firebird-2.5';
     dtSQLite : Result := 'sqlite-3';
     dtMsSql: Result:='mssql';
     dtOracle:Result:='oracle';

@@ -1287,6 +1287,7 @@ var
   fks:TAsForeignKeys;
   fk:TAsForeignKey;
   lst:TStringList;
+  j:integer;
 begin
 
   if ConstraintInfos=nil then
@@ -1307,10 +1308,10 @@ begin
      ci.ForeignColumnName:=fk.Foreign_Column;
      try
       lst := TAsDbUtils.GetTextFields(FDBinfo,ci.ForeignTableName);
-      if lst.Count>0 then
+      for J:=0 to lst.Count-1 do
       begin
-        ci.ForeignFirstTextField:= lst[0];
-        ci.SelectFields.Add(lst[0]);
+        ci.ForeignFirstTextField:= lst[J];
+        ci.SelectFields.Add(lst[j]);
       end;
      finally
       lst.Free;

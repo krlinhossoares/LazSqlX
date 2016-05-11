@@ -5,8 +5,9 @@ unit UFrmCfgCRUD;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, SynHighlighterPas, SynEdit, Forms, Controls,
-  Graphics, Dialogs, StdCtrls, Spin, Buttons, EditBtn, IniFiles, AsCrudInfo;
+  Classes, SysUtils, FileUtil, SynHighlighterPas, SynEdit, SynHighlighterSQL,
+  Forms, Controls, Graphics, Dialogs, StdCtrls, Spin, Buttons, EditBtn,
+  ZSqlUpdate, IniFiles, AsCrudInfo;
 
 type
 
@@ -15,29 +16,32 @@ type
   TFrmCfgCRUD = class(TForm)
     btnAccept: TBitBtn;
     btnCancel: TBitBtn;
-    ChCkListRecords: TCheckBox;
+    ChCkDelete: TCheckBox;
     ChCkGetRecord: TCheckBox;
     ChCkInsert: TCheckBox;
-    ChCkDelete: TCheckBox;
+    ChCkListRecords: TCheckBox;
     ChCkUpdate: TCheckBox;
-    EdtConTransaction: TEdit;
-    EdtQryPropDatabase: TEdit;
+    EdtClassQuery: TEdit;
+    EdtClassSQL: TEdit;
+    EdtAownerCreate: TEdit;
     EdtConDatabase: TEdit;
+    EdtConDatabase1: TEdit;
+    EdtConnection: TEdit;
+    EdtConTransaction: TEdit;
+    EdtCopyTableName: TSpinEdit;
     EdtDirModel: TDirectoryEdit;
     EdtDirDAO: TDirectoryEdit;
     EdtException: TEdit;
-    EdtClassQuery: TEdit;
-    EdtProcNameInsert: TEdit;
-    EdtConnection: TEdit;
-    EdtProcNameUpdate: TEdit;
     EdtProcNameDelete: TEdit;
     EdtProcNameGetRecord: TEdit;
+    EdtProcNameInsert: TEdit;
     EdtProcNameListRecords: TEdit;
+    EdtProcNameUpdate: TEdit;
+    EdtQryPropDatabase: TEdit;
     EdtQryPropTransaction: TEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     Label1: TLabel;
-    EdtCopyTableName: TSpinEdit;
     Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
@@ -45,25 +49,32 @@ type
     Label2: TLabel;
     Label20: TLabel;
     Label21: TLabel;
+    Label22: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
-    LbProcListRecord: TLabel;
-    LbProcInsert: TLabel;
     LbProcDelete: TLabel;
     LbProcGetRecord: TLabel;
+    LbProcInsert: TLabel;
+    LbProcListRecord: TLabel;
     LbProcUpdate: TLabel;
-    MmUses: TMemo;
     MmExceptionCode: TSynEdit;
+    MmSelectWhereDefault: TSynEdit;
+    MmUses: TMemo;
     SynPasSyn1: TSynPasSyn;
+    SynSQLSyn1: TSynSQLSyn;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure EdtDirDAOAcceptDirectory(Sender: TObject; var Value: String);
     procedure EdtDirModelAcceptDirectory(Sender: TObject; var Value: String);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure MmExceptionCodeChange(Sender: TObject);
   private
     { private declarations }
   public
@@ -113,9 +124,17 @@ begin
   EdtQryPropDatabase.Text:= CrudInfo.QueryPropDatabase;
   EdtConTransaction.Text:= CrudInfo.QueryConTransaction;
   EdtQryPropTransaction.Text:= CrudInfo.QueryPropTransaction;
-  EdtClassQuery.Text:= CrudInfo.ClassQuery;;
+  EdtClassQuery.Text:= CrudInfo.ClassQuery;
+  EdtClassSQL.Text:= CrudInfo.ClassSQL;
+  EdtAownerCreate.Text:= CrudInfo.AOwnerCreate;
+  MmSelectWhereDefault.lines.text := CrudInfo.SelectWhereDefault;
 
   MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
+end;
+
+procedure TFrmCfgCRUD.MmExceptionCodeChange(Sender: TObject);
+begin
+
 end;
 
 procedure TFrmCfgCRUD.btnCancelClick(Sender: TObject);
@@ -165,8 +184,10 @@ begin
   CrudInfo.QueryConTransaction  := EdtConTransaction.Text;
   CrudInfo.QueryPropDatabase    := EdtQryPropDatabase.Text;
   CrudInfo.QueryConDatabase     := EdtConDatabase.Text;
-  CrudInfo.ClassQuery:= EdtClassQuery.Text;
-
+  CrudInfo.ClassQuery := EdtClassQuery.Text;
+  CrudInfo.ClassSQL   := EdtClassSQL.Text;
+  CrudInfo.AOwnerCreate:= EdtAownerCreate.Text;
+  CrudInfo.SelectWhereDefault := MmSelectWhereDefault.lines.text;
   CrudInfo.SaveToFile(GetCurrentDir+ PathDelim+'CRUD.ini');
   Close;
 end;

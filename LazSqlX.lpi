@@ -453,7 +453,7 @@
         <ComponentName Value="FrmParams"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="uFrmParams"/>
+        <UnitName Value="UFrmParams"/>
       </Unit59>
     </Units>
   </ProjectOptions>
