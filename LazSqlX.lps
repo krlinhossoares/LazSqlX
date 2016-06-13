@@ -534,8 +534,8 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="152"/>
-        <CursorPos Y="169"/>
+        <TopLine Value="55"/>
+        <CursorPos X="31" Y="85"/>
         <UsageCount Value="119"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -1032,133 +1032,132 @@
       </Unit121>
       <Unit122>
         <Filename Value="C:\lazarus\lcl\include\customcombobox.inc"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="892"/>
         <CursorPos Y="913"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
       </Unit122>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="937" TopLine="917"/>
+        <Caret Line="932" TopLine="917"/>
       </Position1>
       <Position2>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="932" TopLine="917"/>
+        <Caret Line="934" TopLine="917"/>
       </Position2>
       <Position3>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="934" TopLine="917"/>
+        <Caret Line="943" TopLine="917"/>
       </Position3>
       <Position4>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="943" TopLine="917"/>
+        <Caret Line="947" Column="91" TopLine="919"/>
       </Position4>
       <Position5>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="947" Column="91" TopLine="919"/>
+        <Caret Line="932" TopLine="919"/>
       </Position5>
       <Position6>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="932" TopLine="919"/>
+        <Caret Line="934" TopLine="919"/>
       </Position6>
       <Position7>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="934" TopLine="919"/>
+        <Caret Line="943" TopLine="919"/>
       </Position7>
       <Position8>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="943" TopLine="919"/>
+        <Caret Line="946" Column="9" TopLine="919"/>
       </Position8>
       <Position9>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="946" Column="9" TopLine="919"/>
+        <Caret Line="927" TopLine="919"/>
       </Position9>
       <Position10>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="927" TopLine="919"/>
+        <Caret Line="932" TopLine="919"/>
       </Position10>
       <Position11>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="932" TopLine="919"/>
+        <Caret Line="1279" TopLine="1265"/>
       </Position11>
       <Position12>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1279" TopLine="1265"/>
+        <Caret Line="829" TopLine="811"/>
       </Position12>
       <Position13>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="829" TopLine="811"/>
+        <Caret Line="830" TopLine="811"/>
       </Position13>
       <Position14>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="830" TopLine="811"/>
+        <Caret Line="831" TopLine="811"/>
       </Position14>
       <Position15>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="831" TopLine="811"/>
+        <Caret Line="832" TopLine="817"/>
       </Position15>
       <Position16>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="832" TopLine="817"/>
+        <Caret Line="837" TopLine="817"/>
       </Position16>
       <Position17>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="837" TopLine="817"/>
+        <Caret Line="838" TopLine="817"/>
       </Position17>
       <Position18>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="838" TopLine="817"/>
+        <Caret Line="839" TopLine="817"/>
       </Position18>
       <Position19>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="839" TopLine="817"/>
+        <Filename Value="DbInfo\AsTableInfo.pas"/>
+        <Caret Line="621" TopLine="603"/>
       </Position19>
       <Position20>
         <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="621" TopLine="603"/>
+        <Caret Line="622" TopLine="603"/>
       </Position20>
       <Position21>
-        <Filename Value="DbInfo\AsTableInfo.pas"/>
-        <Caret Line="622" TopLine="603"/>
+        <Filename Value="Forms\UFrmModel.pas"/>
+        <Caret Line="841" TopLine="817"/>
       </Position21>
       <Position22>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="841" TopLine="817"/>
+        <Caret Line="842" Column="56" TopLine="817"/>
       </Position22>
       <Position23>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="842" Column="56" TopLine="817"/>
+        <Caret Line="843" TopLine="817"/>
       </Position23>
       <Position24>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="843" TopLine="817"/>
+        <Caret Line="1279" Column="22" TopLine="1266"/>
       </Position24>
       <Position25>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1279" Column="22" TopLine="1266"/>
+        <Caret Line="843" Column="88" TopLine="827"/>
       </Position25>
       <Position26>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="843" Column="88" TopLine="827"/>
+        <Caret Line="1279" TopLine="1262"/>
       </Position26>
       <Position27>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1279" TopLine="1262"/>
+        <Caret Line="841" TopLine="823"/>
       </Position27>
       <Position28>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="841" TopLine="823"/>
+        <Caret Line="1280" Column="26" TopLine="1266"/>
       </Position28>
       <Position29>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1280" Column="26" TopLine="1266"/>
+        <Caret Line="844" Column="24" TopLine="829"/>
       </Position29>
       <Position30>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="844" Column="24" TopLine="829"/>
+        <Filename Value="Forms\UFrmCfgCRUD.pas"/>
+        <Caret Line="169" TopLine="152"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
