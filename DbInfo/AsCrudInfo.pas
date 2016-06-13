@@ -188,22 +188,22 @@ begin
   AOwnerCreate := CrudFile.ReadString('CRUD','AOWNERCREATE', 'Nil');
   {Propety Query Select - Get and List}
   ClassQuery := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
-  QueryConDatabase:= CrudFile.ReadString('CRUD','QUERYCONDATABASE', Connection);
-  QueryPropDatabase:= CrudFile.ReadString('CRUD','QUERYPROPDATABASE', Connection);
+  QueryConDatabase:= CrudFile.ReadString('CRUD','QUERYCONDATABASE', 'Con');
+  QueryPropDatabase:= CrudFile.ReadString('CRUD','QUERYPROPDATABASE', 'Connection');
   QueryConTransaction:= CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');
   QueryPropTransaction:= CrudFile.ReadString('CRUD','QUERYPROPTRANSACTION', '');
-  QueryCommand:= CrudFile.ReadString('CRUD','QUERYCOMMAND', '');
+  QueryCommand:= CrudFile.ReadString('CRUD','QUERYCOMMAND', 'Open');
   SelectWhereDefault := CrudFile.ReadString('CRUD','SELECTWHEREDEFAULT', '');
 
   {--------------------------------------}
 
   {Propety Query Insert, Update and Delete functions}
   ClassSQL := CrudFile.ReadString('CRUD','CLASSSQL', 'TzQuery');
-  SQLConDatabase:= CrudFile.ReadString('CRUD','SQLCONDATABASE', Connection);
-  SQLPropDatabase:= CrudFile.ReadString('CRUD','SQLPROPDATABASE', Connection);
+  SQLConDatabase:= CrudFile.ReadString('CRUD','SQLCONDATABASE', 'Con');
+  SQLPropDatabase:= CrudFile.ReadString('CRUD','SQLPROPDATABASE', 'Connection');
   SQLConTransaction:= CrudFile.ReadString('CRUD','SQLCONTRANSACTION', '');
   SQLPropTransaction:= CrudFile.ReadString('CRUD','SQLPROPTRANSACTION', '');
-  SQLCommand:= CrudFile.ReadString('CRUD','SQLCOMMAND', '');
+  SQLCommand:= CrudFile.ReadString('CRUD','SQLCOMMAND', 'ExecSQL');
   {--------------------------------------}
 
 

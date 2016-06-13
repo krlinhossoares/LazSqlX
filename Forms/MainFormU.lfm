@@ -7260,8 +7260,16 @@ object MainForm: TMainForm
   object ZConnection1: TZConnection
     ControlsCodePage = cCP_UTF8
     AutoEncodeStrings = False
+    Properties.Strings = (
+      'AutoEncodeStrings='
+    )
     Port = 0
     left = 369
     top = 49
+  end
+  object ZQuery1: TZQuery
+    Params = <>
+    left = 530
+    top = 51
   end
 end

@@ -1,7 +1,7 @@
 object FrmCfgCRUD: TFrmCfgCRUD
-  Left = 225
+  Left = 221
   Height = 531
-  Top = 263
+  Top = 234
   Width = 812
   Caption = 'Configuration CRUD'
   ClientHeight = 531
