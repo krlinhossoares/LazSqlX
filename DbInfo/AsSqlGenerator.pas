@@ -350,7 +350,6 @@ begin
 
   r := TStringList.Create;
 
-
   tmpSelect := TStringList.Create;
   tmpInsert := TStringList.Create;
   tmpUpdate := TStringList.Create;

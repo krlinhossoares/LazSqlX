@@ -35,12 +35,18 @@ type
     FProcInsert: TCRUDProc;
     FProcListRecords: TCRUDProc;
     FProcUpdate: TCRUDProc;
+    FQueryCommand: String;
     FQueryConDatabase: String;
     FQueryConTransaction: String;
     FQueryPropDatabase: String;
     FQueryPropTransaction: String;
     FReturnException: string;
     FSelectWhereDefault: String;
+    FSQLCommand: String;
+    FSQLConDatabase: String;
+    FSQLConTransaction: String;
+    FSQLPropDatabase: String;
+    FSQLPropTransaction: String;
     FUsesDefault: string;
     function GetHasReturnException: boolean;
   public
@@ -62,6 +68,14 @@ type
     property QueryConDatabase: String read FQueryConDatabase write FQueryConDatabase;
     property QueryPropTransaction: String read FQueryPropTransaction write FQueryPropTransaction;
     property QueryConTransaction: String read FQueryConTransaction write FQueryConTransaction;
+    property QueryCommand: String read FQueryCommand write FQueryCommand;
+
+    property SQLPropDatabase: String read FSQLPropDatabase write FSQLPropDatabase;
+    property SQLConDatabase: String read FSQLConDatabase write FSQLConDatabase;
+    property SQLPropTransaction: String read FSQLPropTransaction write FSQLPropTransaction;
+    property SQLConTransaction: String read FSQLConTransaction write FSQLConTransaction;
+    property SQLCommand: String read FSQLCommand write FSQLCommand;
+
     property AOwnerCreate: String read FAOwnerCreate write FAOwnerCreate;
 
     property HasReturnException: boolean read GetHasReturnException;
@@ -117,14 +131,27 @@ begin
   CrudFile.WriteString('CRUD','EXCEPTIONCODE', GetCurrentDir+ PathDelim+'CodeException.ini');
   CrudFile.WriteString('CRUD','DIRMODEL',DirModel);
   CrudFile.WriteString('CRUD','DIRDAO',DirDAO);
-  CrudFile.WriteString('CRUD','CLASSQUERY', ClassQuery);
-  CrudFile.WriteString('CRUD','CLASSSQL', ClassSQL);
   CrudFile.WriteString('CRUD','AOWNERCREATE', AOwnerCreate);
+  {Propety Query Select - Get and List}
+  CrudFile.WriteString('CRUD','CLASSQUERY', ClassQuery);
   CrudFile.WriteString('CRUD','QUERYCONDATABASE', QueryConDatabase);
   CrudFile.WriteString('CRUD','QUERYPROPDATABASE', QueryPropDatabase);
   CrudFile.WriteString('CRUD','QUERYCONTRANSACTION', QueryConTransaction);
   CrudFile.WriteString('CRUD','QUERYPROPTRANSACTION', QueryPropTransaction);
   CrudFile.WriteString('CRUD','SELECTWHEREDEFAULT', SelectWhereDefault);
+  CrudFile.WriteString('CRUD','QUERYCOMMAND', QueryCommand);
+
+  {--------------------------------------}
+
+  {Propety Query Insert, Update and Delete functions}
+  CrudFile.WriteString('CRUD','CLASSSQL', ClassSQL);
+  CrudFile.WriteString('CRUD','SQLCONDATABASE', SQLConDatabase);
+  CrudFile.WriteString('CRUD','SQLPROPDATABASE', SQLPropDatabase);
+  CrudFile.WriteString('CRUD','SQLCONTRANSACTION', SQLConTransaction);
+  CrudFile.WriteString('CRUD','SQLPROPTRANSACTION', SQLPropTransaction);
+  CrudFile.WriteString('CRUD','SQLCOMMAND', SQLCommand);
+  {--------------------------------------}
+
   CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);
@@ -158,14 +185,27 @@ begin
 
   ProcListRecords.Enable := CrudFile.ReadBool('CRUD','CREATELISTRECORDS',True);
   ProcListRecords.ProcName := CrudFile.ReadString('CRUD','PROCNAMELISTRECORDS', 'ListRecords');
-  ClassQuery := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
-  ClassSQL := CrudFile.ReadString('CRUD','CLASSSQL', 'TzQuery');
   AOwnerCreate := CrudFile.ReadString('CRUD','AOWNERCREATE', 'Nil');
-  SelectWhereDefault := CrudFile.ReadString('CRUD','SELECTWHEREDEFAULT', '');
+  {Propety Query Select - Get and List}
+  ClassQuery := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
   QueryConDatabase:= CrudFile.ReadString('CRUD','QUERYCONDATABASE', Connection);
   QueryPropDatabase:= CrudFile.ReadString('CRUD','QUERYPROPDATABASE', Connection);
   QueryConTransaction:= CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');
   QueryPropTransaction:= CrudFile.ReadString('CRUD','QUERYPROPTRANSACTION', '');
+  QueryCommand:= CrudFile.ReadString('CRUD','QUERYCOMMAND', '');
+  SelectWhereDefault := CrudFile.ReadString('CRUD','SELECTWHEREDEFAULT', '');
+
+  {--------------------------------------}
+
+  {Propety Query Insert, Update and Delete functions}
+  ClassSQL := CrudFile.ReadString('CRUD','CLASSSQL', 'TzQuery');
+  SQLConDatabase:= CrudFile.ReadString('CRUD','SQLCONDATABASE', Connection);
+  SQLPropDatabase:= CrudFile.ReadString('CRUD','SQLPROPDATABASE', Connection);
+  SQLConTransaction:= CrudFile.ReadString('CRUD','SQLCONTRANSACTION', '');
+  SQLPropTransaction:= CrudFile.ReadString('CRUD','SQLPROPTRANSACTION', '');
+  SQLCommand:= CrudFile.ReadString('CRUD','SQLCOMMAND', '');
+  {--------------------------------------}
+
 
   if FileExists(GetCurrentDir+ PathDelim+'CodeException.ini') then
     ExceptionCode.LoadFromFile(GetCurrentDir+ PathDelim+'CodeException.ini');

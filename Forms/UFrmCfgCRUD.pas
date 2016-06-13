@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynHighlighterPas, SynEdit, SynHighlighterSQL,
   Forms, Controls, Graphics, Dialogs, StdCtrls, Spin, Buttons, EditBtn,
-  ZSqlUpdate, IniFiles, AsCrudInfo;
+  ComCtrls, ZSqlUpdate, IniFiles, AsCrudInfo;
 
 type
 
@@ -21,13 +21,17 @@ type
     ChCkInsert: TCheckBox;
     ChCkListRecords: TCheckBox;
     ChCkUpdate: TCheckBox;
-    EdtClassQuery: TEdit;
-    EdtClassSQL: TEdit;
     EdtAownerCreate: TEdit;
+    EdtClassQuery: TEdit;
+    EdtClassQueryOpenCommand: TEdit;
+    EdtClassSQLExecComand: TEdit;
+    EdtClassSQL: TEdit;
     EdtConDatabase: TEdit;
     EdtConDatabase1: TEdit;
+    EdtConDatabaseSQL: TEdit;
     EdtConnection: TEdit;
     EdtConTransaction: TEdit;
+    EdtConTransactionSQL: TEdit;
     EdtCopyTableName: TSpinEdit;
     EdtDirModel: TDirectoryEdit;
     EdtDirDAO: TDirectoryEdit;
@@ -38,9 +42,12 @@ type
     EdtProcNameListRecords: TEdit;
     EdtProcNameUpdate: TEdit;
     EdtQryPropDatabase: TEdit;
+    EdtSQLPropDatabase: TEdit;
     EdtQryPropTransaction: TEdit;
-    GroupBox1: TGroupBox;
+    EdtSQLPropTransaction: TEdit;
     GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
+    GroupBox4: TGroupBox;
     Label1: TLabel;
     Label16: TLabel;
     Label17: TLabel;
@@ -53,6 +60,12 @@ type
     Label23: TLabel;
     Label24: TLabel;
     Label25: TLabel;
+    Label26: TLabel;
+    Label27: TLabel;
+    Label28: TLabel;
+    Label29: TLabel;
+    Label30: TLabel;
+    Label31: TLabel;
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
@@ -66,15 +79,16 @@ type
     MmExceptionCode: TSynEdit;
     MmSelectWhereDefault: TSynEdit;
     MmUses: TMemo;
+    PageControl1: TPageControl;
     SynPasSyn1: TSynPasSyn;
     SynSQLSyn1: TSynSQLSyn;
+    TabSheet1: TTabSheet;
+    TabSheet2: TTabSheet;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
-    procedure EdtDirDAOAcceptDirectory(Sender: TObject; var Value: String);
     procedure EdtDirModelAcceptDirectory(Sender: TObject; var Value: String);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure MmExceptionCodeChange(Sender: TObject);
   private
     { private declarations }
   public
@@ -120,32 +134,33 @@ begin
 
   ChCkListRecords.Checked    := CrudInfo.ProcListRecords.Enable;
   EdtProcNameListRecords.Text:= CrudInfo.ProcListRecords.ProcName;
+
+  {Propety Query Select - Get and List}
+  EdtClassQuery.Text:= CrudInfo.ClassQuery;
   EdtConDatabase.Text:= CrudInfo.QueryConDatabase;
   EdtQryPropDatabase.Text:= CrudInfo.QueryPropDatabase;
   EdtConTransaction.Text:= CrudInfo.QueryConTransaction;
   EdtQryPropTransaction.Text:= CrudInfo.QueryPropTransaction;
-  EdtClassQuery.Text:= CrudInfo.ClassQuery;
+  EdtClassQueryOpenCommand.Text := CrudInfo.QueryCommand;
+  {--------------------------------------}
+  {Propety Query Insert, Update and Delete functions}
   EdtClassSQL.Text:= CrudInfo.ClassSQL;
+  EdtConDatabaseSQL.Text:= CrudInfo.SQLConDatabase;
+  EdtSQLPropDatabase.Text:= CrudInfo.SQLPropDatabase;
+  EdtConTransactionSQL.Text:= CrudInfo.SQLConTransaction;
+  EdtSQLPropTransaction.Text:= CrudInfo.SQLPropTransaction;
+  EdtClassSQLExecComand.Text := CrudInfo.SQLCommand;
+  {--------------------------------------}
+
   EdtAownerCreate.Text:= CrudInfo.AOwnerCreate;
   MmSelectWhereDefault.lines.text := CrudInfo.SelectWhereDefault;
 
   MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
 end;
 
-procedure TFrmCfgCRUD.MmExceptionCodeChange(Sender: TObject);
-begin
-
-end;
-
 procedure TFrmCfgCRUD.btnCancelClick(Sender: TObject);
 begin
   Close;
-end;
-
-procedure TFrmCfgCRUD.EdtDirDAOAcceptDirectory(Sender: TObject;
-  var Value: String);
-begin
-
 end;
 
 procedure TFrmCfgCRUD.EdtDirModelAcceptDirectory(Sender: TObject;
@@ -180,12 +195,23 @@ begin
   CrudInfo.DirModel := EdtDirModel.Text;
   CrudInfo.DirDAO   := EdtDirDAO.Text;
 
-  CrudInfo.QueryPropTransaction := EdtQryPropTransaction.Text;
-  CrudInfo.QueryConTransaction  := EdtConTransaction.Text;
-  CrudInfo.QueryPropDatabase    := EdtQryPropDatabase.Text;
+  {Propety Query Select - Get and List}
+  CrudInfo.ClassQuery           := EdtClassQuery.Text;
   CrudInfo.QueryConDatabase     := EdtConDatabase.Text;
-  CrudInfo.ClassQuery := EdtClassQuery.Text;
-  CrudInfo.ClassSQL   := EdtClassSQL.Text;
+  CrudInfo.QueryPropDatabase    := EdtQryPropDatabase.Text;
+  CrudInfo.QueryConTransaction  := EdtConTransaction.Text;
+  CrudInfo.QueryPropTransaction := EdtQryPropTransaction.Text;
+  CrudInfo.QueryCommand         := EdtClassQueryOpenCommand.Text;
+  {--------------------------------------}
+  {Propety Query Insert, Update and Delete functions}
+  CrudInfo.ClassSQL           := EdtClassSQL.Text;
+  CrudInfo.SQLConDatabase     := EdtConDatabaseSQL.Text;
+  CrudInfo.SQLPropDatabase    := EdtSQLPropDatabase.Text;
+  CrudInfo.SQLConTransaction  := EdtConTransactionSQL.Text;
+  CrudInfo.SQLPropTransaction := EdtSQLPropTransaction.Text;
+  CrudInfo.SQLCommand         := EdtClassSQLExecComand.Text;
+  {--------------------------------------}
+
   CrudInfo.AOwnerCreate:= EdtAownerCreate.Text;
   CrudInfo.SelectWhereDefault := MmSelectWhereDefault.lines.text;
   CrudInfo.SaveToFile(GetCurrentDir+ PathDelim+'CRUD.ini');
