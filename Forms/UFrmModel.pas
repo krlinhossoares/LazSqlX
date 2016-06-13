@@ -268,9 +268,9 @@ begin
         StrFunctionNameInsert := StrFunctionNameInsert + WithVar(VarModel) + ': ' + ClassNameModel;
 
       if (StrFunctionNameInsert <> InfoCrud.ProcInsert.ProcName + '(') and (InfoCrud.HasReturnException)then
-        StrFunctionNameInsert := StrFunctionNameInsert + ';' + InfoCrud.ReturnException
+        StrFunctionNameInsert := StrFunctionNameInsert + ';' + WithVar(InfoCrud.ReturnException)
       else
-        StrFunctionNameInsert := StrFunctionNameInsert + InfoCrud.ReturnException;
+        StrFunctionNameInsert := StrFunctionNameInsert + WithVar(InfoCrud.ReturnException);
 
       SynEditModel.Lines.Add(Ident + Ident +'function ' +StrFunctionNameInsert+'):Boolean;');
       StrFunctionNameInsert := 'function ' + ClassNameModel + '.' + StrFunctionNameInsert + '):Boolean;';
@@ -294,9 +294,9 @@ begin
       StrFunctionNameUpdate := StrFunctionNameUpdate + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionNameUpdate <> InfoCrud.ProcUpdate.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionNameUpdate := StrFunctionNameUpdate + ';' + InfoCrud.ReturnException
+      StrFunctionNameUpdate := StrFunctionNameUpdate + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionNameUpdate := StrFunctionNameUpdate + InfoCrud.ReturnException;
+      StrFunctionNameUpdate := StrFunctionNameUpdate + WithVar(InfoCrud.ReturnException);
 
     SynEditModel.Lines.Add(Ident + Ident +'function ' + StrFunctionNameUpdate+ '):Boolean;');
     StrFunctionNameUpdate := 'function ' + ClassNameModel + '.' +StrFunctionNameUpdate + '):Boolean;';
@@ -322,9 +322,9 @@ begin
       StrFunctionNameDelete := StrFunctionNameDelete + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionNameDelete <> InfoCrud.ProcDelete.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionNameDelete := StrFunctionNameDelete + ';' + InfoCrud.ReturnException
+      StrFunctionNameDelete := StrFunctionNameDelete + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionNameDelete := StrFunctionNameDelete + InfoCrud.ReturnException;
+      StrFunctionNameDelete := StrFunctionNameDelete + WithVar(InfoCrud.ReturnException);
 
     SynEditModel.Lines.Add(Ident + Ident +'function ' +  StrFunctionNameDelete+ '):Boolean;');
     StrFunctionNameDelete := 'function ' + ClassNameModel + '.' + StrFunctionNameDelete + '):Boolean;';
@@ -348,9 +348,9 @@ begin
       StrFunctionNameGet := StrFunctionNameGet + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionNameGet <> InfoCrud.ProcGetRecord.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionNameGet := StrFunctionNameGet + ';' + InfoCrud.ReturnException
+      StrFunctionNameGet := StrFunctionNameGet + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionNameGet := StrFunctionNameGet + InfoCrud.ReturnException;
+      StrFunctionNameGet := StrFunctionNameGet + WithVar(InfoCrud.ReturnException);
 
     SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameGet+'):Boolean;');
     StrFunctionNameGet := 'function ' + ClassNameModel + '.' +StrFunctionNameGet + '):Boolean;';
@@ -371,9 +371,9 @@ begin
       StrFunctionNameList := StrFunctionNameList + ' out ObjLst: TObjectList; ' + 'WhereSQL: String';
 
     if (StrFunctionNameList <> InfoCrud.ProcListRecords.ProcName + '(') and (InfoCrud.HasReturnException)then
-      StrFunctionNameList := StrFunctionNameList + ';' + InfoCrud.ReturnException
+      StrFunctionNameList := StrFunctionNameList + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionNameList := StrFunctionNameList + InfoCrud.ReturnException;
+      StrFunctionNameList := StrFunctionNameList + WithVar(InfoCrud.ReturnException);
 
     SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameList+ '):Boolean;');
     StrFunctionNameList := 'function ' + ClassNameModel + '.' +StrFunctionNameList + '):Boolean;';
@@ -608,12 +608,14 @@ end;
 
 function TFrmModel.WithVar(s: string): string;
 begin
-  result := 'var ' + Trim(StringReplace(S, 'var ', '', [rfIgnoreCase, rfReplaceAll]));
+  result := '';
+  if Trim(S) <> '' then
+  result := ' var ' + Trim(StringReplace(S, 'var ', '', [rfIgnoreCase, rfReplaceAll]));
 end;
 
 function TFrmModel.WithOut(s: string): string;
 begin
-  result := 'out ' + Trim(StringReplace(S, 'out ', '', [rfIgnoreCase, rfReplaceAll]));
+  result := ' out ' + Trim(StringReplace(S, 'out ', '', [rfIgnoreCase, rfReplaceAll]));
 end;
 
 procedure TFrmModel.GeneratorDAOClass;
@@ -677,9 +679,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' + InfoCrud.ProcInsert.ProcName + '(') and (InfoCrud.HasReturnException)then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     StrFunctionName := StrFunctionName + '):Boolean;';
     SynEditDAO.Lines.Add(Ident + Ident +StrFunctionName);
@@ -699,9 +701,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + InfoCrud.ProcUpdate.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     StrFunctionName := StrFunctionName + '):Boolean;';
     SynEditDAO.Lines.Add(Ident + Ident +StrFunctionName);
@@ -722,9 +724,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' +InfoCrud.ProcDelete.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     StrFunctionname := StrFunctionName + '):Boolean;';
     SynEditDAO.Lines.Add(Ident + Ident +StrFunctionName);
@@ -745,9 +747,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + InfoCrud.ProcGetRecord.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     StrFunctionName := StrFunctionName + '):Boolean;';
 
@@ -770,9 +772,9 @@ begin
 
     if (StrFunctionName <> 'function ' + InfoCrud.ProcListRecords.ProcName + '(') and
       (Trim(InfoCrud.ReturnException) <> '')then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     StrFunctionName := StrFunctionName + '):Boolean;';
 
@@ -836,12 +838,10 @@ begin
         for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
           vAux := vAux + ifThen(I = 0, '', ', ') + InfoTable.PrimaryKeys.Items[I].FieldName;
 
-        Result.Add(' SELECT ' + vAux + ' FROM ' + InfoTable.Tablename + ' ');
+        Result.Add(' SELECT * FROM ' + InfoTable.Tablename + ' ');
         if Trim(InfoCrud.SelectWhereDefault) <> '' then
-          Result.Add(InfoCrud.SelectWhereDefault);
+          Result.Add(StringReplace(InfoCrud.SelectWhereDefault,'''','',[rfReplaceAll]));
       end;
-
-
       qtSelectItem: //Retorna um unico registro de acordo com sua chave (Retorna todos os campos)
       begin
 
@@ -941,7 +941,7 @@ begin
       if J = StrList.Count - 1 then //Ultima linha
         SynEditDAO.Lines.Add(StringOfChar(' ', 16) + QuotedStr(Alinha(StrList.Strings[J])) + ');')
       else //Demais registros
-        SynEditDAO.Lines.Add(StringOfChar(' ', 16) + QuotedStr(Alinha(StrList.Strings[J])) + '#13+');
+        SynEditDAO.Lines.Add(StringOfChar(' ', 16) + QuotedStr(Alinha(StrList.Strings[J])) + #13'+');
     end;
   end;
   SynEditDAO.Lines.Add('');
@@ -970,9 +970,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' + InfoCrud.ProcInsert.ProcName + '(') and (InfoCrud.HasReturnException)then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
     SynEditDAO.Lines.Add('Var');
@@ -998,7 +998,7 @@ begin
       SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.ExecSQL;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
@@ -1038,9 +1038,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' + InfoCrud.ProcUpdate.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + ';' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
 
@@ -1067,7 +1067,7 @@ begin
       SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.ExecSQL;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
@@ -1106,9 +1106,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' +InfoCrud.ProcDelete.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + '; ' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + '; ' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
 
@@ -1135,7 +1135,7 @@ begin
       SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.ExecSQL;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
     SynEditDAO.Lines.Add(Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
@@ -1174,9 +1174,9 @@ begin
       StrFunctionName := StrFunctionName + WithVar(VarModel) + ': ' + ClassNameModel;
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' + InfoCrud.ProcGetRecord.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + ';' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
 
@@ -1203,7 +1203,7 @@ begin
       SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.Open;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
     SynEditDAO.Lines.Add(Ident + Ident + 'if not Qry.isEmpty then ');
     SynEditDAO.Lines.Add(Ident + Ident + 'begin');
 
@@ -1246,7 +1246,7 @@ var
   J, IdSpaceAux, IdSpace: integer;
   StrFunctionName: String;
 begin
-  if InfoCrud.ProcListRecords.Enable then
+   if InfoCrud.ProcListRecords.Enable then
   begin
     SynEditDAO.Lines.Add(ident + '');
 
@@ -1262,9 +1262,9 @@ begin
       StrFunctionName := StrFunctionName + ' out ObjLst: TObjectList; ' + 'WhereSQL: String';
 
     if (StrFunctionName <> 'function ' + ClassNameDAO + '.' + InfoCrud.ProcListRecords.ProcName + '(') and (InfoCrud.HasReturnException) then
-      StrFunctionName := StrFunctionName + ';' + InfoCrud.ReturnException
+      StrFunctionName := StrFunctionName + ';' + WithVar(InfoCrud.ReturnException)
     else
-      StrFunctionName := StrFunctionName + InfoCrud.ReturnException;
+      StrFunctionName := StrFunctionName + WithVar(InfoCrud.ReturnException);
 
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
 
@@ -1279,7 +1279,7 @@ begin
 
     SynEditDAO.Lines.Add(Ident + Ident + 'if Trim(WhereSQL) <> ' + QuotedStr('') + ' then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(WhereSQL);');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.Open;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
     SynEditDAO.Lines.Add(Ident + Ident + 'Qry.First;');
     SynEditDAO.Lines.Add(Ident + Ident + 'While not Qry.Eof do ');
     SynEditDAO.Lines.Add(Ident + Ident + 'begin');
