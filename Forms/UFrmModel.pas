@@ -194,7 +194,7 @@ procedure TFrmModel.GeneratorPascalClass;
 var
   I: integer;
   MaxField, MaxType, MaxVar: integer;
-  StrFunctionNameInsert, StrFunctionNameUpdate, StrFunctionNameDelete, StrFunctionNameGet, StrFunctionNameList: String;
+  StrFunctionNameInsert, StrFunctionNameUpdate, StrFunctionNameDelete, StrFunctionNameGet, StrFunctionNameList, vAux: String;
 begin
   MaxField := 0;
   MaxType := 0;
@@ -380,6 +380,16 @@ begin
 
   end;
 
+  //Metodos Create...
+  SynEditModel.Lines.Add(Ident + Ident + '//Metodos Construtores e Destrutores');
+  SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create;' + ifthen(InfoTable.PrimaryKeys.Count > 0, ' Overload; ',''));
+
+  for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
+    SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+InfoTable.PrimaryKeys.Items[I].FieldName +': '+InfoTable.PrimaryKeys.Items[i].FieldType +'); Overload; ');
+
+  SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; ');
+
+
   SynEditModel.Lines.Add(ident + 'end; ');
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('implementation');
@@ -388,7 +398,34 @@ begin
   SynEditModel.Lines.Add(Ident + UnitNameDAO + ';');
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Var ');
-  SynEditModel.Lines.Add(ident + VarDAO + ':' + ClassNameDAO + ';');
+  SynEditModel.Lines.Add(ident + VarDAO + ': ' + ClassNameDAO + ';');
+
+  //Implementacao dos metodos Construtores e Destrutores
+  SynEditModel.Lines.Add(ident + '');
+  SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create;');
+  SynEditModel.Lines.Add('begin');
+  SynEditModel.Lines.Add(ident + VarDAO + ' := ' + ClassNameDAO + '.' + 'Create;');
+  SynEditModel.Lines.Add('end');
+
+  for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
+  begin
+    SynEditModel.Lines.Add(ident + '');
+    SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoTable.PrimaryKeys.Items[I].FieldName +': '+InfoTable.PrimaryKeys.Items[i].FieldType +');');
+    SynEditModel.Lines.Add('begin');
+    SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
+    SynEditModel.Lines.Add(ident + 'Self'+'.'+ InfoTable.PrimaryKeys.Items[I].FieldName +' := ' + InfoTable.PrimaryKeys.Items[I].FieldName +';');
+    SynEditModel.Lines.Add('end');
+  end;
+
+  SynEditModel.Lines.Add(ident + '');
+  SynEditModel.Lines.Add('Destructor ' + ClassNameModel + '.' + 'Destroy;');
+  SynEditModel.Lines.Add('begin');
+  SynEditModel.Lines.Add(ident + 'FreeAndNil('+ VarDAO + ');');
+  SynEditModel.Lines.Add('end');
+
+  //SynEditModel.Lines.Add(ClassNameModel + 'Destructor Destroy; ');
+  //end;
+
 
   //Gerando Functions Code
   if InfoCrud.ProcInsert.Enable then
