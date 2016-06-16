@@ -386,7 +386,7 @@ begin
   SynEditModel.Lines.Add('Var ');
   SynEditModel.Lines.Add(ident + VarDAO + ': ' + ClassNameDAO + ';');
 
-  //Implementacao dos metodos Construtores e Destrutores
+  // ***INICIO*** Implementacao dos metodos Construtores e Destrutores
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create;');
   SynEditModel.Lines.Add('begin');
@@ -406,8 +406,16 @@ begin
   SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+Copy(vAuxField, 1 , length(vAuxField) - 2)+ ');');
   SynEditModel.Lines.Add('begin');
   SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
+
+
+  MaxVar:=0;
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
-    SynEditModel.Lines.Add(ident + 'Self'+'.'+ InfoTable.PrimaryKeys.Items[I].FieldName +' := ' + InfoTable.PrimaryKeys.Items[I].FieldName +';');
+    if MaxVar < (Length('Self.' + InfoTable.PrimaryKeys.Items[I].FieldName) + 1) then
+      MaxVar := (Length('Self.' + InfoTable.PrimaryKeys.Items[I].FieldName) + 1);
+
+
+  for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
+    SynEditModel.Lines.Add(ident + LPad('Self.'+ InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) + ' := ' + InfoTable.PrimaryKeys.Items[I].FieldName +';');
   SynEditModel.Lines.Add('end');
 
   SynEditModel.Lines.Add(ident + '');
@@ -415,7 +423,7 @@ begin
   SynEditModel.Lines.Add('begin');
   SynEditModel.Lines.Add(ident + 'FreeAndNil('+ VarDAO + ');');
   SynEditModel.Lines.Add('end');
-
+  // ***FIM*** Implementacao dos metodos Construtores e Destrutores
 
   //Gerando Functions Code
   if InfoCrud.ProcInsert.Enable then
