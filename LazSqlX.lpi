@@ -489,7 +489,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="15">
+    <Exceptions Count="16">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -535,6 +535,9 @@
       <Item15>
         <Name Value="EReadError"/>
       </Item15>
+      <Item16>
+        <Name Value="EIBDatabaseError"/>
+      </Item16>
     </Exceptions>
   </Debugging>
 </CONFIG>

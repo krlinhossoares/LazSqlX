@@ -86,14 +86,18 @@ function TFrmModel.TypeDBToTypePascal(S: string): string;
 begin
   if (UpperCase(S) = 'VARCHAR') or (UpperCase(S) = 'BLOB') then
     Result := 'String'
+  else if (UpperCase(S) = 'CHAR') then
+    Result := 'ShortString'
   else if Pos('NUMERIC', UpperCase(S)) > 0 then
     Result := 'Double'
   else if Pos('TIMESTAMP', UpperCase(S)) > 0 then
     Result := 'TDateTime'
   else if Pos('DATE', UpperCase(S)) > 0 then
     Result := 'TDate'
+  else  if Pos('SMALLINT', UpperCase(S)) > 0 then
+    Result := 'SmallInt'
   else
-    Result := S;
+    Result := UpperCase(Copy(S,1,1))+ LowerCase(Copy(S,2,Length(S))); //Apenas a primeira letra em maiuscula
 end;
 
 function TFrmModel.TypeDBToTypePascalParams(Field: TAsFieldInfo): string;
@@ -139,33 +143,6 @@ begin
 
   if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
 
-
-   {if LowerCase(TAsFieldInfo(Field).FieldType) = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'integer'       then Result := 'AsInteger';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'smallint'      then Result := 'AsInteger';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'word'          then Result := 'AsInteger';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'string'        then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'varchar'       then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'char'          then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'float'         then Result := 'AsFloat';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'currency'      then Result := 'AsFloat';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'date'          then Result := 'AsDate';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'time'          then Result := 'AsTime';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'dateTime'      then Result := 'AsDateTime';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'blob'          then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'memo'          then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'widestring'    then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'widememo'      then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'fixedwidechar' then Result := 'AsString';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'boolean'       then Result := 'AsBoolean';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'timestamp'     then Result := 'AsDateTime';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'bytes'         then Result := 'AsInteger';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'bcd'           then Result := 'AsBCD';
-    if LowerCase(TAsFieldInfo(Field).FieldType) = 'fixedchar'     then Result := 'AsString';
-
-    if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';      }
-
-
 end;
 
 function TFrmModel.LPad(S: string; Ch: char; Len: integer): string;
@@ -194,7 +171,7 @@ procedure TFrmModel.GeneratorPascalClass;
 var
   I: integer;
   MaxField, MaxType, MaxVar: integer;
-  StrFunctionNameInsert, StrFunctionNameUpdate, StrFunctionNameDelete, StrFunctionNameGet, StrFunctionNameList, vAux: String;
+  StrFunctionNameInsert, StrFunctionNameUpdate, StrFunctionNameDelete, StrFunctionNameGet, StrFunctionNameList, vAuxField, vAuxType, vAuxOldType: String;
 begin
   MaxField := 0;
   MaxType := 0;
@@ -231,13 +208,13 @@ begin
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('type');
   SynEditModel.Lines.Add(ident + ClassNameModel + '= class');
-  SynEditModel.Lines.Add('');
+  //SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(ident + 'private');
   //Cria Variaveis das Propriedades.
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
     SynEditModel.Lines.Add(Ident + Ident +
-      'F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ':' +
+      'F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ': ' +
       LPad(TypeDBToTypePascal(InfoTable.AllFields[I].FieldType), ' ', MaxType) + ';');
   end;
   SynEditModel.Lines.Add(ident + 'public');
@@ -246,11 +223,12 @@ begin
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
     SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
-      LPad(InfoTable.AllFields[I].FieldName, ' ', MaxField) + ':' +
+      LPad(InfoTable.AllFields[I].FieldName, ' ', MaxField) + ': ' +
       LPad(TypeDBToTypePascal(InfoTable.AllFields[I].FieldType), ' ', MaxType) +
       ' read F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) +
       ' write F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ';');
   end;
+  SynEditModel.Lines.Add('');
   //Cria Funcoes e Procedures CRUD;
   SynEditModel.Lines.Add(Ident + Ident + '//Functions and Procedures Model CRUD');
 
@@ -381,11 +359,19 @@ begin
   end;
 
   //Metodos Create...
+  SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(Ident + Ident + '//Metodos Construtores e Destrutores');
   SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create;' + ifthen(InfoTable.PrimaryKeys.Count > 0, ' Overload; ',''));
 
-  for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
-    SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+InfoTable.PrimaryKeys.Items[I].FieldName +': '+InfoTable.PrimaryKeys.Items[i].FieldType +'); Overload; ');
+  vAuxField   := '';
+  vAuxOldType := '';
+  for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do    //Metodo Create passando todas as chaves da tabela...
+  begin
+    vAuxType  := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
+    vAuxField := InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
+    vAuxOldType := vAuxType;
+  end;
+  SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+ Copy(vAuxField, 1 , length(vAuxField) - 2)+ ');');
 
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; ');
 
@@ -407,24 +393,28 @@ begin
   SynEditModel.Lines.Add(ident + VarDAO + ' := ' + ClassNameDAO + '.' + 'Create;');
   SynEditModel.Lines.Add('end');
 
-  for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
+  vAuxField   := '';
+  vAuxOldType := '';
+  for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do
   begin
-    SynEditModel.Lines.Add(ident + '');
-    SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoTable.PrimaryKeys.Items[I].FieldName +': '+InfoTable.PrimaryKeys.Items[i].FieldType +');');
-    SynEditModel.Lines.Add('begin');
-    SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
-    SynEditModel.Lines.Add(ident + 'Self'+'.'+ InfoTable.PrimaryKeys.Items[I].FieldName +' := ' + InfoTable.PrimaryKeys.Items[I].FieldName +';');
-    SynEditModel.Lines.Add('end');
+    vAuxType  := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
+    vAuxField := InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
+    vAuxOldType := vAuxType;
   end;
+
+  SynEditModel.Lines.Add(ident + '');
+  SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+Copy(vAuxField, 1 , length(vAuxField) - 2)+ ');');
+  SynEditModel.Lines.Add('begin');
+  SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
+  for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
+    SynEditModel.Lines.Add(ident + 'Self'+'.'+ InfoTable.PrimaryKeys.Items[I].FieldName +' := ' + InfoTable.PrimaryKeys.Items[I].FieldName +';');
+  SynEditModel.Lines.Add('end');
 
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Destructor ' + ClassNameModel + '.' + 'Destroy;');
   SynEditModel.Lines.Add('begin');
   SynEditModel.Lines.Add(ident + 'FreeAndNil('+ VarDAO + ');');
   SynEditModel.Lines.Add('end');
-
-  //SynEditModel.Lines.Add(ClassNameModel + 'Destructor Destroy; ');
-  //end;
 
 
   //Gerando Functions Code
@@ -456,10 +446,6 @@ begin
 
     StrFunctionNameInsert:= StrFunctionNameInsert + ');';
     SynEditModel.Lines.Add(StrFunctionNameInsert);
-    {SynEditModel.Lines.Add(Ident + 'Result := ' +
-      VarDAO + '.' + InfoCrud.ProcInsert.ProcName + '(' + Copy(InfoCrud.Connection,
-      1, Pos(':', InfoCrud.Connection) - 1) + ', ' + VarModel + ', ' +
-      Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1) + ');');}
     SynEditModel.Lines.Add('end;');
   end;
   if InfoCrud.ProcUpdate.Enable then
