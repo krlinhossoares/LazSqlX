@@ -24,7 +24,8 @@ type
     dtMySql = 2,
     dtSQLite = 3,
     dtFirebirdd = 4,
-    dtPostgreSql = 5
+    dtPostgreSql = 5,
+    dtMariaDB = 6
    );
 
  TAsDatabaseEngineType =
@@ -64,6 +65,7 @@ type
   TAsDbConnectionInfo = class(TPersistent)
   private
    FAliasName: String;
+   FAlternateLibrary: String;
    FDatabase: string;
    FDbEngine: TAsDatabaseEngineType;
    FDbType: TAsDatabaseType;
@@ -84,6 +86,7 @@ type
    function GetProperties: TStrings;
    procedure Instantiate;
    procedure SetAliasName(AValue: String);
+   procedure SetAlternateLibrary(AValue: String);
    procedure SetDatabase(AValue: string);
    procedure SetDbEngine(AValue: TAsDatabaseEngineType);
    procedure SetDbType(AValue: TAsDatabaseType);
@@ -130,6 +133,8 @@ type
     property Port:Integer read FPort write SetPort;
     {DatabaseEngine [deSqlDB or deZeos]}
     property DbEngineType:TAsDatabaseEngineType read FDbEngine write SetDbEngine;
+    {Library DLL}
+    property AlternateLibrary: String read FAlternateLibrary write SetAlternateLibrary;
 
     property SqlConnection:TSQLConnector read FSqlCon;
 
@@ -972,6 +977,7 @@ begin
     dtFirebirdd: Result := TAsFirebirdMetadata.Create(DbInfo);
     dtSQLite: Result := TAsSqliteMetadata.Create(DbInfo);
     dtPostgreSql: Result := TAsPostgresMetadata.Create(DbInfo);
+    dtMariaDB : Result := TAsMySqlMetadata.Create(DBInfo);
  end;
 end;
 
@@ -1033,7 +1039,7 @@ begin
   case dbtyp of
   dtMsSql:Result :='SELECT TOP '+IntToStr(NumberOfRecords)+' * FROM '+SafeWrap(dbtyp, Schema)+'.'+SafeWrap(dbtyp,TableName);
   dtOracle:Result := 'SELECT * FROM '+SafeWrap(dbtyp,Schema)+'.'+SafeWrap(dbtyp,TableName)+' WHERE ROWNUM <= '+IntToStr(NumberOfRecords);
-  dtMySql,dtSQLite:Result:='SELECT * FROM '+SafeWrap(dbtyp,TableName)+' LIMIT '+IntToStr(NumberOfRecords);
+  dtMySql,dtMariaDB, dtSQLite:Result:='SELECT * FROM '+SafeWrap(dbtyp,TableName)+' LIMIT '+IntToStr(NumberOfRecords);
   dtPostgreSql: Result:='SELECT * FROM '+SafeWrap(dbtyp,Schema)+'.'+SafeWrap(dbtyp,TableName)+' LIMIT '+IntToStr(NumberOfRecords);
   dtFirebirdd: Result:='SELECT FIRST '+IntToStr(NumberOfRecords)+' * FROM '+SafeWrap(dbtyp,TableName);
  end;
@@ -1045,7 +1051,7 @@ begin
  case dbtyp of
   dtMsSql:Result :='SELECT TOP '+IntToStr(NumberOfRecords)+' '+SafeWrap(dbtyp,FieldName)+' FROM '+SafeWrap(dbtyp,Schema)+'.'+SafeWrap(dbtyp,TableName)+'';
   dtOracle:Result := 'SELECT '+SafeWrap(dbtyp,FieldName)+' FROM '+SafeWrap(dbtyp,Schema)+'.'+SafeWrap(dbtyp,TableName)+' WHERE ROWNUM <= '+IntToStr(NumberOfRecords);
-  dtMySql,dtSQLite:Result:='SELECT '+SafeWrap(dbtyp,FieldName)+' FROM '+SafeWrap(dbtyp,TableName)+' LIMIT '+IntToStr(NumberOfRecords);
+  dtMariaDB,dtMySql,dtSQLite:Result:='SELECT '+SafeWrap(dbtyp,FieldName)+' FROM '+SafeWrap(dbtyp,TableName)+' LIMIT '+IntToStr(NumberOfRecords);
   dtPostgreSql: Result:='SELECT '+SafeWrap(dbtyp,FieldName)+' FROM '+SafeWrap(dbtyp,Schema)+'.'+SafeWrap(dbtyp,TableName)+' LIMIT '+IntToStr(NumberOfRecords);
   dtFirebirdd: Result:='SELECT FIRST '+IntToStr(NumberOfRecords)+' '+SafeWrap(dbtyp,FieldName)+' FROM '+SafeWrap(dbtyp,TableName);
  end;
@@ -1086,6 +1092,7 @@ begin
     dtOracle:Result:='Oracle';
     dtMySql:Result:='MySQL 5.0';
     dtPostgreSql:Result:='PostgreSQL';
+    dtMariaDB: Result := 'MariaDB';
   end;
 end;
 
@@ -1093,12 +1100,13 @@ class function TAsDbUtils.DatabaseTypeAsString(DbType: TAsDatabaseType;
  ALowerCase: Boolean): string;
 begin
   case DbType of
-    dtFirebirdd : Result := 'firebird-2.5';
+    dtFirebirdd : Result := 'firebirdd-2.5';
     dtSQLite : Result := 'sqlite-3';
     dtMsSql: Result:='mssql';
     dtOracle:Result:='oracle';
     dtMySql:Result:='mysql';
     dtPostgreSql:Result:='postgresql-9';
+    dtMariaDB: Result := 'MariaDB-5'
   end;
 end;
 
@@ -1499,6 +1507,13 @@ begin
   FAliasName:=AValue;
 end;
 
+procedure TAsDbConnectionInfo.SetAlternateLibrary(AValue: String);
+begin
+  if FAlternateLibrary=AValue then
+    Exit;
+  FAlternateLibrary:=AValue;
+end;
+
 procedure TAsDbConnectionInfo.SetDbEngine(AValue: TAsDatabaseEngineType);
 begin
  if FDbEngine=AValue then Exit;
@@ -1521,9 +1536,17 @@ begin
   if FileExists(FLibraryLocation) then
   begin
     FZCon.LibraryLocation := FLibraryLocation;
-    FLibraryLoader.LibraryName := FLibraryLocation;
-    FLibraryLoader.ConnectionType := TAsDbUtils.DatabaseTypeAsConnectorType(FDbType);
-    FLibraryLoader.Enabled := True;
+    if FDbType <> dtMariaDB then
+    begin
+      FLibraryLoader.LibraryName := FLibraryLocation;
+      FLibraryLoader.ConnectionType := TAsDbUtils.DatabaseTypeAsConnectorType(FDbType);
+      FLibraryLoader.Enabled := True;
+    end
+    else
+    begin
+      FLibraryLoader.Enabled := False;
+      FLibraryLoader.LibraryName := '';
+    end;
   end else
   begin
     FLibraryLoader.Enabled := False;
@@ -1805,6 +1828,7 @@ begin
         s.Password:=lstLine.Values['aPassword'];
         s.Port:= StrToInt(lstLine.Values['aPort']);
         s.AliasName := lstLine.Values['aAliasName'];
+        s.AlternateLibrary := lstLine.Values['aAlternateLibrary'];
         if lstLine.Values['aDbEngineType']<>'' then
           s.DbEngineType:=TAsDatabaseEngineType(StrToInt(lstLine.Values['aDbEngineType']));
         Add(s);

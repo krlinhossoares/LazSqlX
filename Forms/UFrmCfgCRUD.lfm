@@ -1568,7 +1568,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
     DefaultFilter = 'Arquivos SQL (*.sql)|*.sql'
     Enabled = False
     SQLDialect = sqlSybase
-    left = 24
-    top = 301
+    left = 712
+    top = 96
   end
 end

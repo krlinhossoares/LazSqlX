@@ -65,6 +65,7 @@ type
     procedure cmbDbEngineChange(Sender: TObject);
     procedure cmbDbEngineDrawItem(Control: TWinControl; Index: Integer;
      ARect: TRect; State: TOwnerDrawState);
+    procedure cmbDbEngineExit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -92,6 +93,8 @@ type
     bmpSqliteType: TBitmap;
     bmpFirebird : TBitmap;
     bmpPostgreSQL: TBitmap;
+    bmpMariaDB: TBitmap;
+
     bmpSqlDBEngine: TBitmap;
     bmpZeosEngine : TBitmap;
 
@@ -290,6 +293,16 @@ begin
       txtUserName.Text:=c.Username;
       txtPassword.Text:=c.Password;
       txtPort.Value:=c.Port;
+      if C.AlternateLibrary <> '' then
+      begin
+        chkAlternateLibLocation.Checked := True;
+        txtLibraryFilename.Text:= c.AlternateLibrary;
+      end
+      else
+      begin
+        chkAlternateLibLocation.Checked:= False;
+        txtLibraryFilename.Clear;
+      end;
       cmbDbEngine.ItemIndex:=Integer(c.DbEngineType);
       txtAliasName.Text:=c.AliasName;
     except
@@ -348,6 +361,7 @@ begin
       dtSQLite: Draw(ARect.Left, ARect.Top,bmpSqliteType);
       dtFirebirdd: Draw(ARect.Left, ARect.Top,bmpFirebird);
       dtPostgreSql: Draw(ARect.Left, ARect.Top,bmpPostgreSQL);
+      dtMariaDB : Draw(ARect.Left, ARect.Top,bmpMariaDB);
     end;
 
     Brush.Style := bsClear;
@@ -465,6 +479,7 @@ begin
   FDBInfo.Username:=txtUserName.Text;
   FDBInfo.Password:=txtPassword.Text;
   FDBInfo.AliasName:= txtAliasName.Text;
+  FDBInfo.AlternateLibrary:= txtLibraryFilename.Text;
   FDBInfo.DbEngineType:=TAsDatabaseEngineType(cmbDbEngine.ItemIndex);
 end;
 
@@ -481,8 +496,8 @@ end;
 
 procedure TSqlConnBuilderForm.cmbDatabaseTypeChange(Sender: TObject);
 begin
- cmbDatabase.Clear;
-//  cmbDatabase.Width := 241;
+  cmbDatabase.Clear;
+  // cmbDatabase.Width := 241;
   lblUseraname.Visible := True;
   txtUserName.Visible := True;
   lblPassword.Visible := True;
@@ -512,7 +527,7 @@ begin
       end;
       cmbDbEngine.ItemIndex:=1;
     end;
-    dtMySql: // MySQL
+    dtMySql, dtMariaDB: // MySQL
     begin
       txtPort.Text := '3306';
       txtUserName.Text := 'root';
@@ -591,6 +606,7 @@ begin
     3: cmb.Canvas.Draw(ARect.Left, ARect.Top, bmpSqliteType);
     4 :cmb.Canvas.Draw(ARect.Left, ARect.Top, bmpFirebird);
     5 :cmb.Canvas.Draw(ARect.Left,ARect.Top,bmpPostgreSQL);
+    6 :cmb.Canvas.Draw(ARect.Left,ARect.Top,bmpMariaDB);
   end;
 
   cmb.Canvas.Font.Size := 10;
@@ -633,6 +649,11 @@ begin
   cmb.Canvas.TextOut(ARect.Left + 30, ARect.Top + 3, cmb.Items[Index]);
 end;
 
+procedure TSqlConnBuilderForm.cmbDbEngineExit(Sender: TObject);
+begin
+
+end;
+
 procedure TSqlConnBuilderForm.FormCreate(Sender: TObject);
 begin
 
@@ -648,6 +669,7 @@ begin
   bmpSqliteType := TBitmap.Create;
   bmpFirebird := TBitmap.Create;
   bmpPostgreSQL := TBitmap.Create;
+  bmpMariaDB := TBitmap.Create;
 
   bmpSqlDBEngine:=TBitmap.Create;
   bmpZeosEngine := TBitmap.Create;
@@ -658,6 +680,7 @@ begin
   imgDatabaseTypes.GetBitmap(3, bmpSqliteType);
   imgDatabaseTypes.GetBitmap(4, bmpFirebird);
   imgDatabaseTypes.GetBitmap(5,bmpPostgreSQL);
+  imgDatabaseTypes.GetBitmap(6,bmpMariaDB);
 
   imgDbEngines.GetBitmap(0,bmpSqlDBEngine);
   imgDbEngines.GetBitmap(1,bmpZeosEngine);

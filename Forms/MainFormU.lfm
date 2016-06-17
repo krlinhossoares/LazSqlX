@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 338
+  Left = 218
   Height = 596
-  Top = 212
+  Top = 318
   Width = 1012
   Anchors = [akTop, akLeft, akRight, akBottom]
   Caption = 'LazSQLX'
@@ -7263,7 +7263,12 @@ object MainForm: TMainForm
     Properties.Strings = (
       'AutoEncodeStrings='
     )
-    Port = 0
+    Port = 3050
+    Database = 'D:\mtexdados\FIREBIRD2_5\Karlache\mtexKar2.fdb'
+    User = 'sysdba'
+    Password = 'sysdba'
+    Protocol = 'firebirdd-2.5'
+    LibraryLocation = 'D:\Carlos\LazSqlX\build64\fbclientd25.dll'
     left = 369
     top = 49
   end
