@@ -8,7 +8,7 @@ uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, SynHighlighterAny,
   SynCompletion, SynHighlighterJava, SynHighlighterSQL, Forms, Controls,
   Graphics, Dialogs, math, ComCtrls, ZDataset, ZConnection, AsTableInfo,
-  AsCrudInfo, AsSqlGenerator, StrUtils;
+  AsCrudInfo, AsSqlGenerator, AsDbType, StrUtils;
 
 type
 
@@ -44,8 +44,16 @@ type
     function Limpa(S: String): String;
     function LPad(S: string; Ch: char; Len: integer): string;
     function RPad(S: string; Ch: char; Len: integer): string;
+    function TypeDBFirebirdToPascal(S: String): String;
+    function TypeDBFirebirdToPascalParams(S: String): String;
+    function TypeDBMySqlToPascal(S: String): String;
+    function TypeDBMySQLToPascalParams(S: String): String;
     function TypeDBToTypePascal(S: string): string;
+
+
     function TypeDBToTypePascalParams(Field: TAsFieldInfo): string;
+
+
     procedure WriteCreateQuery;
     function WithVar(s: string): string;
     function WithOut(s: string): string;
@@ -54,6 +62,7 @@ type
     { public declarations }
     InfoTable: TAsTableInfo;
     InfoCrud: TCRUDInfo;
+
   end;
 
 var
@@ -84,6 +93,18 @@ end;
 
 function TFrmModel.TypeDBToTypePascal(S: string): string;
 begin
+  case MainForm.FDBInfo.DbType of
+    dtFirebirdd: Result := TypeDBFirebirdToPascal(S);
+    dtMariaDB, dtMySQL  : Result := TypeDBMySqlToPascal(S);
+    dtSQLite: Result := '';
+    dtMsSql: Result:='';
+    dtOracle:Result:='';
+    dtPostgreSql:Result:='';
+  end;
+end;
+
+function TFrmModel.TypeDBFirebirdToPascal(S: String): String;
+begin
   if (UpperCase(S) = 'VARCHAR') or (UpperCase(S) = 'BLOB') then
     Result := 'String'
   else if (UpperCase(S) = 'CHAR') then
@@ -96,6 +117,26 @@ begin
     Result := 'TDate'
   else  if Pos('SMALLINT', UpperCase(S)) > 0 then
     Result := 'SmallInt'
+  else
+    Result := UpperCase(Copy(S,1,1))+ LowerCase(Copy(S,2,Length(S))); //Apenas a primeira letra em maiuscula
+end;
+
+function TFrmModel.TypeDBMySqlToPascal(S: String): String;
+begin
+  if (UpperCase(S) = 'VARCHAR') or (UpperCase(S) = 'BLOB') then
+    Result := 'String'
+  else if (UpperCase(S) = 'CHAR') then
+    Result := 'ShortString'
+  else if Pos('Float', UpperCase(S)) > 0 then
+    Result := 'Double'
+  else if Pos('TIMESTAMP', UpperCase(S)) > 0 then
+    Result := 'TDateTime'
+  else if Pos('DATE', UpperCase(S)) > 0 then
+    Result := 'TDate'
+  else  if Pos('SMALLINT', UpperCase(S)) > 0 then
+    Result := 'SmallInt'
+  else  if Pos('INT', UpperCase(S)) > 0 then
+    Result := 'Integer'
   else
     Result := UpperCase(Copy(S,1,1))+ LowerCase(Copy(S,2,Length(S))); //Apenas a primeira letra em maiuscula
 end;
@@ -117,32 +158,71 @@ begin
   aux := LowerCase(TAsFieldInfo(Field).FieldType);
   aux := TextOnly(aux);
 
-  if aux = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO'
-    else if aux = 'integer'       then Result := 'AsInteger'
-      else if aux = 'smallint'      then Result := 'AsInteger'
-        else if aux = 'word'          then Result := 'AsInteger'
-          else if aux = 'string'        then Result := 'AsString'
-            else if aux = 'varchar'       then Result := 'AsString'
-              else if aux = 'char'          then Result := 'AsString'
-                else if aux = 'float'         then Result := 'AsFloat'
-                  else if aux = 'currency'      then Result := 'AsFloat'
-                    else if aux = 'date'          then Result := 'AsDate'
-                      else if aux = 'time'          then Result := 'AsTime'
-                        else if aux = 'dateTime'      then Result := 'AsDateTime'
-                          else if aux = 'blob'          then Result := 'AsString'
-                            else if aux = 'memo'          then Result := 'AsString'
-                              else if aux = 'widestring'    then Result := 'AsString'
-                                else if aux = 'widememo'      then Result := 'AsString'
-                                  else if aux = 'fixedwidechar' then Result := 'AsString'
-                                    else if aux = 'boolean'       then Result := 'AsBoolean'
-                                      else if aux = 'timestamp'     then Result := 'AsDateTime'
-                                        else if aux = 'bytes'         then Result := 'AsInteger'
-                                          else if aux = 'bcd'           then Result := 'AsBCD'
-                                            else if aux = 'fixedchar'     then Result := 'AsString'
-                                              else if aux = 'numeric'     then Result := 'AsFloat';
+  case MainForm.FDBInfo.DbType of
+    dtFirebirdd: Result := TypeDBFirebirdToPascalParams(Aux);
+    dtMariaDB, dtMySQL  : Result := TypeDBMySqlToPascal(Aux);
+    dtSQLite: Result := '';
+    dtMsSql: Result:='';
+    dtOracle:Result:='';
+    dtPostgreSql:Result:='';
+  end;
 
   if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
 
+end;
+
+function TFrmModel.TypeDBFirebirdToPascalParams(S: String): String;
+begin
+  if S = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO'
+    else if S = 'integer'       then Result := 'AsInteger'
+      else if S = 'smallint'      then Result := 'AsInteger'
+        else if S = 'word'          then Result := 'AsInteger'
+          else if S = 'string'        then Result := 'AsString'
+            else if S = 'varchar'       then Result := 'AsString'
+              else if S = 'char'          then Result := 'AsString'
+                else if S = 'float'         then Result := 'AsFloat'
+                  else if S = 'currency'      then Result := 'AsFloat'
+                    else if S = 'date'          then Result := 'AsDate'
+                      else if S = 'time'          then Result := 'AsTime'
+                        else if S = 'dateTime'      then Result := 'AsDateTime'
+                          else if S = 'blob'          then Result := 'AsString'
+                            else if S = 'memo'          then Result := 'AsString'
+                              else if S = 'widestring'    then Result := 'AsString'
+                                else if S = 'widememo'      then Result := 'AsString'
+                                  else if S = 'fixedwidechar' then Result := 'AsString'
+                                    else if S = 'boolean'       then Result := 'AsBoolean'
+                                      else if S = 'timestamp'     then Result := 'AsDateTime'
+                                        else if S = 'bytes'         then Result := 'AsInteger'
+                                          else if S = 'bcd'           then Result := 'AsBCD'
+                                            else if S = 'fixedchar'     then Result := 'AsString'
+                                              else if S = 'numeric'     then Result := 'AsFloat';
+end;
+
+function TFrmModel.TypeDBMySQLToPascalParams(S: String): String;
+begin
+  if S = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO'
+    else if S = 'int'       then Result := 'AsInteger'
+      else if S = 'smallint'      then Result := 'AsInteger'
+        else if S = 'word'          then Result := 'AsInteger'
+          else if S = 'string'        then Result := 'AsString'
+            else if S = 'varchar'       then Result := 'AsString'
+              else if S = 'char'          then Result := 'AsString'
+                else if S = 'float'         then Result := 'AsFloat'
+                  else if S = 'currency'      then Result := 'AsFloat'
+                    else if S = 'date'          then Result := 'AsDate'
+                      else if S = 'time'          then Result := 'AsTime'
+                        else if S = 'dateTime'      then Result := 'AsDateTime'
+                          else if S = 'blob'          then Result := 'AsString'
+                            else if S = 'memo'          then Result := 'AsString'
+                              else if S = 'widestring'    then Result := 'AsString'
+                                else if S = 'widememo'      then Result := 'AsString'
+                                  else if S = 'fixedwidechar' then Result := 'AsString'
+                                    else if S = 'boolean'       then Result := 'AsBoolean'
+                                      else if S = 'timestamp'     then Result := 'AsDateTime'
+                                        else if S = 'bytes'         then Result := 'AsInteger'
+                                          else if S = 'bcd'           then Result := 'AsBCD'
+                                            else if S = 'fixedchar'     then Result := 'AsString'
+                                              else if S = 'numeric'     then Result := 'AsFloat';
 end;
 
 function TFrmModel.LPad(S: string; Ch: char; Len: integer): string;

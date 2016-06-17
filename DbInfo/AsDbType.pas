@@ -1106,7 +1106,7 @@ begin
     dtOracle:Result:='oracle';
     dtMySql:Result:='mysql';
     dtPostgreSql:Result:='postgresql-9';
-    dtMariaDB: Result := 'MariaDB-5'
+    dtMariaDB: Result := 'MariaDB-5';
   end;
 end;
 
