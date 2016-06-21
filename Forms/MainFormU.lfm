@@ -1,9 +1,10 @@
 object MainForm: TMainForm
-  Left = 218
+  Left = 163
   Height = 596
-  Top = 318
+  Top = 243
   Width = 1012
-  Anchors = [akTop, akLeft, akRight, akBottom]
+  Anchors = []
+  BorderStyle = bsSingle
   Caption = 'LazSQLX'
   ClientHeight = 576
   ClientWidth = 1012
@@ -2432,8 +2433,8 @@ object MainForm: TMainForm
   end
   object ApplicationActions: TActionList
     Images = ApplicationImages
-    left = 672
-    top = 48
+    left = 680
+    top = 32
     object actExecute: TAction
       Category = 'Query'
       Caption = 'Execute'
@@ -2929,8 +2930,8 @@ object MainForm: TMainForm
     FormatSettings.EscapeStyle = sesFirebird
     FormatSettings.StatementKind = skFullInsert
     FormatSettings.QuoteIdentifiers = False
-    left = 520
-    top = 176
+    left = 448
+    top = 32
   end
   object TablesPopupMenu: TPopupMenu
     Images = ApplicationImages
@@ -3995,7 +3996,7 @@ object MainForm: TMainForm
   object ApplicationImages: TImageList
     BkColor = clForeground
     DrawingStyle = dsTransparent
-    left = 416
+    left = 336
     top = 72
     Bitmap = {
       4C69430000001000000010000000FF00FF00FF00FF00FF00FF00FF00FF00FF00
@@ -6857,8 +6858,8 @@ object MainForm: TMainForm
   object FindDialog1: TFindDialog
     Options = [frDown, frHideMatchCase, frHideWholeWord, frHideUpDown, frEntireScope, frHideEntireScope, frHidePromptOnReplace]
     OnFind = FindDialog1Find
-    left = 686
-    top = 112
+    left = 680
+    top = 104
   end
   object LibraryLoader: TSQLDBLibraryLoader
     Enabled = False
@@ -7248,33 +7249,5 @@ object MainForm: TMainForm
     OnTimer = timerSearchTimer
     left = 184
     top = 304
-  end
-  object ZSQLMonitor1: TZSQLMonitor
-    Active = True
-    AutoSave = True
-    FileName = 'LogSQLMonitor.txt'
-    MaxTraceCount = 100
-    left = 752
-    top = 48
-  end
-  object ZConnection1: TZConnection
-    ControlsCodePage = cCP_UTF8
-    AutoEncodeStrings = False
-    Properties.Strings = (
-      'AutoEncodeStrings='
-    )
-    Port = 3050
-    Database = 'D:\mtexdados\FIREBIRD2_5\Karlache\mtexKar2.fdb'
-    User = 'sysdba'
-    Password = 'sysdba'
-    Protocol = 'firebirdd-2.5'
-    LibraryLocation = 'D:\Carlos\LazSqlX\build64\fbclientd25.dll'
-    left = 369
-    top = 49
-  end
-  object ZQuery1: TZQuery
-    Params = <>
-    left = 530
-    top = 51
   end
 end

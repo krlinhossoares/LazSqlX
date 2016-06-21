@@ -44,14 +44,18 @@ type
     function Limpa(S: String): String;
     function LPad(S: string; Ch: char; Len: integer): string;
     function RPad(S: string; Ch: char; Len: integer): string;
+
+
+    function TypeDBToTypePascal(S: string): string;
+    function TypeDBToTypePascalParams(Field: TAsFieldInfo): string;
+
     function TypeDBFirebirdToPascal(S: String): String;
     function TypeDBFirebirdToPascalParams(S: String): String;
+
     function TypeDBMySqlToPascal(S: String): String;
     function TypeDBMySQLToPascalParams(S: String): String;
-    function TypeDBToTypePascal(S: string): string;
 
 
-    function TypeDBToTypePascalParams(Field: TAsFieldInfo): string;
 
 
     procedure WriteCreateQuery;
@@ -160,7 +164,7 @@ begin
 
   case MainForm.FDBInfo.DbType of
     dtFirebirdd: Result := TypeDBFirebirdToPascalParams(Aux);
-    dtMariaDB, dtMySQL  : Result := TypeDBMySqlToPascal(Aux);
+    dtMariaDB, dtMySQL  : Result := TypeDBMySQLToPascalParams(Aux);
     dtSQLite: Result := '';
     dtMsSql: Result:='';
     dtOracle:Result:='';
@@ -448,10 +452,10 @@ begin
   for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do    //Metodo Create passando todas as chaves da tabela...
   begin
     vAuxType  := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
-    vAuxField := InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
+    vAuxField := 'A'+InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
     vAuxOldType := vAuxType;
   end;
-  SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+ Copy(vAuxField, 1 , length(vAuxField) - 2)+ ');');
+  SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+ Copy(vAuxField, 1 , length(vAuxField) - 2)+ '); Overload;');
 
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; ');
 
@@ -470,15 +474,16 @@ begin
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create;');
   SynEditModel.Lines.Add('begin');
+  SynEditModel.Lines.Add(ident + 'Inherited Create;');
   SynEditModel.Lines.Add(ident + VarDAO + ' := ' + ClassNameDAO + '.' + 'Create;');
-  SynEditModel.Lines.Add('end');
+  SynEditModel.Lines.Add('end;');
 
   vAuxField   := '';
   vAuxOldType := '';
   for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do
   begin
     vAuxType  := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
-    vAuxField := InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
+    vAuxField := 'A'+InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
     vAuxOldType := vAuxType;
   end;
 
@@ -495,14 +500,14 @@ begin
 
 
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
-    SynEditModel.Lines.Add(ident + LPad('Self.'+ InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) + ' := ' + InfoTable.PrimaryKeys.Items[I].FieldName +';');
-  SynEditModel.Lines.Add('end');
+    SynEditModel.Lines.Add(ident + LPad('Self.'+ InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) + ' := ' + 'A'+InfoTable.PrimaryKeys.Items[I].FieldName +';');
+  SynEditModel.Lines.Add('end;');
 
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Destructor ' + ClassNameModel + '.' + 'Destroy;');
   SynEditModel.Lines.Add('begin');
   SynEditModel.Lines.Add(ident + 'FreeAndNil('+ VarDAO + ');');
-  SynEditModel.Lines.Add('end');
+  SynEditModel.Lines.Add('end;');
   // ***FIM*** Implementacao dos metodos Construtores e Destrutores
 
   //Gerando Functions Code
