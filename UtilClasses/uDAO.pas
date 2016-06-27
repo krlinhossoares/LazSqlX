@@ -1,6 +1,6 @@
 {
 
-*** Classe DAO ***
+*** Classe DAO *** ...
 
 Esta classe tem como objetivo fazer dinamicamente a persistencia de objetos nas tabelas do banco de dados.
 
