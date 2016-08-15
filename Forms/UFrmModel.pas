@@ -1042,24 +1042,25 @@ begin
   for J := 0 to StrList.Count - 1 do
     if Length(StrList.Strings[j]) + 2 > Comp then
        comp := Length(StrList.Strings[j]) + 2;
-
+  SynEditDAO.Lines.Add(StringOfChar(' ', 4)+'{$REGION ''Comando SQL''}');
   for J := 0 to StrList.Count - 1 do
   begin
     if J = 0 then //Primeira linha
     begin
        if (StrList.Count > 1) then //Primeira linha de uma lista com vários registros...
-         SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + '#13+')
+         SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');')
        else //Se tiver apenas um registro na lista, cai aqui....     }
          SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end
     else
     begin
       if J = StrList.Count - 1 then //Ultima linha
-        SynEditDAO.Lines.Add(StringOfChar(' ', 16) + QuotedStr(Alinha(StrList.Strings[J])) + ');')
+        SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');')
       else //Demais registros
-        SynEditDAO.Lines.Add(StringOfChar(' ', 16) + QuotedStr(Alinha(StrList.Strings[J])) + #13'+');
+        SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end;
   end;
+  SynEditDAO.Lines.Add(StringOfChar(' ', 4)+'{$ENDREGION}');
   SynEditDAO.Lines.Add('');
 end;
 

@@ -12,7 +12,7 @@ interface
 
 uses
   Classes, SysUtils, DB, sqldb, mssqlconn, SQLDBLaz, AsDbType, UFrmParams,
-  strutils, ZDataset, syncobjs;
+  strutils, ZDataset, syncobjs, Dialogs;
 
 type
 
@@ -145,7 +145,7 @@ begin
   FActive := True;
   try
     try
-      SqlExecute;
+      Synchronize(@SqlExecute);
     except
       on e: Exception do
       begin
@@ -174,11 +174,11 @@ begin
     if Assigned(FQuery) then
     begin
       FQuery.Close;
-      FQuery.SQL.Text:=FCommand;
-      FQuery.PacketRecords:=500;
+      FQuery.SQL.Text      := FCommand;
+      FQuery.PacketRecords := 500;
       try
        if FIsSelect then
-         FQuery.Open
+          FQuery.Open
        else
        begin
          FQuery.ExecSQL;

@@ -7250,4 +7250,9 @@ object MainForm: TMainForm
     left = 184
     top = 304
   end
+  object ZQuery1: TZQuery
+    Params = <>
+    left = 574
+    top = 74
+  end
 end

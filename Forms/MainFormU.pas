@@ -250,6 +250,7 @@ type
     PageControlPopupMenu: TPopupMenu;
     SaveDialog: TSaveDialog;
     SqlSyntax: TSynSQLSyn;
+    ZQuery1: TZQuery;
     procedure actAboutExecute(Sender: TObject);
     procedure actCheckSyntaxExecute(Sender: TObject);
     procedure actClearSessionHistoryExecute(Sender: TObject);
@@ -359,9 +360,6 @@ type
     procedure txtSearchTableEnter(Sender: TObject);
     procedure txtSearchTableExit(Sender: TObject);
     procedure txtSearchTableKeyPress(Sender: TObject; var Key: char);
-
-
-
   private
     FCrudInfo: TCRUDInfo;
 
@@ -1302,6 +1300,7 @@ begin
   if Key = #13 then
     QuickSearchTables;
 end;
+
 
 procedure TMainForm.SearchActive;
 begin

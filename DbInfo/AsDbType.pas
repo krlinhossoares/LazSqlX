@@ -12,8 +12,9 @@ unit AsDbType;
 interface
 
 uses
-  Classes, SysUtils, typinfo, types, fgl, strutils, AsStringUtils,
-  RegExpr, ZConnection, ZDataset, sqldb, db, fpsqlparser, fpsqltree, sqldblib;
+  Classes, SysUtils, typinfo, types, fgl, strutils, AsStringUtils, UFrmParams,
+  Dialogs, RegExpr, ZConnection, ZDataset, sqldb, db, fpsqlparser, fpsqltree,
+  sqldblib;
 
 type
 
@@ -782,13 +783,16 @@ begin
  case FDBInfo.DbEngineType of
     deZeos:
      begin
-      if not FZCon.Connected then FZCon.Connect;
+      if not FZCon.Connected then
+        FZCon.Connect;
       FZQuery.Close;
-      FZQuery.Open;
+      if TFrmParams.CreateForm(FZQuery) then
+        FZQuery.Open;
      end;
     deSqlDB:
      begin
-      if not FCon.Connected then FCon.Open;
+      if not FCon.Connected then
+        FCon.Open;
       FQuery.Close;
       FQuery.Open;
      end;
