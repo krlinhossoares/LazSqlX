@@ -795,6 +795,9 @@ begin
       if not FCon.Connected then
         FCon.Open;
       FQuery.Close;
+      if FQuery.Params.Count > 0 then
+        TFrmParams.CreateForm(FQuery);
+
       FQuery.Open;
      end;
  end;

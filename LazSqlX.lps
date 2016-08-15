@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Win32"/>
-    <Units Count="127">
+    <Units Count="128">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -42,8 +42,8 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="2200"/>
-        <CursorPos X="17" Y="2211"/>
+        <TopLine Value="1692"/>
+        <CursorPos X="2" Y="1696"/>
         <UsageCount Value="206"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -73,10 +73,11 @@
       <Unit6>
         <Filename Value="DbInfo\AsDbType.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="781"/>
-        <CursorPos Y="791"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="160"/>
+        <CursorPos X="5" Y="174"/>
         <UsageCount Value="223"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="DbInfo\AsProcedureInfo.pas"/>
@@ -114,10 +115,11 @@
         <Filename Value="UtilClasses\sqlexecthread.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SqlExecThread"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="142"/>
-        <CursorPos X="30" Y="148"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="172"/>
+        <CursorPos X="3" Y="168"/>
         <UsageCount Value="223"/>
+        <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="UtilClasses\Utils.pas"/>
@@ -325,10 +327,11 @@
       <Unit33>
         <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="797"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="800"/>
         <CursorPos X="3" Y="754"/>
         <UsageCount Value="286"/>
+        <Loaded Value="True"/>
       </Unit33>
       <Unit34>
         <Filename Value="QueryDesigner\QueryDesignerPropertyGridU.pas"/>
@@ -554,10 +557,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="UFrmParams"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="35"/>
-        <CursorPos X="36" Y="43"/>
+        <EditorIndex Value="7"/>
+        <CursorPos X="53" Y="9"/>
         <UsageCount Value="94"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit59>
       <Unit60>
         <Filename Value="Resources\TableInfoReserved.dt"/>
@@ -1057,8 +1061,16 @@
         <UsageCount Value="11"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit126>
+      <Unit127>
+        <Filename Value="C:\lazarus\fpc\3.0.0\source\packages\fcl-db\src\sqldb\sqldb.pp"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="563"/>
+        <CursorPos X="3" Y="577"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit127>
     </Units>
-    <JumpHistory Count="8" HistoryIndex="7">
+    <JumpHistory Count="20" HistoryIndex="19">
       <Position1>
         <Filename Value="Forms\MainFormU.pas"/>
         <Caret Line="341" Column="15" TopLine="328"/>
@@ -1091,6 +1103,54 @@
         <Filename Value="Forms\MainFormU.pas"/>
         <Caret Line="2211" Column="17" TopLine="2200"/>
       </Position8>
+      <Position9>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2203" Column="13" TopLine="2200"/>
+      </Position9>
+      <Position10>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="2013" Column="3" TopLine="2011"/>
+      </Position10>
+      <Position11>
+        <Filename Value="Forms\MainFormU.pas"/>
+        <Caret Line="1696" Column="2" TopLine="1692"/>
+      </Position11>
+      <Position12>
+        <Filename Value="LazSqlXCtrls\LazSqlXCtrls.pas"/>
+        <Caret Line="754" Column="3" TopLine="800"/>
+      </Position12>
+      <Position13>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="144" Column="3" TopLine="142"/>
+      </Position13>
+      <Position14>
+        <Filename Value="UtilClasses\sqlexecthread.pas"/>
+        <Caret Line="168" Column="3" TopLine="172"/>
+      </Position14>
+      <Position15>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="797" Column="10" TopLine="781"/>
+      </Position15>
+      <Position16>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="798" Column="16" TopLine="779"/>
+      </Position16>
+      <Position17>
+        <Filename Value="Forms\ufrmparams.pas"/>
+        <Caret Line="27" Column="20" TopLine="13"/>
+      </Position17>
+      <Position18>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="794" Column="23" TopLine="779"/>
+      </Position18>
+      <Position19>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="174" Column="5" TopLine="160"/>
+      </Position19>
+      <Position20>
+        <Filename Value="Forms\ufrmparams.pas"/>
+        <Caret Line="27" Column="51" TopLine="13"/>
+      </Position20>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
