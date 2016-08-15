@@ -786,8 +786,9 @@ begin
       if not FZCon.Connected then
         FZCon.Connect;
       FZQuery.Close;
-      if TFrmParams.CreateForm(FZQuery) then
-        FZQuery.Open;
+      if FZQuery.Params.Count > 0 then
+        TFrmParams.CreateForm(FZQuery);
+      FZQuery.Open;
      end;
     deSqlDB:
      begin
@@ -859,9 +860,12 @@ begin
     deZeos:
     begin
       if not FZCon.Connected then FZCon.Connect;
+      if FZQuery.Params.Count > 0 then
+        TFrmParams.CreateForm(FZQuery);
       FZQuery.ExecSQL;
       FZQuery.ApplyUpdates;
-      FZCon.Commit;
+      if not FZCon.AutoCommit then
+        FZCon.Commit;
     end;
     deSqlDB:
     begin
