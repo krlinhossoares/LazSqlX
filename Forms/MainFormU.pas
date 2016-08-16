@@ -71,6 +71,10 @@ type
     actChmHelp: TAction;
     actCreateCRUDDelphi: TAction;
     ActCreateCRUDJava: TAction;
+    ActExportCSV: TAction;
+    ActExportXML: TAction;
+    ActExportRTF: TAction;
+    ActExportJSon: TAction;
     ActScriptExecutive: TAction;
     actPdfHelp: TAction;
     actRefreshProcedures: TAction;
@@ -90,6 +94,7 @@ type
     ApplicationProperties: TApplicationProperties;
     btnExportJson: TToolButton;
     cmbSchema: TComboBox;
+    CSVExporter: TCSVExporter;
     FindDialog1: TFindDialog;
     GridPrinter: TFrPrintGrid;
     MenuItem1: TMenuItem;
@@ -98,6 +103,9 @@ type
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
+    RTFExporter: TRTFExporter;
+    JSonExport: TSimpleJSONExporter;
+    XMLExporter: TSimpleXMLExporter;
     timerSearch: TTimer;
     ToolButton3: TToolButton;
     trvProcedures: TTreeView;
@@ -269,9 +277,9 @@ type
     procedure actExecuteExecute(Sender: TObject);
     procedure actCloseExecute(Sender: TObject);
     procedure actCloseTabExecute(Sender: TObject);
-    procedure actExportDBFExecute(Sender: TObject);
+    procedure ActExportCSVExecute(Sender: TObject);
     procedure actExportSQLExecute(Sender: TObject);
-    procedure actExportXMLExecute(Sender: TObject);
+    procedure ActExportXMLExecute(Sender: TObject);
     procedure actFindExecute(Sender: TObject);
     procedure actFindReplaceExecute(Sender: TObject);
     procedure actFormatQueryExecute(Sender: TObject);
@@ -326,13 +334,9 @@ type
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
     procedure GridPrinterGetValue(const ParName: string; var ParValue: variant);
-    procedure imgLogoClick(Sender: TObject);
-    procedure lstTablesDblClick(Sender: TObject);
-    procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure mitOpenDataClick(Sender: TObject);
-    procedure mitQueryClick(Sender: TObject);
     procedure mitRefreshTablesClick(Sender: TObject);
     procedure OnCaretPosition(Line, Pos: integer);
     procedure OnDynamicEditKeyDown(Sender: TObject; var Key: word;
@@ -2259,10 +2263,9 @@ begin
   FPageControl.RemoveTab(FPageControl.ActiveTab);
 end;
 
-
-procedure TMainForm.actExportDBFExecute(Sender: TObject);
+procedure TMainForm.ActExportCSVExecute(Sender: TObject);
 begin
-  // DoExport(DbfExporter,'.dbf');
+  DoExport(CSVExporter,'.csv');
 end;
 
 procedure TMainForm.actExportSQLExecute(Sender: TObject);
@@ -2271,9 +2274,9 @@ begin
   DoExport(SqlExporter, '.sql');
 end;
 
-procedure TMainForm.actExportXMLExecute(Sender: TObject);
+procedure TMainForm.ActExportXMLExecute(Sender: TObject);
 begin
-
+  DoExport(XMLExporter,'.xml');
 end;
 
 procedure TMainForm.actFindExecute(Sender: TObject);
@@ -2538,12 +2541,12 @@ end;
 
 procedure TMainForm.actExportJSONExecute(Sender: TObject);
 begin
-
+  DoExport(JSonExport,'.json');
 end;
 
 procedure TMainForm.actExportRTFExecute(Sender: TObject);
 begin
-
+  DoExport(RTFExporter,'.rtf');
 end;
 
 procedure TMainForm.actNewTableExecute(Sender: TObject);
@@ -2666,7 +2669,6 @@ begin
   FDBInfo.Schema := cmbSchema.Text;
   FillTables;
   FillProcedures;
-
 end;
 
 procedure TMainForm.EditSelectAll1Execute(Sender: TObject);
@@ -2689,7 +2691,6 @@ begin
 
 end;
 
-
 procedure TMainForm.FormShow(Sender: TObject);
 begin
   Caption := 'LazSqlX ' + AppVersion + ' (Beta)';
@@ -2700,21 +2701,6 @@ procedure TMainForm.GridPrinterGetValue(const ParName: string; var ParValue: var
 begin
   if ParName = 'title' then
     ParValue := GridPrinter.Caption;
-end;
-
-procedure TMainForm.imgLogoClick(Sender: TObject);
-begin
-
-end;
-
-
-procedure TMainForm.lstTablesDblClick(Sender: TObject);
-begin
-end;
-
-procedure TMainForm.MenuItem1Click(Sender: TObject);
-begin
-
 end;
 
 procedure TMainForm.MenuItem4Click(Sender: TObject);
@@ -2852,17 +2838,11 @@ begin
   end;
 end;
 
-
 procedure TMainForm.mitOpenDataClick(Sender: TObject);
 begin
   if trvTables.Selected <> nil then;
   if trvTables.Selected.Level = 0 then
     ExecuteQuery(True);
-end;
-
-procedure TMainForm.mitQueryClick(Sender: TObject);
-begin
-
 end;
 
 procedure TMainForm.mitRefreshTablesClick(Sender: TObject);
@@ -2874,7 +2854,6 @@ procedure TMainForm.OnCaretPosition(Line, Pos: integer);
 begin
   sbMain.Panels[2].Text := 'Row: ' + IntToStr(Pos) + ' Col: ' + IntToStr(Line);
 end;
-
 
 procedure TMainForm.OnDynamicEditKeyDown(Sender: TObject; var Key: word;
   Shift: TShiftState);

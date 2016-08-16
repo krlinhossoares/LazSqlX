@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 241
+  Left = 338
   Height = 596
-  Top = 155
+  Top = 230
   Width = 1012
   Anchors = []
   BorderStyle = bsSingle
@@ -60,22 +60,17 @@ object MainForm: TMainForm
     object btnExportCsv: TToolButton
       Left = 156
       Top = 2
+      Action = ActExportCSV
     end
     object btnExportXml: TToolButton
       Left = 179
-      Hint = 'Export as XML'
       Top = 2
-      Caption = 'Export to XML'
-      Enabled = False
-      ImageIndex = 29
+      Action = ActExportXML
     end
     object btnExportJson: TToolButton
       Left = 202
-      Hint = 'Export as JSON'
       Top = 2
-      Caption = 'Export to JSON'
-      Enabled = False
-      ImageIndex = 27
+      Action = ActExportJSon
     end
     object btnExecute: TToolButton
       Left = 370
@@ -188,7 +183,6 @@ object MainForm: TMainForm
       Width = 747
       Align = alClient
       Center = True
-      OnClick = imgLogoClick
       Picture.Data = {
         1754506F727461626C654E6574776F726B47726170686963B275000089504E47
         0D0A1A0A0000000D49484452000001000000010008060000005C72A866000000
@@ -1639,46 +1633,10 @@ object MainForm: TMainForm
     object mitExport: TMenuItem
       Caption = 'Export'
       object mitExportToCSV: TMenuItem
-        Bitmap.Data = {
-          36040000424D3604000000000000360000002800000010000000100000000100
-          2000000000000004000064000000640000000000000000000000AE100000AE10
-          0000AE100000BC9A82FFBC957BFFBC957BFFBD9376FFBF9172FFBF8E6EFFC18C
-          69FFC28A65FFC38861FFC4845DFFC58258FFC88055FFC88055FFAE100000AE10
-          0000AE100000BE9D85FFFCEDE3FFFCECE1FFFCEAE0FFFBE9DEFFFBE8DCFFFBE7
-          DBFFFBE6D9FFFBE5D7FFFAE4D6FFFAE3D4FFFAE2D2FFC68159FFAE100000AE10
-          0000AE100000C0A088FFFCEEE5FFFCEDE3FFD6AE90FFD6AE90FFD6AE90FFD6AE
-          90FFD6AE90FFD6AE90FFD6AE90FFFAE4D6FFFAE3D4FFC4845EFFAE100000AE10
-          0000AE100000C2A28CFFFCEFE6FFFCEEE5FFFCEDE3FFFCECE1FFFCEAE0FFFBE9
-          DEFFFBE8DCFFFBE7DBFFFBE6D9FFFBE5D7FFFAE4D6FFC38962FFAE100000AE10
-          0000AE100000C4A58FFFFDF0E8FFFCEFE6FFD6AE90FFD6AE90FFD6AE90FFD6AE
-          90FFD6AE90FFD6AE90FFD6AE90FFFBE6D9FFFBE5D7FFC18B67FFAE100000AE10
-          0000AE100000C6A892FFFDF1EAFFFDF0E8FFFCEFE6FFFCEEE5FFFCEDE3FFFCEC
-          E1FFFCEAE0FFFBE9DEFFFBE8DCFFFBE7DBFFFBE6D9FFC08E6CFFAE100000AE10
-          0000AE100000C8AB95FFFDF2EBFFFDF1EAFFD6AE90FFD6AE90FFD6AE90FFD6AE
-          90FFD6AE90FFD6AE90FFD6AE90FFFBE8DCFFFBE7DBFFBF9072FFAE100000AE10
-          0000AE100000CAAD99FFFDF3EDFFFDF2EBFFFDF1EAFFFDF0E8FFFCEFE6FFFCEE
-          E5FFFCEDE3FFFCECE1FFFCEAE0FFFBE9DEFFFBE8DCFFBD9376FF00C000FF00C0
-          00FF00C000FF00C000FF00C000FF00C000FF00C000FF00C000FF00C000FF00C0
-          00FF00C000FF00C000FF00C000FFFCEAE0FFFBE9DEFFBB957AFF00C000FF00C0
-          00FFFFFFFFFFFFFFFFFF00C000FFFFFFFFFFFFFFFFFF00C000FF00C000FF00C0
-          00FFFFFFFFFF00C000FF00C000FFFCECE1FFFCEAE0FFBA977EFF00C000FFFFFF
-          FFFF00C000FF00C000FF00C000FF00C000FF00C000FFFFFFFFFF00C000FFFFFF
-          FFFF00C000FFFFFFFFFF00C000FFFCEDE3FFFCECE1FFBA977EFF00C000FFFFFF
-          FFFF00C000FF00C000FF00C000FFFFFFFFFF00C000FF00C000FF00C000FFFFFF
-          FFFF00C000FFFFFFFFFF00C000FFBA977EFFBA977EFFBA977EFF00C000FF00C0
-          00FFFFFFFFFFFFFFFFFF00C000FF00C000FFFFFFFFFFFFFFFFFF00C000FFFFFF
-          FFFF00C000FFFFFFFFFF00C000FFFFFFFFFFFFFFFFFFBA977EFF00C000FF00C0
-          00FF00C000FF00C000FF00C000FF00C000FF00C000FF00C000FF00C000FF00C0
-          00FF00C000FF00C000FF00C000FFFFFFFFFFBA977EFFAE100000AE100000AE10
-          0000AE100000D8C0AFFFFFFBF9FFFEFAF7FFFEF9F5FFFEF8F4FFFEF7F2FFFEF6
-          F0FFFDF4EFFFBA977EFFFFFFFFFFBA977EFFAE100000AE100000AE100000AE10
-          0000AE100000DAC3B3FFD4BBA9FFD1B6A3FFCDB19DFFC9AC97FFC6A791FFC2A2
-          8BFFBE9D85FFBA977EFFBA977EFFAE100000AE100000AE100000
-        }
+        Action = ActExportCSV
       end
       object mitExportToXml: TMenuItem
-        Caption = 'Export to XML'
-        Enabled = False
+        Action = ActExportXML
         Bitmap.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000064000000640000000000000000000000AE100000AE10
@@ -1715,12 +1673,9 @@ object MainForm: TMainForm
           0000AE100000DAC3B3FFD4BBA9FFD1B6A3FFCDB19DFFC9AC97FFC6A791FFC2A2
           8BFFBE9D85FFBA977EFFBA977EFFAE100000AE100000AE100000
         }
-        Hint = 'Export as XML'
-        ImageIndex = 29
       end
       object mitJsonExport: TMenuItem
-        Caption = 'Export to JSON'
-        Enabled = False
+        Action = ActExportJSon
         Bitmap.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000064000000640000000000000000000000B12D5800B12D
@@ -1757,12 +1712,9 @@ object MainForm: TMainForm
           5800B12D5800CCC9C6FFCBCACAFFCAC7C4FFC8B1A0FFC9AC97FFC6A791FFC2A2
           8BFFBE9D85FFBA977EFFBA977EFFB12D5800B12D5800B12D5800
         }
-        Hint = 'Export as JSON'
-        ImageIndex = 27
       end
       object mitRtfExport: TMenuItem
-        Caption = 'Export to RTF'
-        Enabled = False
+        Action = ActExportRTF
         Bitmap.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000064000000640000000000000000000000AE100000AE10
@@ -1799,8 +1751,6 @@ object MainForm: TMainForm
           0000AE100000DAC3B3FFD4BBA9FFD1B6A3FFCDB19DFFC9AC97FFC6A791FFC2A2
           8BFFBE9D85FFBA977EFFBA977EFFAE100000AE100000AE100000
         }
-        Hint = 'Export as RTF'
-        ImageIndex = 30
       end
       object mitSqlExport: TMenuItem
         Caption = 'Export to SQL Script'
@@ -2904,6 +2854,30 @@ object MainForm: TMainForm
       OnExecute = ActScriptExecutiveExecute
       ShortCut = 16507
     end
+    object ActExportCSV: TAction
+      Category = 'Export'
+      Caption = 'Export to CSV'
+      ImageIndex = 28
+      OnExecute = ActExportCSVExecute
+    end
+    object ActExportXML: TAction
+      Category = 'Export'
+      Caption = 'Export to XML'
+      ImageIndex = 29
+      OnExecute = ActExportXMLExecute
+    end
+    object ActExportRTF: TAction
+      Category = 'Export'
+      Caption = 'Export to RTF'
+      ImageIndex = 30
+      OnExecute = ActExportRTFExecute
+    end
+    object ActExportJSon: TAction
+      Category = 'Export'
+      Caption = 'Export to Json'
+      ImageIndex = 27
+      OnExecute = ActExportJSonExecute
+    end
   end
   object OpenDialog: TOpenDialog
     DefaultExt = '.sql'
@@ -2930,7 +2904,7 @@ object MainForm: TMainForm
     FormatSettings.EscapeStyle = sesFirebird
     FormatSettings.StatementKind = skFullInsert
     FormatSettings.QuoteIdentifiers = False
-    left = 448
+    left = 300
     top = 32
   end
   object TablesPopupMenu: TPopupMenu
@@ -3217,7 +3191,6 @@ object MainForm: TMainForm
         0000000000000000000000000000000000000000000000000000
       }
       ImageIndex = 44
-      OnClick = mitQueryClick
       object mitSelectQuery: TMenuItem
         Action = actGenerateSelectQuery
         Bitmap.Data = {
@@ -3912,7 +3885,6 @@ object MainForm: TMainForm
       }
       Hint = 'Create class Model and DAO.'
       ImageIndex = 62
-      OnClick = MenuItem1Click
       object MenuItem5: TMenuItem
         Action = actCreateCRUDDelphi
         Bitmap.Data = {
@@ -6863,8 +6835,8 @@ object MainForm: TMainForm
   end
   object LibraryLoader: TSQLDBLibraryLoader
     Enabled = False
-    left = 658
-    top = 408
+    left = 680
+    top = 216
   end
   object GridPrinter: TFrPrintGrid
     Font.CharSet = ANSI_CHARSET
@@ -6874,8 +6846,8 @@ object MainForm: TMainForm
     ShowCaption = True
     ShowProgress = True
     OnGetValue = GridPrinterGetValue
-    left = 527
-    top = 448
+    left = 576
+    top = 32
   end
   object ReplaceDialog1: TReplaceDialog
     Options = [frDown, frFindNext, frHideUpDown, frEntireScope, frPromptOnReplace, frHidePromptOnReplace]
@@ -7249,5 +7221,47 @@ object MainForm: TMainForm
     OnTimer = timerSearchTimer
     left = 184
     top = 304
+  end
+  object CSVExporter: TCSVExporter
+    ExportFields = <>
+    RestorePosition = False
+    FormatSettings.DecimalSeparator = #0
+    FormatSettings.CurrencyDigits = 0
+    FormatSettings.FieldDelimiter = ','
+    FormatSettings.IgnoreOuterWhitespace = False
+    FormatSettings.RowDelimiter = #13#10
+    FormatSettings.QuoteChar = '"'
+    left = 329
+    top = 32
+  end
+  object XMLExporter: TSimpleXMLExporter
+    ExportFields = <>
+    RestorePosition = False
+    FormatSettings.DecimalSeparator = #0
+    FormatSettings.CurrencyDigits = 0
+    FormatSettings.FieldAsAttributes = False
+    FormatSettings.IndentSize = 0
+    left = 360
+    top = 32
+  end
+  object RTFExporter: TRTFExporter
+    ExportFields = <>
+    RestorePosition = False
+    FormatSettings.DecimalSeparator = #0
+    FormatSettings.CurrencyDigits = 0
+    FormatSettings.Options = [reHeaderRow, reTopLine, reBottomLine]
+    left = 392
+    top = 32
+  end
+  object JSonExport: TSimpleJSONExporter
+    ExportFields = <>
+    RestorePosition = False
+    FormatSettings.DecimalSeparator = #0
+    FormatSettings.CurrencyDigits = 0
+    FormatSettings.RowFormat = rfArray
+    FormatSettings.ColumnFormat = cfObject
+    FormatSettings.IndentSize = 0
+    left = 424
+    top = 32
   end
 end
