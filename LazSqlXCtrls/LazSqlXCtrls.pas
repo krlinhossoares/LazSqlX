@@ -361,8 +361,8 @@ begin
     VK_SPACE: //Ctrl-Space
       if ssCtrl in Shift then
         InvokeSynCompleteKey;
-     VK_DELETE:
-    FParent.FullScanTableAliases;
+    VK_DELETE:
+      FParent.FullScanTableAliases;
   end;
 end;
 procedure TLazSqlXTabSheet.OnQueryEditorKeyPress(Sender: TObject; var Key: char
@@ -391,6 +391,16 @@ begin
   case key of
     VK_OEM_PERIOD: //.
       InvokeSynCompleteKey;
+    VK_UP:
+      begin
+        if ssAlt in Shift then
+          QueryEditor.Text:= UpperCase(QueryEditor.Text);
+      end;
+    VK_DOWN:
+      begin
+        if ssAlt in Shift then
+          QueryEditor.Text:= LowerCase(QueryEditor.Text);
+      end;
   end;
   if Assigned(FOnCaretPositionChanged) then
   FOnCaretPositionChanged(FQueryEditor.CaretX,FQueryEditor.CaretY);

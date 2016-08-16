@@ -1,7 +1,7 @@
 object FrmParams: TFrmParams
-  Left = 325
+  Left = 425
   Height = 315
-  Top = 414
+  Top = 416
   Width = 418
   BorderIcons = []
   Caption = 'Params'
@@ -31,6 +31,7 @@ object FrmParams: TFrmParams
       RowCount = 2
       TabOrder = 0
       TitleStyle = tsStandard
+      OnKeyPress = SgParamsKeyPress
       ColWidths = (
         176
         239
@@ -55,7 +56,6 @@ object FrmParams: TFrmParams
       DefaultCaption = True
       Kind = bkOK
       ModalResult = 1
-      OnClick = BitBtn1Click
       TabOrder = 0
     end
     object BitBtn2: TBitBtn

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ExtCtrls,
-  StdCtrls, Grids, ValEdit, Buttons, ZDataSet, sqldb;
+  StdCtrls, Grids, ValEdit, Buttons, ZDataSet, sqldb, db ;
 
 type
 
@@ -18,7 +18,7 @@ type
     Panel1: TPanel;
     Panel2: TPanel;
     SgParams: TStringGrid;
-    procedure BitBtn1Click(Sender: TObject);
+    procedure SgParamsKeyPress(Sender: TObject; var Key: char);
  private
     { private declarations }
   public
@@ -36,9 +36,13 @@ implementation
 
 { TFrmParams }
 
-procedure TFrmParams.BitBtn1Click(Sender: TObject);
+procedure TFrmParams.SgParamsKeyPress(Sender: TObject; var Key: char);
 begin
-
+  if (Key=#13) then
+    if SgParams.Row = SgParams.RowCount-1 then
+        SgParams.Row :=1
+    else
+      SgParams.Row := SgParams.Row+1;
 end;
 
 class function TFrmParams.CreateForm(var  Query: TZQuery): Boolean;

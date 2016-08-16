@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 163
+  Left = 241
   Height = 596
-  Top = 243
+  Top = 155
   Width = 1012
   Anchors = []
   BorderStyle = bsSingle
@@ -17,7 +17,7 @@ object MainForm: TMainForm
   OnShow = FormShow
   Position = poDesktopCenter
   LCLVersion = '1.6.0.4'
-  WindowState = wsFullScreen
+  WindowState = wsMaximized
   object tlbMain: TToolBar
     Left = 0
     Height = 24

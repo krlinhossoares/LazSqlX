@@ -325,7 +325,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FormShow(Sender: TObject);
-    procedure GridPrinterGetValue(const ParName: String; var ParValue: Variant);
+    procedure GridPrinterGetValue(const ParName: string; var ParValue: variant);
     procedure imgLogoClick(Sender: TObject);
     procedure lstTablesDblClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
@@ -334,7 +334,7 @@ type
     procedure mitOpenDataClick(Sender: TObject);
     procedure mitQueryClick(Sender: TObject);
     procedure mitRefreshTablesClick(Sender: TObject);
-    procedure OnCaretPosition(Line, Pos: Integer);
+    procedure OnCaretPosition(Line, Pos: integer);
     procedure OnDynamicEditKeyDown(Sender: TObject; var Key: word;
       Shift: TShiftState);
     procedure OnPageControlChange(Sender: TObject);
@@ -349,7 +349,7 @@ type
     procedure ToolButton2Click(Sender: TObject);
     procedure trvTablesChange(Sender: TObject; Node: TTreeNode);
     procedure trvTablesExpanding(Sender: TObject; Node: TTreeNode;
-     var AllowExpansion: Boolean);
+      var AllowExpansion: boolean);
     procedure trvTablesKeyPress(Sender: TObject; var Key: char);
     procedure txtSearchprocChange(Sender: TObject);
     procedure txtSearchprocEnter(Sender: TObject);
@@ -359,6 +359,7 @@ type
     procedure txtSearchTableEnter(Sender: TObject);
     procedure txtSearchTableExit(Sender: TObject);
     procedure txtSearchTableKeyPress(Sender: TObject; var Key: char);
+    procedure ZSQLMonitor1LogTrace(Sender: TObject; Event: TZLoggingEvent);
   private
     FCrudInfo: TCRUDInfo;
 
@@ -376,7 +377,7 @@ type
 
 
     {MainControl to hold all Tabs with Queries/returned results}
-    FPageControl:TLazSqlXPageControl;
+    FPageControl: TLazSqlXPageControl;
 
     {Loading indicator appears on statusbar if the executing query is in progress}
     FLoadingIndicator: TLoadingIndicator;
@@ -391,11 +392,11 @@ type
     FQuickSearchLastWord: string;
 
     {This is used to search for tables and procedures in TreeView}
-    FTableSearch: String;
-    FContTimeSearch: Word;
+    FTableSearch: string;
+    FContTimeSearch: word;
 
     {Ativa a pesquisa }
-    Procedure SearchActive;
+    procedure SearchActive;
 
     {disconnectes sqldb/zeos}
     procedure DoDisconnect;
@@ -405,7 +406,7 @@ type
     function GetDbInfo: TAsDbConnectionInfo;
 
     {Gets field name as FieldName(type(length), allow null)}
-    function GetFieldNameForTreeView(f:TCollectionItem):string;
+    function GetFieldNameForTreeView(f: TCollectionItem): string;
 
     {Updates GUI controls based on status connected/disconnected}
     procedure UpdateGUI(aIsConnected: boolean);
@@ -416,7 +417,7 @@ type
     procedure DoExport(exporter: TCustomDatasetExporter; FileExt: string);
 
     {Shows AsDbForm for the selected table in tableList}
-    procedure ShowEditForm(FormFilter:TAsDbFormFilter);
+    procedure ShowEditForm(FormFilter: TAsDbFormFilter);
 
     {fills schemas}
     procedure FillSchemas;
@@ -453,13 +454,13 @@ type
     procedure FindText(aText: string);
 
     {QuickSearch table list}
-    procedure QuickSearchTables(StartIndex: Integer=0);
+    procedure QuickSearchTables(StartIndex: integer = 0);
 
     {Search table list}
-    procedure SearchTables(aText: string; StartIndex: Integer=0);
+    procedure SearchTables(aText: string; StartIndex: integer = 0);
 
     {QuickSearch Procedures}
-    procedure QuickSearchProcedure(StartIndex: Integer=0);
+    procedure QuickSearchProcedure(StartIndex: integer = 0);
 
     {Resizes active tab's gridColumns to the specified width}
     procedure ResizeGridColumns(ColumnWidth: integer = 100);
@@ -471,7 +472,8 @@ type
     procedure OnExecutionStopped(Sender: TObject);
 
     {Event fired when Grid draws cells; this event is assigned to a LazSqlXTab property}
-    procedure OnDBGridDrawColumnCell(Sender: TObject; const Rect: TRect; DataCol: integer; Column: TColumn; State: TGridDrawState);
+    procedure OnDBGridDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: integer; Column: TColumn; State: TGridDrawState);
 
     {Event fired when ActiveTab's Grid Cell is clicked and the type is of Blob or Memo; this event is assigned to a LazSqlXTab property}
     procedure EditSpecialField(Sender: TObject);   {*****Edit Special Fields*****}
@@ -496,13 +498,14 @@ type
     {Configuration CRUD}
     property CrudInfo: TCRUDInfo read FCrudInfo write FCrudInfo;
 
-    property DbInfo:TAsDbConnectionInfo read GetDbInfo;
+    property DbInfo: TAsDbConnectionInfo read GetDbInfo;
 
   end;
 
 const
   LazSqlXSessionFile = 'LazSqlX.sess';
-  SEARCH_DELAY = 2; {Tempo em segundos entre um KeyPress e outro para considerar na pesquisa de tabelas}
+  SEARCH_DELAY = 2;
+{Tempo em segundos entre um KeyPress e outro para considerar na pesquisa de tabelas}
 
 
 
@@ -592,39 +595,39 @@ end;
 
 procedure TMainForm.LoadSession;
 var
-  xmldoc:TXMLDocument;
-  ServerNode:TDOMNode;
-  I: Integer;
-  Filename:string;
+  xmldoc: TXMLDocument;
+  ServerNode: TDOMNode;
+  I: integer;
+  Filename: string;
   s: DOMString;
 begin
-  if (FPageControl<>nil) then
+  if (FPageControl <> nil) then
   begin
-    Filename := GetTempDir+LazSqlXSessionFile;
+    Filename := GetTempDir + LazSqlXSessionFile;
 
     if FileExists(Filename) then
     begin
       FPageControl.RemoveAllTabs;
-      ReadXMLFile(xmldoc,Filename);
+      ReadXMLFile(xmldoc, Filename);
       try
-       ServerNode := xmldoc.DocumentElement.FindNode(FDBInfo.Identifier);
-       if ServerNode<>nil then
-       for I:=0 to ServerNode.ChildNodes.Count-1 do
-       begin
-         s := ServerNode.ChildNodes[I].TextContent;
-         if Trim(s)<>EmptyStr then
-         begin
+        ServerNode := xmldoc.DocumentElement.FindNode(FDBInfo.Identifier);
+        if ServerNode <> nil then
+          for I := 0 to ServerNode.ChildNodes.Count - 1 do
+          begin
+            s := ServerNode.ChildNodes[I].TextContent;
+            if Trim(s) <> EmptyStr then
+            begin
+              actNewTab.Execute;
+              if FPageControl.ActiveTab <> nil then
+                FPageControl.ActiveTab.QueryEditor.Text := s;
+            end;
+          end;
+        if FPageControl.PageCount = 0 then
           actNewTab.Execute;
-          if FPageControl.ActiveTab<>nil then
-          FPageControl.ActiveTab.QueryEditor.Text :=s;
-         end;
-       end;
-       if FPageControl.PageCount=0 then
-       actNewTab.Execute;
-       FPageControl.ScanNeeded;
+        FPageControl.ScanNeeded;
       finally
-        if xmldoc<>nil then
-        xmldoc.Free;
+        if xmldoc <> nil then
+          xmldoc.Free;
       end;
     end;
   end;
@@ -632,68 +635,71 @@ end;
 
 procedure TMainForm.SaveSession;
 var
-  xmldoc:TXMLDocument;
-  RootElement:TDOMElement;
-  QueryElement:TDOMElement;
-  ServerNode:TDOMNode;
-  I: Integer;
-  Filename:string;
-  ServerIdentifier:string;
+  xmldoc: TXMLDocument;
+  RootElement: TDOMElement;
+  QueryElement: TDOMElement;
+  ServerNode: TDOMNode;
+  I: integer;
+  Filename: string;
+  ServerIdentifier: string;
 begin
-  if (FDBInfo=nil) then exit;
-  if (FPageControl<>nil) then
+  if (FDBInfo = nil) then
+    exit;
+  if (FPageControl <> nil) then
   begin
-    Filename := GetTempDir+LazSqlXSessionFile;
+    Filename := GetTempDir + LazSqlXSessionFile;
     ServerNode := nil;
     if FileExists(Filename) then
-      ReadXMLFile(xmldoc,Filename)
+      ReadXMLFile(xmldoc, Filename)
     else
       xmldoc := TXMLDocument.Create;
     try
 
-     if FPageControl<>nil then
-     begin
-       ServerIdentifier := FDBInfo.Identifier;
+      if FPageControl <> nil then
+      begin
+        ServerIdentifier := FDBInfo.Identifier;
 
-       if xmldoc.DocumentElement=nil then
-       begin
-        RootElement := xmldoc.CreateElement('Tabs');
-        xmldoc.AppendChild(RootElement);
-       end else
-       begin
-         RootElement := xmldoc.DocumentElement;
-       end;
+        if xmldoc.DocumentElement = nil then
+        begin
+          RootElement := xmldoc.CreateElement('Tabs');
+          xmldoc.AppendChild(RootElement);
+        end
+        else
+        begin
+          RootElement := xmldoc.DocumentElement;
+        end;
 
         if RootElement <> nil then
         begin
 
-         if RootElement.ChildNodes.Count > 0 then
-         ServerNode := RootElement.FindNode(ServerIdentifier);
+          if RootElement.ChildNodes.Count > 0 then
+            ServerNode := RootElement.FindNode(ServerIdentifier);
 
-         if ServerNode<>nil then
-         begin
-           if ServerNode.ChildNodes <> nil then
-           for I:=0 to ServerNode.ChildNodes.Count-1 do
-           begin
-            ServerNode.RemoveChild(ServerNode.ChildNodes[0]);
-           end;
-         end else
-         begin
-          ServerNode := xmldoc.CreateElement(ServerIdentifier);
-          xmldoc.DocumentElement.AppendChild(ServerNode);
-         end;
+          if ServerNode <> nil then
+          begin
+            if ServerNode.ChildNodes <> nil then
+              for I := 0 to ServerNode.ChildNodes.Count - 1 do
+              begin
+                ServerNode.RemoveChild(ServerNode.ChildNodes[0]);
+              end;
+          end
+          else
+          begin
+            ServerNode := xmldoc.CreateElement(ServerIdentifier);
+            xmldoc.DocumentElement.AppendChild(ServerNode);
+          end;
 
-         if FPageControl.Tag=0 then
-         for I:=0 to FPageControl.PageCount-1 do
-         begin
-           QueryElement := xmldoc.CreateElement(FPageControl.Pages[I].Name);
-           QueryElement.TextContent:= FPageControl.Pages[I].QueryEditor.Text;
-           ServerNode.AppendChild(QueryElement);
-         end;
+          if FPageControl.Tag = 0 then
+            for I := 0 to FPageControl.PageCount - 1 do
+            begin
+              QueryElement := xmldoc.CreateElement(FPageControl.Pages[I].Name);
+              QueryElement.TextContent := FPageControl.Pages[I].QueryEditor.Text;
+              ServerNode.AppendChild(QueryElement);
+            end;
         end;
 
-      WriteXMLFile(xmldoc,Filename);
-     end;
+        WriteXMLFile(xmldoc, Filename);
+      end;
     finally
       xmldoc.Free;
     end;
@@ -708,7 +714,7 @@ var
   tis: TAsTableInfos;
   ti: TAsTableInfo;
   outPut: TStringList;
-  tab:TLazSqlXTabSheet;
+  tab: TLazSqlXTabSheet;
 begin
 
   try
@@ -727,16 +733,16 @@ begin
     actExecute.Enabled := True;
 
     try
-      s := TAsSqlGenerator.Create(FDBInfo,p);
-      tis := TAsTableInfos.Create(nil,FDBInfo);
-      ti := tis.Add(cmbSchema.Text, table,False);
+      s := TAsSqlGenerator.Create(FDBInfo, p);
+      tis := TAsTableInfos.Create(nil, FDBInfo);
+      ti := tis.Add(cmbSchema.Text, table, False);
 
       if not IsStoredProcedure then
         Output := s.GenerateQuery(0, ti, queryType)
       else
         outPut := s.GenerateStoredProcedure(ti, queryType);
 
-      tab:=FPageControl.AddTab;
+      tab := FPageControl.AddTab;
 
       tab.QueryEditor.Lines.Add('');
       tab.QueryEditor.Lines.Text := tab.QueryEditor.Lines.Text + outPut.Text;
@@ -942,10 +948,10 @@ var
   FindS: string;
   IPos, FLen, SLen: integer; {Internpos, Lengde søkestreng, lengde memotekst}
   Res: integer;
-  qe:TSynEdit;
+  qe: TSynEdit;
 begin
 
-  qe:=FPageControl.ActiveTab.QueryEditor;
+  qe := FPageControl.ActiveTab.QueryEditor;
   {FPos is global}
   FFound := False;
   FLen := Length(aText);
@@ -976,47 +982,47 @@ begin
 
 end;
 
-procedure TMainForm.QuickSearchTables(StartIndex:Integer=0);
+procedure TMainForm.QuickSearchTables(StartIndex: integer = 0);
 var
- I: Integer;
+  I: integer;
 begin
-  for I:=StartIndex to trvTables.Items.Count -1 do
+  for I := StartIndex to trvTables.Items.Count - 1 do
   begin
     if Pos(UPPERCASE(txtSearchTable.Text), UPPERCASE(trvTables.Items[I].Text)) > 0 then
     begin
-     trvTables.Items[I].Selected:= True;
-     Break;
+      trvTables.Items[I].Selected := True;
+      Break;
     end;
   end;
 end;
 
-procedure TMainForm.SearchTables(aText: string; StartIndex: Integer);
+procedure TMainForm.SearchTables(aText: string; StartIndex: integer);
 var
- I: Integer;
+  I: integer;
 begin
 
   if Trim(FTableSearch) = '' then
-     Exit;
+    Exit;
 
-  for I:=StartIndex to trvTables.Items.Count -1 do
+  for I := StartIndex to trvTables.Items.Count - 1 do
   begin
     if Pos(UPPERCASE(FTableSearch), UPPERCASE(trvTables.Items[I].Text)) > 0 then
     begin
-     trvTables.Items[I].Selected:= True;
-     Break;
+      trvTables.Items[I].Selected := True;
+      Break;
     end;
   end;
 end;
 
-procedure TMainForm.QuickSearchProcedure(StartIndex:Integer=0);
+procedure TMainForm.QuickSearchProcedure(StartIndex: integer = 0);
 var
- I: Integer;
+  I: integer;
 begin
-  for I:=StartIndex to trvProcedures.Items.Count -1 do
+  for I := StartIndex to trvProcedures.Items.Count - 1 do
   begin
-    if AnsiContainsText(trvProcedures.Items[I].Text,txtSearchproc.Text) then
+    if AnsiContainsText(trvProcedures.Items[I].Text, txtSearchproc.Text) then
     begin
-     trvProcedures.Items[I].Selected:= True;
+      trvProcedures.Items[I].Selected := True;
     end;
   end;
 end;
@@ -1025,9 +1031,9 @@ end;
 procedure TMainForm.ResizeGridColumns(ColumnWidth: integer);
 var
   I: integer;
-  qe:TDBGrid;
+  qe: TDBGrid;
 begin
-  qe:=FPageControl.ActiveTab.DataGrid;
+  qe := FPageControl.ActiveTab.DataGrid;
   qe.BeginUpdate;
   try
     for I := 0 to qe.Columns.Count - 1 do
@@ -1042,8 +1048,8 @@ end;
 procedure TMainForm.OnExecutionFinished(Sender: TObject; IsTableData: boolean);
 begin
   FLoadingIndicator.StopAnimation;
-  actExecute.ImageIndex:=22;
-  sbMain.Panels[3].Text:= FPageControl.ActiveTab.Message;
+  actExecute.ImageIndex := 22;
+  sbMain.Panels[3].Text := FPageControl.ActiveTab.Message;
 end;
 
 
@@ -1056,35 +1062,37 @@ end;
 
 procedure TMainForm.ReplaceDialog1Find(Sender: TObject);
 begin
- FindText(ReplaceDialog1.FindText);
+  FindText(ReplaceDialog1.FindText);
 end;
 
 procedure TMainForm.ReplaceDialog1Replace(Sender: TObject);
 var
- s:TSynSearchOptions;
+  s: TSynSearchOptions;
 begin
 
- if FPageControl.ActiveTab = nil then exit;
+  if FPageControl.ActiveTab = nil then
+    exit;
 
   if frEntireScope in ReplaceDialog1.Options then
-  s := [ssoEntireScope];
+    s := [ssoEntireScope];
 
   if frReplace in ReplaceDialog1.Options then
-  s := s + [ssoReplace];
+    s := s + [ssoReplace];
 
   if frReplaceAll in ReplaceDialog1.Options then
-  s := s+ [ssoReplaceAll];
+    s := s + [ssoReplaceAll];
 
   if frMatchCase in ReplaceDialog1.Options then
-  s := s+[ssoMatchCase];
+    s := s + [ssoMatchCase];
 
   if frWholeWord in ReplaceDialog1.Options then
-  s := s+[ssoWholeWord];
+    s := s + [ssoWholeWord];
 
   if FPageControl.ActiveTab.QueryEditor.SelAvail then
-  s := s+[ssoSelectedOnly];
+    s := s + [ssoSelectedOnly];
 
- FPageControl.ActiveTab.QueryEditor.SearchReplace(ReplaceDialog1.FindText,ReplaceDialog1.ReplaceText,s);
+  FPageControl.ActiveTab.QueryEditor.SearchReplace(
+    ReplaceDialog1.FindText, ReplaceDialog1.ReplaceText, s);
 
 end;
 
@@ -1104,34 +1112,35 @@ begin
 
   if FContTimeSearch >= SEARCH_DELAY then
   begin
-    FTableSearch        := '';
+    FTableSearch := '';
     timerSearch.Enabled := False;
   end;
 end;
 
 procedure TMainForm.ToolButton1Click(Sender: TObject);
 var
- frm:TAsDbForm;
- ti:TAsTableInfos;
+  frm: TAsDbForm;
+  ti: TAsTableInfos;
 begin
- ti := TAsTableInfos.Create(nil,FDBInfo);
- try
-  frm := TAsDbForm.Create(FDBInfo,cmbSchema.Text,ti.Add(cmbSchema.Text,trvTables.Selected.Text));
-  frm.OpenData;
-  frm.CloseData;
- finally
-   ti.Free;
-   frm.Free;
- end;
+  ti := TAsTableInfos.Create(nil, FDBInfo);
+  try
+    frm := TAsDbForm.Create(FDBInfo, cmbSchema.Text, ti.Add(
+      cmbSchema.Text, trvTables.Selected.Text));
+    frm.OpenData;
+    frm.CloseData;
+  finally
+    ti.Free;
+    frm.Free;
+  end;
 
 end;
 
 procedure TMainForm.ToolButton2Click(Sender: TObject);
 var
-  cs:TAsColumns;
+  cs: TAsColumns;
 begin
   try
-    cs := TAsDbUtils.GetColumns(FDBInfo,trvTables.Selected.Text);
+    cs := TAsDbUtils.GetColumns(FDBInfo, trvTables.Selected.Text);
   finally
     cs.Free;
   end;
@@ -1139,111 +1148,113 @@ end;
 
 procedure TMainForm.trvTablesChange(Sender: TObject; Node: TTreeNode);
 begin
- if  Node.Level=0 then
-  trvTables.PopupMenu := TablesPopupMenu
- else
-   trvTables.PopupMenu := nil;
+  if Node.Level = 0 then
+    trvTables.PopupMenu := TablesPopupMenu
+  else
+    trvTables.PopupMenu := nil;
 end;
 
 procedure TMainForm.trvTablesExpanding(Sender: TObject; Node: TTreeNode;
- var AllowExpansion: Boolean);
+  var AllowExpansion: boolean);
 
 var
-  tis:TAsTableInfos;
-  ti:TAsTableInfo;
-  tn,nkeys,nfkeys,nIndexes,nTriggers: TTreeNode;
-  I: Integer;
-  fstr:string;
+  tis: TAsTableInfos;
+  ti: TAsTableInfo;
+  tn, nkeys, nfkeys, nIndexes, nTriggers: TTreeNode;
+  I: integer;
+  fstr: string;
   f: TAsFieldInfo;
-  FieldsO, FieldsD: String;
+  FieldsO, FieldsD: string;
 begin
 
- if Node.Level>0 then
- Exit;
+  if Node.Level > 0 then
+    Exit;
 
- try
+  try
 
-   tis :=  TAsTableInfos.Create(nil,FDBInfo);
-   ti := tis.Add(cmbSchema.Text,Node.Text);
-   Node.DeleteChildren;
-   for I:=0 to ti.AllFields.Count-1 do
-   begin
-     f := ti.AllFields[I];
-     tn := trvTables.Items.AddChild(Node,GetFieldNameForTreeView(f));
-     if f.IsPrimaryKey then
-      tn.ImageIndex:= 1
-     else
-     if f.IsReference then
-      tn.ImageIndex:= 2
-     else
-      tn.ImageIndex:=3;
+    tis := TAsTableInfos.Create(nil, FDBInfo);
+    ti := tis.Add(cmbSchema.Text, Node.Text);
+    Node.DeleteChildren;
+    for I := 0 to ti.AllFields.Count - 1 do
+    begin
+      f := ti.AllFields[I];
+      tn := trvTables.Items.AddChild(Node, GetFieldNameForTreeView(f));
+      if f.IsPrimaryKey then
+        tn.ImageIndex := 1
+      else
+      if f.IsReference then
+        tn.ImageIndex := 2
+      else
+        tn.ImageIndex := 3;
 
-     tn.SelectedIndex:=tn.ImageIndex;
-   end;
+      tn.SelectedIndex := tn.ImageIndex;
+    end;
 
-     nkeys := trvTables.Items.AddChild(Node,'Keys');
-     nkeys.ImageIndex:=6;
-     nkeys.SelectedIndex:=nkeys.ImageIndex;
-     for I:=0 to ti.PrimaryKeys.Count-1 do
-     begin
-       tn := trvTables.Items.AddChild(nkeys,GetFieldNameForTreeView(ti.PrimaryKeys[I]));
-       tn.ImageIndex:= 1;
-       tn.SelectedIndex:=tn.ImageIndex;
-     end;
+    nkeys := trvTables.Items.AddChild(Node, 'Keys');
+    nkeys.ImageIndex := 6;
+    nkeys.SelectedIndex := nkeys.ImageIndex;
+    for I := 0 to ti.PrimaryKeys.Count - 1 do
+    begin
+      tn := trvTables.Items.AddChild(nkeys, GetFieldNameForTreeView(ti.PrimaryKeys[I]));
+      tn.ImageIndex := 1;
+      tn.SelectedIndex := tn.ImageIndex;
+    end;
 
-     nfkeys := trvTables.Items.AddChild(Node,'Foreign Keys');
-     nfkeys.ImageIndex:=6;
-     nfkeys.SelectedIndex:=nfkeys.ImageIndex;
-     for I:=0 to ti.ImportedKeys.Count-1 do
-     begin
-       if FieldsO = '' then
-         FieldsO:= ti.ImportedKeys[I].ForeignColumnName // Fields FK TableName
-       else
-         IF Pos(ti.ImportedKeys[I].ForeignColumnName, FieldsO) = 0 THEN
-           FieldsO:= FieldsO + ','+ti.ImportedKeys[I].ForeignColumnName;
+    nfkeys := trvTables.Items.AddChild(Node, 'Foreign Keys');
+    nfkeys.ImageIndex := 6;
+    nfkeys.SelectedIndex := nfkeys.ImageIndex;
+    for I := 0 to ti.ImportedKeys.Count - 1 do
+    begin
+      if FieldsO = '' then
+        FieldsO := ti.ImportedKeys[I].ForeignColumnName // Fields FK TableName
+      else
+      if Pos(ti.ImportedKeys[I].ForeignColumnName, FieldsO) = 0 then
+        FieldsO := FieldsO + ',' + ti.ImportedKeys[I].ForeignColumnName;
 
-       if FieldsD = '' then
-         FieldsD:= ti.ImportedKeys[I].ColumnName // Fields FK TableName
-       else
-         IF Pos(ti.ImportedKeys[I].ColumnName, FieldsD) = 0 THEN
-           FieldsD:= FieldsD + ','+ti.ImportedKeys[I].ColumnName;
+      if FieldsD = '' then
+        FieldsD := ti.ImportedKeys[I].ColumnName // Fields FK TableName
+      else
+      if Pos(ti.ImportedKeys[I].ColumnName, FieldsD) = 0 then
+        FieldsD := FieldsD + ',' + ti.ImportedKeys[I].ColumnName;
 
-       if (I = ti.ImportedKeys.Count - 1) or
-          (ti.ImportedKeys[I].ConstraintName <> ti.ImportedKeys[I+1].ConstraintName) then
-       begin
-          tn := trvTables.Items.AddChild(nfkeys,ti.ImportedKeys[I].ConstraintName + ' - On Fields(' +FieldsD+')' + ' FK Table('+ti.ImportedKeys[I].ForeignTableName+'('+FieldsO+'))');
-          tn.ImageIndex := 2;
-          tn.SelectedIndex:=tn.ImageIndex;
-       end;
+      if (I = ti.ImportedKeys.Count - 1) or
+        (ti.ImportedKeys[I].ConstraintName <> ti.ImportedKeys[I + 1].ConstraintName) then
+      begin
+        tn := trvTables.Items.AddChild(nfkeys, ti.ImportedKeys[I].ConstraintName +
+          ' - On Fields(' + FieldsD + ')' + ' FK Table(' + ti.ImportedKeys[I].ForeignTableName +
+          '(' + FieldsO + '))');
+        tn.ImageIndex := 2;
+        tn.SelectedIndex := tn.ImageIndex;
+      end;
 {       tn := trvTables.Items.AddChild(nfkeys,GetFieldNameForTreeView(ti.ImportedKeys[I]));
        tn.ImageIndex:= 2;
        tn.SelectedIndex:=tn.ImageIndex;}
-     end;
+    end;
 
-     nIndexes := trvTables.Items.AddChild(Node,'Indexes');
-     nIndexes.ImageIndex:=6;
-     nIndexes.SelectedIndex:=nIndexes.ImageIndex;
-     for I:=0 to ti.Indexes.Count-1 do
-     begin
-       tn := trvTables.Items.AddChild(nIndexes,GetFieldNameForTreeView(ti.Indexes[I]));
-       tn.ImageIndex:= 5;
-       tn.SelectedIndex:=tn.ImageIndex;
-     end;
+    nIndexes := trvTables.Items.AddChild(Node, 'Indexes');
+    nIndexes.ImageIndex := 6;
+    nIndexes.SelectedIndex := nIndexes.ImageIndex;
+    for I := 0 to ti.Indexes.Count - 1 do
+    begin
+      tn := trvTables.Items.AddChild(nIndexes, GetFieldNameForTreeView(ti.Indexes[I]));
+      tn.ImageIndex := 5;
+      tn.SelectedIndex := tn.ImageIndex;
+    end;
 
-     nTriggers := trvTables.Items.AddChild(Node,'Triggers');
-     nTriggers.ImageIndex:=6;
-     nTriggers.SelectedIndex:=nTriggers.ImageIndex;
-     for I:=0 to ti.Triggers.Count-1 do
-     begin
-       tn := trvTables.Items.AddChild(nTriggers,GetFieldNameForTreeView(ti.Triggers[I]));
-       tn.ImageIndex:= 4;
-       tn.SelectedIndex:=tn.ImageIndex;
-     end;
+    nTriggers := trvTables.Items.AddChild(Node, 'Triggers');
+    nTriggers.ImageIndex := 6;
+    nTriggers.SelectedIndex := nTriggers.ImageIndex;
+    for I := 0 to ti.Triggers.Count - 1 do
+    begin
+      tn := trvTables.Items.AddChild(nTriggers, GetFieldNameForTreeView(ti.Triggers[I]));
+      tn.ImageIndex := 4;
+      tn.SelectedIndex := tn.ImageIndex;
+    end;
 
 
- finally
-   tis.Free;
- end;
+  finally
+    tis.Free;
+  end;
 end;
 
 
@@ -1300,10 +1311,15 @@ begin
     QuickSearchTables;
 end;
 
+procedure TMainForm.ZSQLMonitor1LogTrace(Sender: TObject; Event: TZLoggingEvent);
+begin
+
+end;
+
 
 procedure TMainForm.SearchActive;
 begin
-  FContTimeSearch     := 0;
+  FContTimeSearch := 0;
   timerSearch.Enabled := True;
 end;
 
@@ -1325,7 +1341,7 @@ begin
         actNewTabExecute(nil);
       end;
       FillSchemas;
-      FDBInfo.Schema:=cmbSchema.Text;
+      FDBInfo.Schema := cmbSchema.Text;
       FillTables;
       FillProcedures;
       pgcLeft.ActivePageIndex := 0;
@@ -1338,14 +1354,14 @@ end;
 
 procedure TMainForm.UpdateGUI(aIsConnected: boolean);
 begin
-  actConnect.Enabled:= not aIsConnected;
+  actConnect.Enabled := not aIsConnected;
   actDisconnect.Enabled := aIsConnected;
-  actNewTab.Enabled:=aIsConnected;
-  actFind.Enabled:=aIsConnected ;
-  actFindReplace.Enabled:=aIsConnected;
-  actOpen.Enabled:=aIsConnected;
-  actPrint.Enabled:= aIsConnected;
-  actSaveAs.Enabled:=aIsConnected;
+  actNewTab.Enabled := aIsConnected;
+  actFind.Enabled := aIsConnected;
+  actFindReplace.Enabled := aIsConnected;
+  actOpen.Enabled := aIsConnected;
+  actPrint.Enabled := aIsConnected;
+  actSaveAs.Enabled := aIsConnected;
 
   if aIsConnected then
   begin
@@ -1364,16 +1380,16 @@ begin
     actGenerateDeleteProc.Visible := tabProcedures.TabVisible;
     actGenerateSelectProc.Visible := tabProcedures.TabVisible;
     sbMain.Panels[0].Text := FDBInfo.Server + '/' + FDBInfo.Database;
-    btnConnect.Action:=actDisconnect;
-    mitConnect.Action:=actDisconnect;
+    btnConnect.Action := actDisconnect;
+    mitConnect.Action := actDisconnect;
   end
   else
   begin
     FPageControl.Visible := False;
     pnlTables.Visible := False;
     pnlMain.Color := clWindow;
-    btnConnect.Action:=actConnect;
-    mitConnect.Action:=actConnect;
+    btnConnect.Action := actConnect;
+    mitConnect.Action := actConnect;
   end;
 
 end;
@@ -1385,40 +1401,43 @@ end;
 
 function TMainForm.GetDbInfo: TAsDbConnectionInfo;
 begin
- Result := FDBInfo;
+  Result := FDBInfo;
 end;
 
 function TMainForm.GetFieldNameForTreeView(f: TCollectionItem): string;
 var
-  fi:TAsFieldInfo;
-  ik:TAsImportedKeyInfo;
-  idx:TAsIndexInfo;
-  tri:TAsTriggerInfo;
+  fi: TAsFieldInfo;
+  ik: TAsImportedKeyInfo;
+  idx: TAsIndexInfo;
+  tri: TAsTriggerInfo;
 begin
   if f is TAsFieldInfo then
   begin
-     fi := f as TAsFieldInfo;
-     Result := fi.FieldName +' ('+fi.FieldType+' ('+IntToStr(fi.Length)+',';
-     if fi.AllowNull then
-      Result := Result+'null'
-     else
-      Result := Result+' not null';
+    fi := f as TAsFieldInfo;
+    Result := fi.FieldName + ' (' + fi.FieldType + ' (' + IntToStr(fi.Length) + ',';
+    if fi.AllowNull then
+      Result := Result + 'null'
+    else
+      Result := Result + ' not null';
     Result := Result + '))';
-  end else
+  end
+  else
   if f is TAsImportedKeyInfo then
   begin
     ik := f as TAsImportedKeyInfo;
-    Result := ik.ColumnName +' ('+ik.ForeignTableName+'('+ik.ForeignColumnName+'))';
-  end else
+    Result := ik.ColumnName + ' (' + ik.ForeignTableName + '(' + ik.ForeignColumnName + '))';
+  end
+  else
   if f is TAsIndexInfo then
   begin
     idx := f as TAsIndexInfo;
-    Result := idx.INDEX_Name+' ('+idx.Column_Name+', '+idx.ASC_OR_DESC+')';
-  end else
+    Result := idx.INDEX_Name + ' (' + idx.Column_Name + ', ' + idx.ASC_OR_DESC + ')';
+  end
+  else
   if f is TAsTriggerInfo then
   begin
     tri := f as TAsTriggerInfo;
-    Result := tri.Name+' ('+tri.Event+')';
+    Result := tri.Name + ' (' + tri.Event + ')';
   end;
 
 end;
@@ -1427,8 +1446,8 @@ procedure TMainForm.DoDisconnect;
 begin
   try
     FDBInfo.Close;
-    sbMain.Panels[2].Text:='';
-    sbMain.Panels[3].Text:='';
+    sbMain.Panels[2].Text := '';
+    sbMain.Panels[3].Text := '';
   except
     //usually when discconnection doesn't work for some reason
     FDBInfo.Free;
@@ -1505,27 +1524,28 @@ end;
 
 procedure TMainForm.ShowEditForm(FormFilter: TAsDbFormFilter);
 var
-  frm:TAsDbForm;
-  ti:TAsTableInfos;
+  frm: TAsDbForm;
+  ti: TAsTableInfos;
 begin
- if trvTables.Selected<>nil then
- begin
-  ti := TAsTableInfos.Create(nil,FDBInfo);
-  try
+  if trvTables.Selected <> nil then
+  begin
+    ti := TAsTableInfos.Create(nil, FDBInfo);
     try
-      ti.AddTable(cmbSchema.Text,trvTables.Selected.Text);
-      frm := TAsDbForm.Create(FDBInfo,cmbSchema.Text,ti[0]);
-      frm.ShowModal(FormFilter);
-      frm.CloseData;
-    except on E:Exception do
-      ShowMessage(E.Message);
+      try
+        ti.AddTable(cmbSchema.Text, trvTables.Selected.Text);
+        frm := TAsDbForm.Create(FDBInfo, cmbSchema.Text, ti[0]);
+        frm.ShowModal(FormFilter);
+        frm.CloseData;
+      except
+        on E: Exception do
+          ShowMessage(E.Message);
+      end;
+    finally
+      ti.Free;
+      if frm <> nil then
+        frm.Free;
     end;
-  finally
-    ti.Free;
-    if frm<>nil then
-    frm.Free;
   end;
- end;
 end;
 
 procedure TMainForm.FillSchemas;
@@ -1542,37 +1562,37 @@ begin
 
 
   case FDBInfo.DbType of
-    dtMsSql:cmbSchema.ItemIndex := cmbSchema.Items.IndexOf('dbo');
+    dtMsSql: cmbSchema.ItemIndex := cmbSchema.Items.IndexOf('dbo');
     dtOracle: cmbSchema.ItemIndex := cmbSchema.Items.IndexOf(FDBInfo.UserName);
-    dtPostgreSql:cmbSchema.ItemIndex := cmbSchema.Items.IndexOf('public');
-  else
-    cmbSchema.ItemIndex := 0;
+    dtPostgreSql: cmbSchema.ItemIndex := cmbSchema.Items.IndexOf('public');
+    else
+      cmbSchema.ItemIndex := 0;
   end;
 
-  if cmbSchema.ItemIndex<0 then
+  if cmbSchema.ItemIndex < 0 then
   begin
-    if cmbSchema.Items.Count>0 then
-    cmbSchema.ItemIndex:=0;
+    if cmbSchema.Items.Count > 0 then
+      cmbSchema.ItemIndex := 0;
   end;
 end;
 
 procedure TMainForm.FillTables;
 var
   list: TStringList;
-  I: Integer;
-  tn,tc: TTreeNode;
+  I: integer;
+  tn, tc: TTreeNode;
 begin
 
   try
     list := TAsDbUtils.GetTablenames(FDBInfo);
     trvTables.Items.Clear;
     list.Sort;
-    for I:=0 to list.Count-1 do
+    for I := 0 to list.Count - 1 do
     begin
-      tn := trvTables.Items.Add(nil,list[I]);
-      tn.ImageIndex:= 0;
-      tn.SelectedIndex:=0;
-      tc := trvTables.Items.AddChild(tn,'');
+      tn := trvTables.Items.Add(nil, list[I]);
+      tn.ImageIndex := 0;
+      tn.SelectedIndex := 0;
+      tc := trvTables.Items.AddChild(tn, '');
     end;
     FPageControl.Tables.Clear;
     FPageControl.Tables.AddStrings(list);
@@ -1580,24 +1600,25 @@ begin
     list.Free;
   end;
   if trvTables.Items.Count > 0 then
-    trvTables.Items[0].Selected:=True;
+    trvTables.Items[0].Selected := True;
 end;
 
 procedure TMainForm.FillProcedures;
 var
   lst: TStringList;
-  s: String;
+  s: string;
   n: TTreeNode;
 begin
-  if FDBInfo.DbType=dtSQLite then exit;
+  if FDBInfo.DbType = dtSQLite then
+    exit;
   trvProcedures.Items.Clear;
   try
     lst := TAsDbUtils.GetProcedureNames(FDBInfo);
     for s in lst do
     begin
-      n := trvProcedures.Items.AddChild(nil,s);
-      n.ImageIndex:=9;
-      n.SelectedIndex:=9;
+      n := trvProcedures.Items.AddChild(nil, s);
+      n.ImageIndex := 9;
+      n.SelectedIndex := 9;
     end;
     FPageControl.Procedures.Clear;
     FPageControl.Procedures.AddStrings(lst);
@@ -1613,17 +1634,17 @@ var
   lst: TList;
   s: string;
   ProcInfo: TAsProcedureInfo;
-  tab:TLazSqlXTabSheet;
+  tab: TLazSqlXTabSheet;
 begin
 
   try
     ProcInfo := TAsProcedureInfo.Create(FDBInfo);
-    s := ProcInfo.GetRunProcedureText(procname,true);
+    s := ProcInfo.GetRunProcedureText(procname, True);
     if s <> EmptyStr then
     begin
       actNewTab.Execute;
-      tab:=FPageControl.ActiveTab;
-      tab.QueryEditor.Text:= s;
+      tab := FPageControl.ActiveTab;
+      tab.QueryEditor.Text := s;
       tab.RunQuery;
     end;
   finally
@@ -1660,14 +1681,16 @@ begin
       dtFirebirdd:
       begin
         qr.SQL.Text :=
-          'SELECT r.RDB$PROCEDURE_SOURCE FROM RDB$PROCEDURES r where r.RDB$PROCEDURE_NAME=''' + procname
-          + '''';
+          'SELECT r.RDB$PROCEDURE_SOURCE FROM RDB$PROCEDURES r where r.RDB$PROCEDURE_NAME='''
+          + procname + '''';
       end;
       dtPostgreSql:
       begin
-         qr.SQL.Text := 'SELECT ROUTINE_DEFINITION FROM INFORMATION_SCHEMA.ROUTINES ' +
+        qr.SQL.Text := 'SELECT ROUTINE_DEFINITION FROM INFORMATION_SCHEMA.ROUTINES ' +
           ' WHERE ROUTINE_SCHEMA = ''' + cmbSchema.Text +
-          ''' AND (ROUTINE_TYPE = ''PROCEDURE'' or ROUTINE_TYPE = ''FUNCTION'' ) AND SPECIFIC_NAME = ''' + procname + ''';';
+          ''' AND (ROUTINE_TYPE = ''PROCEDURE'' or ROUTINE_TYPE = ''FUNCTION'' ) AND SPECIFIC_NAME = '''
+          +
+          procname + ''';';
       end;
     end;
 
@@ -1691,18 +1714,18 @@ end;
 
 procedure TMainForm.ExecuteQuery(IsTableData: boolean);
 var
-  strActiveTablename:string;
+  strActiveTablename: string;
 begin
- actExecute.ImageIndex:=61;
- actExecute.Hint:='Stop execution';
- FLoadingIndicator.StartAnimation;
+  actExecute.ImageIndex := 61;
+  actExecute.Hint := 'Stop execution';
+  FLoadingIndicator.StartAnimation;
 
- if trvTables.Selected<>nil then
-  if trvTables.Selected.Level=0 then
-  strActiveTablename := trvTables.Selected.Text;
+  if trvTables.Selected <> nil then
+    if trvTables.Selected.Level = 0 then
+      strActiveTablename := trvTables.Selected.Text;
 
- if strActiveTablename<>'' then
- FPageControl.ActiveTab.RunQuery(IsTableData,cmbSchema.Text,strActiveTablename);
+  if strActiveTablename <> '' then
+    FPageControl.ActiveTab.RunQuery(IsTableData, cmbSchema.Text, strActiveTablename);
 end;
 
 procedure TMainForm.EditSpecialField(Sender: TObject);
@@ -1716,19 +1739,18 @@ var
 
 begin
 
+  if not (Sender is TDBGrid) then
+    Exit;
 
- if not (Sender is TDBGrid) then
-      Exit;
+  grd := (Sender as TDBGrid);
 
- grd := (Sender as TDBGrid);
-
- if (not grd.DataSource.DataSet.Active) then
-  exit;
+  if (not grd.DataSource.DataSet.Active) then
+    exit;
 
   try
 
     if not grd.ReadOnly then
-    grd.DataSource.DataSet.Edit;
+      grd.DataSource.DataSet.Edit;
 
     BlobFieldForm.btnLoadFromfile.Visible := not grd.ReadOnly;
     EditMemoForm.btnOk.Visible := not grd.ReadOnly;
@@ -1738,8 +1760,8 @@ begin
       begin
         try
           fDetect := TFileDetector.Create;
-          if fDetect.Errors.Count>0 then
-          ShowMessage(fDetect.Errors.Text);
+          if fDetect.Errors.Count > 0 then
+            ShowMessage(fDetect.Errors.Text);
           m := TMemoryStream.Create;
           TBlobField(grd.SelectedField).SaveToStream(m);
           fType := fDetect.Detect(m);
@@ -1860,14 +1882,14 @@ end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
- SaveSession;
+  SaveSession;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDBInfo := TAsDbConnectionInfo.Create;
   FCrudInfo := TCRUDInfo.Create;
-  FCrudInfo.LoadFromFile(GetCurrentDir+ PathDelim+'CRUD.ini');
+  FCrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD.ini');
 
   AppVersion := TFileUtils.GetApplicationVersion;
 
@@ -1887,28 +1909,28 @@ begin
   ApplicationImages.GetBitmap(47, ArrowImageRight);
   ApplicationImages.GetBitmap(48, RectImage);
 
-  FPageControl := TLazSqlXPageControl.Create(Self,FDBInfo);
+  FPageControl := TLazSqlXPageControl.Create(Self, FDBInfo);
   FPageControl.Highlighter := SqlSyntax;
   FPageControl.Keywords.AddStrings(TLazSqlXResources.SqlReservedKeywords);
   FPageControl.OnExecutionFinished := @OnExecutionFinished;
-  FPageControl.OnExecutionStopped:=@OnExecutionStopped;
-  FPageControl.OnDataGridDblClick:=@EditSpecialField;
-  FPageControl.QueryEditorPopUpMenu:=QueryEditorPopupMenu;
-  FPageControl.DataGridPopUpMenu:=GridPopupMenu;
+  FPageControl.OnExecutionStopped := @OnExecutionStopped;
+  FPageControl.OnDataGridDblClick := @EditSpecialField;
+  FPageControl.QueryEditorPopUpMenu := QueryEditorPopupMenu;
+  FPageControl.DataGridPopUpMenu := GridPopupMenu;
   FPageControl.PopupMenu := PageControlPopupMenu;
-  FPageControl.OnChange:=@OnPageControlChange;
-  FPageControl.OnCaretPositionChanged:=@OnCaretPosition;
+  FPageControl.OnChange := @OnPageControlChange;
+  FPageControl.OnCaretPositionChanged := @OnCaretPosition;
 
-  FPageControl.TableIcon:=FtableIcon;
+  FPageControl.TableIcon := FtableIcon;
   FPageControl.FunctionIcon := FfunctionIcon;
   FPageControl.FieldIcon := FfieldIcon;
-  FPageControl.VarIcon:=FvarIcon;
-  FPageControl.ProcedureIcon:=FprocedureIcon;
+  FPageControl.VarIcon := FvarIcon;
+  FPageControl.ProcedureIcon := FprocedureIcon;
 
 
   FPageControl.Parent := pnlMain;
-  FPageControl.Visible:= False;
-  FPageControl.Align:=alClient;
+  FPageControl.Visible := False;
+  FPageControl.Align := alClient;
 
   sbMain.Panels[1].Style := psOwnerDraw;
   FLoadingIndicator := TLoadingIndicator.Create(pnlIndicator);
@@ -1935,44 +1957,45 @@ end;
 
 procedure TMainForm.actOpenExecute(Sender: TObject);
 begin
- if FPageControl.PageCount<0 then exit;
-    if OpenDialog.Execute then
-    begin
-      actNewTab.Execute;
-      FPageControl.ActiveTab.QueryEditor.Lines.LoadFromFile(OpenDialog.FileName);
-      FPageControl.ActiveTab.Caption := ExtractFileNameWithoutExt(OpenDialog.FileName);
-    end;
+  if FPageControl.PageCount < 0 then
+    exit;
+  if OpenDialog.Execute then
+  begin
+    actNewTab.Execute;
+    FPageControl.ActiveTab.QueryEditor.Lines.LoadFromFile(OpenDialog.FileName);
+    FPageControl.ActiveTab.Caption := ExtractFileNameWithoutExt(OpenDialog.FileName);
+  end;
 end;
 
 procedure TMainForm.actOpenTableExecute(Sender: TObject);
 begin
- actNewTabExecute(nil);
- ExecuteQuery(True);
+  actNewTabExecute(nil);
+  ExecuteQuery(True);
 end;
 
 procedure TMainForm.actPdfHelpExecute(Sender: TObject);
 begin
-  OpenDocument(ChangeFileExt(Application.ExeName,'.pdf'));
+  OpenDocument(ChangeFileExt(Application.ExeName, '.pdf'));
 end;
 
 procedure TMainForm.actPrintExecute(Sender: TObject);
 var
-  p:TAsSqlParser;
-  fromTable:string;
+  p: TAsSqlParser;
+  fromTable: string;
 begin
- try
-   p := TAsSqlParser.Create(cmbSchema.Text,FDBInfo);
-   p.ParseCommand(FPageControl.ActiveTab.QueryEditor.Text);
-   if (p.FromTables.Count>0) then
-     fromTable:=p.FromTables[0].Name
-   else
-   fromTable:= FPageControl.ActiveTab.Caption;
- finally
-   p.Free;
- end;
- GridPrinter.Caption:=fromTable;
-  GridPrinter.DBGrid:=FPageControl.ActiveTab.DataGrid;
-  GridPrinter.Template:=TLazSqlXResources.ReportTemplatePath;
+  try
+    p := TAsSqlParser.Create(cmbSchema.Text, FDBInfo);
+    p.ParseCommand(FPageControl.ActiveTab.QueryEditor.Text);
+    if (p.FromTables.Count > 0) then
+      fromTable := p.FromTables[0].Name
+    else
+      fromTable := FPageControl.ActiveTab.Caption;
+  finally
+    p.Free;
+  end;
+  GridPrinter.Caption := fromTable;
+  GridPrinter.DBGrid := FPageControl.ActiveTab.DataGrid;
+  GridPrinter.Template := TLazSqlXResources.ReportTemplatePath;
   GridPrinter.PreviewReport;
 end;
 
@@ -1992,7 +2015,7 @@ end;
 
 procedure TMainForm.actRefreshProceduresExecute(Sender: TObject);
 begin
- FillProcedures;
+  FillProcedures;
 end;
 
 procedure TMainForm.actRefreshTablesExecute(Sender: TObject);
@@ -2004,7 +2027,7 @@ end;
 
 procedure TMainForm.actRunStoredProcedureExecute(Sender: TObject);
 begin
-  if trvProcedures.Selected<>nil then
+  if trvProcedures.Selected <> nil then
     RunProcedure(trvProcedures.Selected.Text);
 end;
 
@@ -2053,7 +2076,7 @@ begin
     try
       DoDisconnect;
       try
-        TAsDbUtils.ExecuteQuery('DROP TABLE ' + trvTables.Selected.Text,FDBInfo);
+        TAsDbUtils.ExecuteQuery('DROP TABLE ' + trvTables.Selected.Text, FDBInfo);
       finally
         DoSelectiveConnect;
         FillTables;
@@ -2067,7 +2090,7 @@ end;
 
 procedure TMainForm.actEditFormAllExecute(Sender: TObject);
 begin
- ShowEditForm(dffNone);
+  ShowEditForm(dffNone);
 end;
 
 procedure TMainForm.actEditFormCustomFilterExecute(Sender: TObject);
@@ -2078,9 +2101,9 @@ end;
 procedure TMainForm.actDesignTableExecute(Sender: TObject);
 begin
   if trvTables.Selected <> nil then
-    begin
-      DesignTableForm.Showmodal(FDBInfo, cmbSchema.Text, trvTables.Selected.Text);
-    end;
+  begin
+    DesignTableForm.Showmodal(FDBInfo, cmbSchema.Text, trvTables.Selected.Text);
+  end;
 end;
 
 procedure TMainForm.actEditLimitRecordsExecute(Sender: TObject);
@@ -2099,7 +2122,7 @@ var
   I: integer;
   db: string;
   lstErrors: TStringList;
-  lst:TStringList;
+  lst: TStringList;
 begin
   try
     lstErrors := TStringList.Create;
@@ -2110,7 +2133,7 @@ begin
 
       lst := TAsDbUtils.GetTablenames(FDBInfo);
 
-      infos := TAsTableInfos.Create(nil,FDBInfo);
+      infos := TAsTableInfos.Create(nil, FDBInfo);
 
       ProgressForm.MaxProgress := lst.Count;
 
@@ -2169,24 +2192,24 @@ end;
 
 procedure TMainForm.actAboutExecute(Sender: TObject);
 begin
- AboutForm.ShowModal;
+  AboutForm.ShowModal;
 end;
 
 procedure TMainForm.actClearSessionHistoryExecute(Sender: TObject);
 begin
- DeleteFile(GetTempDir+LazSqlXSessionFile);
+  DeleteFile(GetTempDir + LazSqlXSessionFile);
 end;
 
 procedure TMainForm.actCopyRunProcedureTextExecute(Sender: TObject);
 var
-  pi:TAsProcedureInfo;
+  pi: TAsProcedureInfo;
 begin
- if trvProcedures.Selected=nil then
- exit;
+  if trvProcedures.Selected = nil then
+    exit;
 
   pi := TAsProcedureInfo.Create(FDBInfo);
   try
-    Clipboard.AsText:=pi.GetRunProcedureText(trvProcedures.Selected.Text,false);
+    Clipboard.AsText := pi.GetRunProcedureText(trvProcedures.Selected.Text, False);
   finally
     pi.Free;
   end;
@@ -2194,7 +2217,7 @@ end;
 
 procedure TMainForm.actCreateDAOExecute(Sender: TObject);
 begin
-  //
+
 end;
 
 procedure TMainForm.actCreateCRUDDelphiExecute(Sender: TObject);
@@ -2203,27 +2226,26 @@ var
   ti: TAsTableInfos;
   t: TAsTableInfo;
 begin
- if trvTables.Selected=nil then
- Exit;
+  if trvTables.Selected = nil then
+    Exit;
 
- if trvTables.Selected.Level>0 then
- Exit;
+  if trvTables.Selected.Level > 0 then
+    Exit;
 
   dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
-  ti := TAsTableInfos.Create(nil,FDBInfo);
+  ti := TAsTableInfos.Create(nil, FDBInfo);
   t := ti.Add(cmbSchema.Text, trvTables.Selected.Text);
   try
     if not Assigned(FrmModel) then
       FrmModel := TFrmModel.Create(Application);
     FrmModel.InfoTable := t;
-    FrmModel.InfoCrud:= Self.CrudInfo;
+    FrmModel.InfoCrud := Self.CrudInfo;
     FrmModel.ShowModal;
   finally
     dbc.Free;
     ti.Free;
     FreeAndNil(FrmModel);
   end;
-  //
 
 end;
 
@@ -2261,32 +2283,33 @@ end;
 
 procedure TMainForm.actFindReplaceExecute(Sender: TObject);
 begin
- ReplaceDialog1.Execute;
+  ReplaceDialog1.Execute;
 end;
 
 procedure TMainForm.actFormatQueryExecute(Sender: TObject);
 begin
- if FPageControl.PageCount>0 then
- FPageControl.ActiveTab.QueryEditor.Text:= TAsDbUtils.FormatQuery(FPageControl.ActiveTab.QueryEditor.Text);
+  if FPageControl.PageCount > 0 then
+    FPageControl.ActiveTab.QueryEditor.Text :=
+      TAsDbUtils.FormatQuery(FPageControl.ActiveTab.QueryEditor.Text);
 end;
 
 procedure TMainForm.actGenerateAllprocExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), True);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), True);
   end;
 end;
 
 procedure TMainForm.actGenerateAllQueryExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), False);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), False);
   end;
 end;
 
@@ -2297,19 +2320,19 @@ var
   t: TAsTableInfo;
 begin
 
- if trvTables.Selected=nil then
- Exit;
+  if trvTables.Selected = nil then
+    Exit;
 
- if trvTables.Selected.Level>0 then
- Exit;
+  if trvTables.Selected.Level > 0 then
+    Exit;
 
   dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
-  ti := TAsTableInfos.Create(nil,FDBInfo);
+  ti := TAsTableInfos.Create(nil, FDBInfo);
   t := ti.Add(cmbSchema.Text, trvTables.Selected.Text);
   try
     if actNewTab.Execute then
       FPageControl.ActiveTab.QueryEditor.Text := dbc.GetCreateScript(t, True, False);
-      //FPageControl.ActiveTab.QueryEditor.Lines.Add(dbc.GetCreateScript(t, True, False));
+    //FPageControl.ActiveTab.QueryEditor.Lines.Add(dbc.GetCreateScript(t, True, False));
   finally
     dbc.Free;
     ti.Free;
@@ -2319,101 +2342,101 @@ end;
 
 procedure TMainForm.actGenerateDeleteProcExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), True);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), True);
   end;
 end;
 
 procedure TMainForm.actGenerateDeleteQueryExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), False);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), False);
   end;
 end;
 
 procedure TMainForm.actGenerateInsertProcExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), True);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), True);
   end;
 end;
 
 procedure TMainForm.actGenerateInsertQueryExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), False);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), False);
   end;
 end;
 
 procedure TMainForm.actGenerateSelectItemProcExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), True);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), True);
   end;
 end;
 
 procedure TMainForm.actGenerateSelectItemQueryExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), False);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), False);
   end;
 end;
 
 procedure TMainForm.actGenerateSelectProcExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), True);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), True);
   end;
 end;
 
 procedure TMainForm.actGenerateSelectQueryExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), False);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), False);
   end;
 end;
 
 procedure TMainForm.actGenerateUpdateProcExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), True);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), True);
   end;
 end;
 
 procedure TMainForm.actGenerateUpdateQueryExecute(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then
+  if trvTables.Selected <> nil then
   begin
-   if trvTables.Selected.Level=0 then
-    GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
-      (Sender as TAction).Tag), False);
+    if trvTables.Selected.Level = 0 then
+      GenerateSqlQuery(trvTables.Selected.Text, TQueryType(
+        (Sender as TAction).Tag), False);
   end;
 end;
 
@@ -2467,7 +2490,7 @@ end;
 
 procedure TMainForm.actDataImporterExecute(Sender: TObject);
 var
-  lst:TStringList;
+  lst: TStringList;
 begin
   with DataImporterDialog do
   begin
@@ -2476,9 +2499,9 @@ begin
     try
       cmbTablename.Items.AddStrings(lst);
 
-      if trvTables.Selected<>nil then
-      if trvTables.Selected.Level=0 then
-        cmbTablename.ItemIndex:= lst.IndexOf(trvTables.Selected.Text);
+      if trvTables.Selected <> nil then
+        if trvTables.Selected.Level = 0 then
+          cmbTablename.ItemIndex := lst.IndexOf(trvTables.Selected.Text);
 
       if ShowModal = mrOk then
       begin
@@ -2501,7 +2524,7 @@ end;
 
 procedure TMainForm.actChmHelpExecute(Sender: TObject);
 begin
- OpenDocument(ChangeFileExt(Application.ExeName,'.chm'));
+  OpenDocument(ChangeFileExt(Application.ExeName, '.chm'));
 end;
 
 procedure TMainForm.actNewTabExecute(Sender: TObject);
@@ -2526,18 +2549,18 @@ end;
 procedure TMainForm.actNewTableExecute(Sender: TObject);
 begin
   DoDisconnect;
-  DesignTableForm.Showmodal(FDBInfo,cmbSchema.Text, '');
+  DesignTableForm.Showmodal(FDBInfo, cmbSchema.Text, '');
   DoSelectiveConnect;
   FillTables;
 end;
 
 procedure TMainForm.actSaveAsExecute(Sender: TObject);
 begin
-    if SaveDialog.Execute then
-    begin
-      FPageControl.ActiveTab.QueryEditor.Lines.SaveToFile(SaveDialog.FileName);
-      actSaveAs.Enabled := False;
-    end;
+  if SaveDialog.Execute then
+  begin
+    FPageControl.ActiveTab.QueryEditor.Lines.SaveToFile(SaveDialog.FileName);
+    actSaveAs.Enabled := False;
+  end;
 end;
 
 procedure TMainForm.actScriptExecutiveExecute(Sender: TObject);
@@ -2572,10 +2595,11 @@ end;
 
 procedure TMainForm.actShowStoredProcedureTextExecute(Sender: TObject);
 begin
-  if trvProcedures.Selected<>nil then
+  if trvProcedures.Selected <> nil then
   begin
     actNewTab.Execute;
-    FPageControl.ActiveTab.QueryEditor.Text := GetProcedureText(trvProcedures.Selected.Text);
+    FPageControl.ActiveTab.QueryEditor.Text :=
+      GetProcedureText(trvProcedures.Selected.Text);
   end;
 end;
 
@@ -2585,62 +2609,63 @@ begin
     SaveSession;
   except
   end;
-  MessageDlg('Error',E.Message,mtError,[mbOk],0);
+  MessageDlg('Error', E.Message, mtError, [mbOK], 0);
 end;
 
 procedure TMainForm.ApplicationPropertiesIdle(Sender: TObject; var Done: boolean);
 begin
 
- if Assigned(FDBInfo) then
- begin
-   mitGenerateSP.Visible := FDBInfo.DbType <> dtFirebirdd;
-   actDropDatabase.Enabled := FDBInfo.DbType in [dtMsSql, dtMySql, dtOracle];
- end;
+  if Assigned(FDBInfo) then
+  begin
+    mitGenerateSP.Visible := FDBInfo.DbType <> dtFirebirdd;
+    actDropDatabase.Enabled := FDBInfo.DbType in [dtMsSql, dtMySql, dtOracle];
+  end;
 
- if FPageControl.PageCount>0 then
- begin
-  actExecute.Enabled:=Trim(FPageControl.ActiveTab.QueryEditor.Text)<>EmptyStr;
-  actCheckSyntax.Enabled:=actExecute.Enabled;
-  actFormatQuery.Enabled:=actExecute.Enabled;
-  actGridCopy.Enabled := (FPageControl.ActiveTab.HasActiveData);
-  actPrint.Enabled:=(FPageControl.ActiveTab.HasActiveData);
+  if FPageControl.PageCount > 0 then
+  begin
+    actExecute.Enabled := Trim(FPageControl.ActiveTab.QueryEditor.Text) <> EmptyStr;
+    actCheckSyntax.Enabled := actExecute.Enabled;
+    actFormatQuery.Enabled := actExecute.Enabled;
+    actGridCopy.Enabled := (FPageControl.ActiveTab.HasActiveData);
+    actPrint.Enabled := (FPageControl.ActiveTab.HasActiveData);
 
-  actGridCopyRow.Enabled := actGridCopy.Enabled;
-  actGridCopyAll.Enabled := actGridCopy.Enabled;
+    actGridCopyRow.Enabled := actGridCopy.Enabled;
+    actGridCopyAll.Enabled := actGridCopy.Enabled;
 
-  actCheckSyntax.Enabled := actExecute.Enabled;
-  actQueryDesigner.Enabled := FDBInfo.Connected;
-  actDatabaseCloner.Enabled := FDBInfo.Connected;
-  actDataImporter.Enabled := FDBInfo.Connected;
-  actOpen.Enabled:=FDBInfo.Connected;
-  actFind.Enabled:=FDBInfo.Connected;
-  actFindReplace.Enabled:=FDBInfo.Connected;
+    actCheckSyntax.Enabled := actExecute.Enabled;
+    actQueryDesigner.Enabled := FDBInfo.Connected;
+    actDatabaseCloner.Enabled := FDBInfo.Connected;
+    actDataImporter.Enabled := FDBInfo.Connected;
+    actOpen.Enabled := FDBInfo.Connected;
+    actFind.Enabled := FDBInfo.Connected;
+    actFindReplace.Enabled := FDBInfo.Connected;
 
- end else
- begin
-  actExecute.Enabled:=False;
-  actFormatQuery.Enabled := False;
-  actCheckSyntax.Enabled:=False;
-  actGridCopy.Enabled := False;
-  actGridCopyRow.Enabled := False;
-  actGridCopyAll.Enabled := False;
-  actCheckSyntax.Enabled := False;
-  actQueryDesigner.Enabled := False;
-  actDatabaseCloner.Enabled := False;
-  actDataImporter.Enabled := False;
- end;
+  end
+  else
+  begin
+    actExecute.Enabled := False;
+    actFormatQuery.Enabled := False;
+    actCheckSyntax.Enabled := False;
+    actGridCopy.Enabled := False;
+    actGridCopyRow.Enabled := False;
+    actGridCopyAll.Enabled := False;
+    actCheckSyntax.Enabled := False;
+    actQueryDesigner.Enabled := False;
+    actDatabaseCloner.Enabled := False;
+    actDataImporter.Enabled := False;
+  end;
 end;
 
 procedure TMainForm.Button1Click(Sender: TObject);
 begin
- ShowMessage( TAsStringUtils.GetSafeName('asasd12312a-a&*@&^#*&!@#^( -- ]]') );
+  ShowMessage(TAsStringUtils.GetSafeName('asasd12312a-a&*@&^#*&!@#^( -- ]]'));
 end;
 
 procedure TMainForm.cmbSchemaChange(Sender: TObject);
 begin
-   FDBInfo.Schema:=cmbSchema.Text;
-   FillTables;
-   FillProcedures;
+  FDBInfo.Schema := cmbSchema.Text;
+  FillTables;
+  FillProcedures;
 
 end;
 
@@ -2654,13 +2679,13 @@ begin
 
   if ssCtrl in Shift then
     if Key = VK_F then
-     if actFind.Enabled then
-      FindDialog1.Execute;
+      if actFind.Enabled then
+        FindDialog1.Execute;
 
 
   if (Key = VK_F3) and (Trim(FindDialog1.FindText) <> '') then
-  if actFind.Enabled then
-    FindText(FindDialog1.FindText);
+    if actFind.Enabled then
+      FindText(FindDialog1.FindText);
 
 end;
 
@@ -2671,10 +2696,10 @@ begin
   pgcLeft.ActivePageIndex := 0;
 end;
 
-procedure TMainForm.GridPrinterGetValue(const ParName: String;
- var ParValue: Variant);
+procedure TMainForm.GridPrinterGetValue(const ParName: string; var ParValue: variant);
 begin
- if ParName='title' then ParValue:=GridPrinter.Caption;
+  if ParName = 'title' then
+    ParValue := GridPrinter.Caption;
 end;
 
 procedure TMainForm.imgLogoClick(Sender: TObject);
@@ -2694,12 +2719,12 @@ end;
 
 procedure TMainForm.MenuItem4Click(Sender: TObject);
 begin
- try
-  if not Assigned(FrmCfgCRUD) then
-    FrmCfgCRUD := TFrmCFGCrud.Create(Application);
-  FrmCfgCRUD.CrudInfo := Self.CrudInfo;
-  FrmCfgCRUD.ShowModal;
-  Finally
+  try
+    if not Assigned(FrmCfgCRUD) then
+      FrmCfgCRUD := TFrmCFGCrud.Create(Application);
+    FrmCfgCRUD.CrudInfo := Self.CrudInfo;
+    FrmCfgCRUD.ShowModal;
+  finally
     FreeAndNil(FrmCfgCRUD);
   end;
 end;
@@ -2709,16 +2734,16 @@ var
   infos: TAsTableInfos;
   I: integer;
   lstErrors: TStringList;
-  lst:TStringList;
+  lst: TStringList;
   s: TAsSqlGenerator;
   StrMetaData: TStringList;
-  tab:TLazSqlXTabSheet;
-  aux: String;
+  tab: TLazSqlXTabSheet;
+  aux: string;
 begin
   try
     lstErrors := TStringList.Create;
     s := TAsSqlGenerator.Create(DbInfo);
-    StrMetaData:= TStringList.Create;
+    StrMetaData := TStringList.Create;
     StrMetaData.Clear;
     try
       ProgressForm.Show;
@@ -2727,7 +2752,7 @@ begin
       lst := TAsDbUtils.GetTablenames(FDBInfo);
       lst.Sort;
 
-      infos := TAsTableInfos.Create(nil,FDBInfo);
+      infos := TAsTableInfos.Create(nil, FDBInfo);
 
       ProgressForm.MaxProgress := lst.Count;
 
@@ -2770,11 +2795,11 @@ begin
       ProgressForm.Reset;
       for I := 0 to infos.Count - 1 do
       begin
-        aux := Trim(S.GetCreateScript(DbInfo,infos[I],csTable).Text);
+        aux := Trim(S.GetCreateScript(DbInfo, infos[I], csTable).Text);
         if Trim(Aux) <> '' then
           StrMetaData.Add(Trim(Aux));
         ProgressForm.Message :=
-                  'Generator Metadata Create Table [' + lst[I] + '] ... ';
+          'Generator Metadata Create Table [' + lst[I] + '] ... ';
         ProgressForm.StepProgress;
         Application.ProcessMessages;
       end;
@@ -2787,13 +2812,13 @@ begin
       ProgressForm.Show;
       for I := 0 to infos.Count - 1 do
       begin
-         aux := Trim(S.GetCreateScript(DbInfo,infos[I],csPrimaryKey).Text);
-         if Trim(Aux) <> '' then
-           StrMetaData.Add(Trim(Aux));
-         ProgressForm.Message :=
-                   'Generator Metadata Tables Primary Key [' + lst[I] + '] ... ';
-         ProgressForm.StepProgress;
-         Application.ProcessMessages;
+        aux := Trim(S.GetCreateScript(DbInfo, infos[I], csPrimaryKey).Text);
+        if Trim(Aux) <> '' then
+          StrMetaData.Add(Trim(Aux));
+        ProgressForm.Message :=
+          'Generator Metadata Tables Primary Key [' + lst[I] + '] ... ';
+        ProgressForm.StepProgress;
+        Application.ProcessMessages;
       end;
     finally
       ProgressForm.Close;
@@ -2804,19 +2829,19 @@ begin
       ProgressForm.Show;
       for I := 0 to infos.Count - 1 do
       begin
-         aux := Trim(S.GetCreateScript(DbInfo,infos[I],csForeingKey).Text);
-         if Trim(Aux) <> '' then
-         StrMetaData.Add(Trim(Aux));
-         ProgressForm.Message :=
-                   'Generator Metadata Tables Foreing Key [' + lst[I] + '] ... ';
-         ProgressForm.StepProgress;
-         Application.ProcessMessages;
+        aux := Trim(S.GetCreateScript(DbInfo, infos[I], csForeingKey).Text);
+        if Trim(Aux) <> '' then
+          StrMetaData.Add(Trim(Aux));
+        ProgressForm.Message :=
+          'Generator Metadata Tables Foreing Key [' + lst[I] + '] ... ';
+        ProgressForm.StepProgress;
+        Application.ProcessMessages;
       end;
     finally
       ProgressForm.Close;
     end;
 
-    tab:=FPageControl.AddTab;
+    tab := FPageControl.AddTab;
     tab.QueryEditor.Lines.Add('');
     tab.QueryEditor.Lines.Text := StrMetaData.Text;
     FPageControl.ScanNeeded;
@@ -2830,9 +2855,9 @@ end;
 
 procedure TMainForm.mitOpenDataClick(Sender: TObject);
 begin
-  if trvTables.Selected<>nil then;
-    if trvTables.Selected.Level=0 then
-      ExecuteQuery(True);
+  if trvTables.Selected <> nil then;
+  if trvTables.Selected.Level = 0 then
+    ExecuteQuery(True);
 end;
 
 procedure TMainForm.mitQueryClick(Sender: TObject);
@@ -2845,9 +2870,9 @@ begin
   FillTables;
 end;
 
-procedure TMainForm.OnCaretPosition(Line, Pos: Integer);
+procedure TMainForm.OnCaretPosition(Line, Pos: integer);
 begin
- sbMain.Panels[2].Text:= 'Row: '+IntToStr(Pos)+' Col: '+IntToStr(Line);
+  sbMain.Panels[2].Text := 'Row: ' + IntToStr(Pos) + ' Col: ' + IntToStr(Line);
 end;
 
 
@@ -2861,31 +2886,32 @@ end;
 
 procedure TMainForm.OnExecutionStopped(Sender: TObject);
 begin
- if (Sender is TLazSqlXTabSheet) then
- if (Sender as TLazSqlXTabSheet) = FPageControl.ActiveTab then
- begin
-  actExecute.ImageIndex:=22;
-  actExecute.Hint:='Execute Query';
-  FLoadingIndicator.StopAnimation;
- end;
+  if (Sender is TLazSqlXTabSheet) then
+    if (Sender as TLazSqlXTabSheet) = FPageControl.ActiveTab then
+    begin
+      actExecute.ImageIndex := 22;
+      actExecute.Hint := 'Execute Query';
+      FLoadingIndicator.StopAnimation;
+    end;
 end;
 
 procedure TMainForm.OnPageControlChange(Sender: TObject);
 begin
- if FPageControl.ActiveTab.ExecutionInProgress then
- begin
-   actExecute.Hint:='Stop current execution';
-   actExecute.ImageIndex:=61;
-   FLoadingIndicator.StartAnimation;
- end else
- begin
-   actExecute.Hint:='Execute Query';
-   actExecute.ImageIndex:=22;
-   FLoadingIndicator.StopAnimation;
- end;
- sbMain.Panels[3].Text:=FPageControl.ActiveTab.Message;
- sbMain.Panels[2].Text:= '';
- FPageControl.ScanNeeded;
+  if FPageControl.ActiveTab.ExecutionInProgress then
+  begin
+    actExecute.Hint := 'Stop current execution';
+    actExecute.ImageIndex := 61;
+    FLoadingIndicator.StartAnimation;
+  end
+  else
+  begin
+    actExecute.Hint := 'Execute Query';
+    actExecute.ImageIndex := 22;
+    FLoadingIndicator.StopAnimation;
+  end;
+  sbMain.Panels[3].Text := FPageControl.ActiveTab.Message;
+  sbMain.Panels[2].Text := '';
+  FPageControl.ScanNeeded;
 end;
 
 end.

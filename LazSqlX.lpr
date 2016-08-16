@@ -26,7 +26,6 @@ begin
   {$IFDEF DEBUG}
   SetHeapTraceOutput(ChangeFileExt(Application.Exename, '.trc'));
   {$ENDIF}
-
   RequireDerivedFormResource := True;
   Application.Initialize;
   Application.CreateForm(TMainForm, MainForm);
