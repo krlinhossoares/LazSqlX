@@ -1,7 +1,7 @@
 object AboutForm: TAboutForm
-  Left = 501
+  Left = 392
   Height = 240
-  Top = 251
+  Top = 338
   Width = 320
   BorderStyle = bsToolWindow
   Caption = 'About'
@@ -9,7 +9,7 @@ object AboutForm: TAboutForm
   ClientWidth = 320
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.2.6.0'
+  LCLVersion = '1.6.0.4'
   object pnlMain: TPanel
     Left = 8
     Height = 192
@@ -313,7 +313,7 @@ object AboutForm: TAboutForm
       Left = 107
       Height = 15
       Top = 37
-      Width = 52
+      Width = 51
       Caption = 'lblVersion'
       ParentColor = False
     end

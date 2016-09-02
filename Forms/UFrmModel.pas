@@ -46,11 +46,14 @@ type
     function RPad(S: string; Ch: char; Len: integer): string;
 
 
+
     function TypeDBToTypePascal(S: string): string;
     function TypeDBToTypePascalParams(Field: TAsFieldInfo): string;
+    function TypeDBToTypePascalFields(Field: TAsFieldInfo): string;
 
     function TypeDBFirebirdToPascal(S: String): String;
     function TypeDBFirebirdToPascalParams(S: String): String;
+    function TypeDBFirebirdToPascalFields(S: String): String;
 
     function TypeDBMySqlToPascal(S: String): String;
     function TypeDBMySQLToPascalParams(S: String): String;
@@ -62,6 +65,7 @@ type
     function WithVar(s: string): string;
     function WithOut(s: string): string;
     procedure WriteCreateSQL;
+    procedure WriteDestroyQuery;
   public
     { public declarations }
     InfoTable: TAsTableInfo;
@@ -112,13 +116,15 @@ begin
   if (UpperCase(S) = 'VARCHAR') or (UpperCase(S) = 'BLOB') then
     Result := 'String'
   else if (UpperCase(S) = 'CHAR') then
-    Result := 'ShortString'
+    Result := 'String'
   else if Pos('NUMERIC', UpperCase(S)) > 0 then
     Result := 'Double'
   else if Pos('TIMESTAMP', UpperCase(S)) > 0 then
     Result := 'TDateTime'
   else if Pos('DATE', UpperCase(S)) > 0 then
     Result := 'TDate'
+  else if Pos('DATE', UpperCase(S)) > 0 then
+    Result := 'TTime'
   else  if Pos('SMALLINT', UpperCase(S)) > 0 then
     Result := 'SmallInt'
   else
@@ -175,6 +181,35 @@ begin
 
 end;
 
+function TFrmModel.TypeDBToTypePascalFields(Field: TAsFieldInfo): string;
+var aux: String;
+
+  function TextOnly(S: String): String;
+  var i : word;
+  begin
+    result := '';
+    for i := 0 to Length(S) do
+      if S[i] in ['a'..'z', 'A'..'Z'] then
+        result := result + S[i];
+  end;
+
+begin
+  Result := '';
+  aux := LowerCase(TAsFieldInfo(Field).FieldType);
+  aux := TextOnly(aux);
+
+  case MainForm.FDBInfo.DbType of
+    dtFirebirdd: Result := TypeDBFirebirdToPascalFields(Aux);
+    dtMariaDB, dtMySQL  : Result := TypeDBMySQLToPascalParams(Aux);
+    dtSQLite: Result := '';
+    dtMsSql: Result:='';
+    dtOracle:Result:='';
+    dtPostgreSql:Result:='';
+  end;
+
+  if Result = '' then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO';
+end;
+
 function TFrmModel.TypeDBFirebirdToPascalParams(S: String): String;
 begin
   if S = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO'
@@ -199,7 +234,36 @@ begin
                                         else if S = 'bytes'         then Result := 'AsInteger'
                                           else if S = 'bcd'           then Result := 'AsBCD'
                                             else if S = 'fixedchar'     then Result := 'AsString'
-                                              else if S = 'numeric'     then Result := 'AsFloat';
+                                              else if S = 'numeric'     then Result := 'AsFloat'
+                                                else if S = 'double'     then Result := 'AsDouble';
+end;
+
+function TFrmModel.TypeDBFirebirdToPascalFields(S: String): String;
+begin
+  if S = 'Unknow'        then Result := 'ERRO_FIELDTYPE_NAO_DEFINIDO'
+    else if S = 'integer'       then Result := 'AsInteger'
+      else if S = 'smallint'      then Result := 'AsInteger'
+        else if S = 'word'          then Result := 'AsInteger'
+          else if S = 'string'        then Result := 'AsString'
+            else if S = 'varchar'       then Result := 'AsString'
+              else if S = 'char'          then Result := 'AsString'
+                else if S = 'float'         then Result := 'AsFloat'
+                  else if S = 'currency'      then Result := 'AsFloat'
+                    else if S = 'date'          then Result := 'AsDate'
+                      else if S = 'time'          then Result := 'AsTime'
+                        else if S = 'dateTime'      then Result := 'AsDateTime'
+                          else if S = 'blob'          then Result := 'AsString'
+                            else if S = 'memo'          then Result := 'AsString'
+                              else if S = 'widestring'    then Result := 'AsString'
+                                else if S = 'widememo'      then Result := 'AsString'
+                                  else if S = 'fixedwidechar' then Result := 'AsString'
+                                    else if S = 'boolean'       then Result := 'AsBoolean'
+                                      else if S = 'timestamp'     then Result := 'AsDateTime'
+                                        else if S = 'bytes'         then Result := 'AsInteger'
+                                          else if S = 'bcd'           then Result := 'AsBCD'
+                                            else if S = 'fixedchar'     then Result := 'AsString'
+                                              else if S = 'numeric'     then Result := 'AsFloat'
+                                                else if S = 'double'     then Result := 'AsFloat';
 end;
 
 function TFrmModel.TypeDBMySQLToPascalParams(S: String): String;
@@ -695,8 +759,8 @@ end;
 
 procedure TFrmModel.WriteCreateQuery;
 begin
-  SynEditDAO.Lines.Add(Ident + Ident + 'Qry := ' + InfoCrud.ClassQuery + '.Create('+InfoCrud.AOwnerCreate+');');
-
+  SynEditDAO.Lines.Add(Ident + 'Qry := ' + InfoCrud.ClassQuery + '.Create('+InfoCrud.AOwnerCreate+');');
+  SynEditDAO.Lines.Add(Ident + 'try');
   if Trim(InfoCrud.QueryPropDatabase) <> '' then
     SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropDatabase + ':= ' +
       InfoCrud.QueryConDatabase + ';');
@@ -707,10 +771,16 @@ begin
   SynEditDAO.Lines.Add(Ident + Ident + 'Qry.SQL.Clear;');
 end;
 
+procedure TFrmModel.WriteDestroyQuery;
+begin
+  SynEditDAO.Lines.Add(Ident + Ident + 'FreeAndNil(Qry);');
+end;
+
+
 procedure TFrmModel.WriteCreateSQL;
 begin
-  SynEditDAO.Lines.Add(Ident + Ident + 'Qry := ' + InfoCrud.ClassSQL + '.Create('+InfoCrud.AOwnerCreate+');');
-
+  SynEditDAO.Lines.Add(Ident + 'Qry := ' + InfoCrud.ClassSQL + '.Create('+InfoCrud.AOwnerCreate+');');
+  SynEditDAO.Lines.Add(Ident + 'try');
   if Trim(InfoCrud.QueryPropDatabase) <> '' then
     SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryPropDatabase + ':= ' +
       InfoCrud.QueryConDatabase + ';');
@@ -956,7 +1026,7 @@ begin
 
         Result.Add(' SELECT * FROM ' + InfoTable.Tablename + ' ');
         if Trim(InfoCrud.SelectWhereDefault) <> '' then
-          Result.Add(StringReplace(InfoCrud.SelectWhereDefault,'''','',[rfReplaceAll]));
+          Result.Add(StringReplace(InfoCrud.SelectWhereDefault,'"','',[rfReplaceAll]));
       end;
       qtSelectItem: //Retorna um unico registro de acordo com sua chave (Retorna todos os campos)
       begin
@@ -1042,25 +1112,25 @@ begin
   for J := 0 to StrList.Count - 1 do
     if Length(StrList.Strings[j]) + 2 > Comp then
        comp := Length(StrList.Strings[j]) + 2;
-  SynEditDAO.Lines.Add(StringOfChar(' ', 4)+'{$REGION ''Comando SQL''}');
+  SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
   for J := 0 to StrList.Count - 1 do
   begin
     if J = 0 then //Primeira linha
     begin
        if (StrList.Count > 1) then //Primeira linha de uma lista com vários registros...
-         SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');')
+         SynEditDAO.Lines.Add(StringOfChar(' ', 6) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');')
        else //Se tiver apenas um registro na lista, cai aqui....     }
-         SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
+         SynEditDAO.Lines.Add(StringOfChar(' ', 6) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end
     else
     begin
       if J = StrList.Count - 1 then //Ultima linha
-        SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');')
+        SynEditDAO.Lines.Add(StringOfChar(' ', 6) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');')
       else //Demais registros
-        SynEditDAO.Lines.Add(StringOfChar(' ', 4) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
+        SynEditDAO.Lines.Add(StringOfChar(' ', 6) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end;
   end;
-  SynEditDAO.Lines.Add(StringOfChar(' ', 4)+'{$ENDREGION}');
+  SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
   SynEditDAO.Lines.Add('');
 end;
 
@@ -1095,8 +1165,8 @@ begin
     SynEditDAO.Lines.Add('Var');
     SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassSQL + ';');
     SynEditDAO.Lines.Add('begin');
-    SynEditDAO.Lines.Add(Ident + 'try');
     WriteCreateSQL;
+    SynEditDAO.Lines.Add(Ident + Ident + 'try');
     SQL := GenerateSqlQuery(qtInsert);
 
     EscreveSqlSynEditDao(SQL);
@@ -1112,19 +1182,22 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
-    SynEditDAO.Lines.Add(Ident + 'except');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Result := True;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
       S := StringReplace(InfoCrud.ExceptionCode.Strings[J], '$UnitName',
         UnitNameDAO, [rfReplaceAll]);
       S := StringReplace(S, '$ProcName', InfoCrud.ProcInsert.ProcName, [rfReplaceAll]);
-      SynEditDAO.Lines.Add(Ident + Ident + S);
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + S);
     end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + 'finally');
+    WriteDestroyQuery;
     SynEditDAO.Lines.Add(Ident + 'end;');
     SynEditDAO.Lines.Add('End;');
   end;
@@ -1165,8 +1238,8 @@ begin
     SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassSQL + ';');
 
     SynEditDAO.Lines.Add('begin');
-    SynEditDAO.Lines.Add(Ident + 'try');
     WriteCreateSQL;
+    SynEditDAO.Lines.Add(Ident + Ident +'try');
     SQL := GenerateSqlQuery(qtUpdate);
     EscreveSqlSynEditDao(SQL);
 
@@ -1181,19 +1254,22 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
-    SynEditDAO.Lines.Add(Ident + 'except');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident +'Qry.' + InfoCrud.SQLCommand+ ';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident +'Result := True;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
       S := StringReplace(InfoCrud.ExceptionCode.Strings[J], '$UnitName',
         UnitNameDAO, [rfReplaceAll]);
       S := StringReplace(S, '$ProcName', InfoCrud.ProcUpdate.ProcName, [rfReplaceAll]);
-      SynEditDAO.Lines.Add(Ident + Ident + S);
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + S);
     end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + 'finally');
+    WriteDestroyQuery;
     SynEditDAO.Lines.Add(Ident + 'end;');
     SynEditDAO.Lines.Add('End;');
   end;
@@ -1232,8 +1308,9 @@ begin
     SynEditDAO.Lines.Add('var');
     SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassSQL + ';');
     SynEditDAO.Lines.Add('begin');
-    SynEditDAO.Lines.Add(Ident + 'try');
     WriteCreateSQL;
+    SynEditDAO.Lines.Add(Ident +Ident + 'try');
+
     SQL := GenerateSqlQuery(qtDelete);
 
     EscreveSqlSynEditDao(SQL);
@@ -1249,19 +1326,23 @@ begin
 
     for J := 0 to InfoTable.PrimaryKeys.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
-    SynEditDAO.Lines.Add(Ident + 'except');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Result := True;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
       S := StringReplace(InfoCrud.ExceptionCode.Strings[J], '$UnitName', UnitNameDAO, [rfReplaceAll]);
       S := StringReplace(S, '$ProcName', InfoCrud.ProcDelete.ProcName, [rfReplaceAll]);
-      SynEditDAO.Lines.Add(Ident + Ident + S);
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + S);
     end;
-    SynEditDAO.Lines.Add(Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + Ident +'end;');
+    SynEditDAO.Lines.Add(Ident +  'finally');
+    WriteDestroyQuery;
+    SynEditDAO.Lines.Add(Ident +'end;');
+
     SynEditDAO.Lines.Add('End;');
   end;
 end;
@@ -1300,8 +1381,8 @@ begin
     SynEditDAO.Lines.Add('var');
     SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery + ';');
     SynEditDAO.Lines.Add('begin');
-    SynEditDAO.Lines.Add(Ident + 'try');
     WriteCreateQuery;
+    SynEditDAO.Lines.Add(Ident + Ident + 'try');
     SQL := GenerateSqlQuery(qtSelectItem);
 
     EscreveSqlSynEditDao(SQL);
@@ -1317,19 +1398,18 @@ begin
 
     for J := 0 to InfoTable.PrimaryKeys.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
     end;
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
-    SynEditDAO.Lines.Add(Ident + Ident + 'if not Qry.isEmpty then ');
-    SynEditDAO.Lines.Add(Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not Qry.isEmpty then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
 
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace:= 0;
     IdSpaceAux:=0;
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      //IdSpaceAux := Length('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]));
       IdSpaceAux := Length(VarModel + '.' + InfoTable.AllFields[J].FieldName);
       IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
     end;
@@ -1337,21 +1417,23 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-//      SynEditDAO.Lines.Add(Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.PrimaryKeys[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.PrimaryKeys[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.PrimaryKeys[J].FieldName + ';');
-      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad(VarModel + '.' + InfoTable.AllFields[J].FieldName,' ', IdSpace) + ' := ' + 'Qry.FieldByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J])+ ';');
-
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +  LPad(VarModel + '.' + InfoTable.AllFields[J].FieldName,' ', IdSpace) + ' := ' + 'Qry.FieldByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalFields(InfoTable.AllFields[J])+ ';');
     end;
-    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
-    SynEditDAO.Lines.Add(Ident + 'except');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Result := True;');
+    SynEditDAO.Lines.Add(Ident + Ident +  'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
       S := StringReplace(InfoCrud.ExceptionCode.Strings[J], '$UnitName',
         UnitNameDAO, [rfReplaceAll]);
       S := StringReplace(S, '$ProcName', InfoCrud.ProcGetRecord.ProcName, [rfReplaceAll]);
-      SynEditDAO.Lines.Add(Ident + Ident + S);
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + S);
     end;
-    SynEditDAO.Lines.Add(Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident  +  'Finally');
+    WriteDestroyQuery;
+    SynEditDAO.Lines.Add(Ident +  'end;');
+
     SynEditDAO.Lines.Add('End;');
   end;
 end;
@@ -1389,18 +1471,18 @@ begin
     SynEditDAO.Lines.Add(Ident + 'Qry:' + InfoCrud.ClassQuery + ';');
     SynEditDAO.Lines.Add(Ident + VarModel + ':' + ClassNameModel + ';');
     SynEditDAO.Lines.Add('begin');
-    SynEditDAO.Lines.Add(Ident + 'try');
     WriteCreateQuery;
+    SynEditDAO.Lines.Add(Ident + Ident + 'try');
     SQL := GenerateSqlQuery(qtSelect);
     EscreveSqlSynEditDao(SQL);
 
-    SynEditDAO.Lines.Add(Ident + Ident + 'if Trim(WhereSQL) <> ' + QuotedStr('') + ' then ');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(WhereSQL);');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Qry.First;');
-    SynEditDAO.Lines.Add(Ident + Ident + 'While not Qry.Eof do ');
-    SynEditDAO.Lines.Add(Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if Trim(WhereSQL) <> ' + QuotedStr('') + ' then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(WhereSQL);');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.First;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'While not Qry.Eof do ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create;');
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace:= 0;
     IdSpaceAux:=0;
@@ -1412,22 +1494,28 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident + Ident + LPad(VarModel + '.' + InfoTable.AllFields[J].FieldName, ' ', IdSpace) + ' := ' + 'Qry.FieldByName(' +QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]) + ';');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + LPad(VarModel + '.'
+          + InfoTable.AllFields[J].FieldName, ' ', IdSpace) + ' := ' +
+          'Qry.FieldByName(' +QuotedStr(InfoTable.AllFields[J].FieldName) + ').'
+          + TypeDBToTypePascalFields(InfoTable.AllFields[J]) + ';');
     end;
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'ObjLst.Add(' + VarModel + ');');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'ObjLst.Add(' + VarModel + ');');
 
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Next;');
-    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
-    SynEditDAO.Lines.Add(Ident + Ident + 'Result := True;');
-    SynEditDAO.Lines.Add(Ident + 'except');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Next;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Result := True;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'except');
     for J := 0 to InfoCrud.ExceptionCode.Count - 1 do
     begin
       S := StringReplace(InfoCrud.ExceptionCode.Strings[J], '$UnitName',
         UnitNameDAO, [rfReplaceAll]);
       S := StringReplace(S, '$ProcName', InfoCrud.ProcListRecords.ProcName,
         [rfReplaceAll]);
-      SynEditDAO.Lines.Add(Ident + Ident + S);
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + S);
     end;
+    SynEditDAO.Lines.Add(Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + 'finally');
+    WriteDestroyQuery;
     SynEditDAO.Lines.Add(Ident + 'end;');
     SynEditDAO.Lines.Add('end;');
   end;
