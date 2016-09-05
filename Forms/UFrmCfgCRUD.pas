@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynHighlighterPas, SynEdit, SynHighlighterSQL,
   Forms, Controls, Graphics, Dialogs, StdCtrls, Spin, Buttons, EditBtn,
-  ComCtrls, ZSqlUpdate, IniFiles, AsCrudInfo;
+  ComCtrls, ZSqlUpdate, IniFiles, AsCrudInfo, Types;
 
 type
 
@@ -21,6 +21,16 @@ type
     ChCkInsert: TCheckBox;
     ChCkListRecords: TCheckBox;
     ChCkUpdate: TCheckBox;
+    EdtCondition2: TEdit;
+    EdtCondition3: TEdit;
+    EdtField1: TEdit;
+    EdtField2: TEdit;
+    EdtField3: TEdit;
+    EdtOperator1: TEdit;
+    EdtOperator2: TEdit;
+    EdtOperator3: TEdit;
+    EdtValue1: TEdit;
+    EdtCondition1: TEdit;
     EdtAownerCreate: TEdit;
     EdtClassQuery: TEdit;
     EdtClassQueryOpenCommand: TEdit;
@@ -45,10 +55,15 @@ type
     EdtSQLPropDatabase: TEdit;
     EdtQryPropTransaction: TEdit;
     EdtSQLPropTransaction: TEdit;
+    EdtValue2: TEdit;
+    EdtValue3: TEdit;
+    GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
     GroupBox4: TGroupBox;
     Label1: TLabel;
+    Label10: TLabel;
+    Label11: TLabel;
     Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
@@ -57,13 +72,13 @@ type
     Label20: TLabel;
     Label21: TLabel;
     Label22: TLabel;
-    Label23: TLabel;
     Label24: TLabel;
     Label25: TLabel;
     Label26: TLabel;
     Label27: TLabel;
     Label28: TLabel;
     Label29: TLabel;
+    Label3: TLabel;
     Label30: TLabel;
     Label31: TLabel;
     Label4: TLabel;
@@ -71,13 +86,13 @@ type
     Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    Label9: TLabel;
     LbProcDelete: TLabel;
     LbProcGetRecord: TLabel;
     LbProcInsert: TLabel;
     LbProcListRecord: TLabel;
     LbProcUpdate: TLabel;
     MmExceptionCode: TSynEdit;
-    MmSelectWhereDefault: TSynEdit;
     MmUses: TMemo;
     PageControl1: TPageControl;
     SynPasSyn1: TSynPasSyn;
@@ -86,9 +101,12 @@ type
     TabSheet2: TTabSheet;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
+    procedure EdtCondition1Change(Sender: TObject);
     procedure EdtDirModelAcceptDirectory(Sender: TObject; var Value: String);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: Boolean);
   private
     { private declarations }
   public
@@ -153,14 +171,39 @@ begin
   {--------------------------------------}
 
   EdtAownerCreate.Text:= CrudInfo.AOwnerCreate;
-  MmSelectWhereDefault.lines.text := CrudInfo.SelectWhereDefault;
+
+  EdtField1.Text    := CrudInfo.SelectDefault1.Field;
+  EdtOperator1.Text := CrudInfo.SelectDefault1.Oper;
+  EdtValue1.Text    := CrudInfo.SelectDefault1.Value;
+  EdtCondition1.Text:= CrudInfo.SelectDefault1.Condition;
+
+  EdtField2.Text    := CrudInfo.SelectDefault2.Field;
+  EdtOperator2.Text := CrudInfo.SelectDefault2.Oper;
+  EdtValue2.Text    := CrudInfo.SelectDefault2.Value;
+  EdtCondition2.Text:= CrudInfo.SelectDefault2.Condition;
+
+  EdtField3.Text    := CrudInfo.SelectDefault3.Field;
+  EdtOperator3.Text := CrudInfo.SelectDefault3.Oper;
+  EdtValue3.Text    := CrudInfo.SelectDefault3.Value;
+  EdtCondition3.Text:= CrudInfo.SelectDefault3.Condition;
 
   MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
+end;
+
+procedure TFrmCfgCRUD.TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: Boolean);
+begin
+
 end;
 
 procedure TFrmCfgCRUD.btnCancelClick(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TFrmCfgCRUD.EdtCondition1Change(Sender: TObject);
+begin
+
 end;
 
 procedure TFrmCfgCRUD.EdtDirModelAcceptDirectory(Sender: TObject;
@@ -213,7 +256,28 @@ begin
   {--------------------------------------}
 
   CrudInfo.AOwnerCreate:= EdtAownerCreate.Text;
-  CrudInfo.SelectWhereDefault := MmSelectWhereDefault.lines.text;
+
+  if not Assigned(CrudInfo.SelectDefault1) then
+    CrudInfo.SelectDefault1 := TCRUDWhereDefault.Create;
+  CrudInfo.SelectDefault1.Field := EdtField1.Text;
+  CrudInfo.SelectDefault1.Oper  := EdtOperator1.Text;
+  CrudInfo.SelectDefault1.Value := EdtValue1.Text;
+  CrudInfo.SelectDefault1.Condition := EdtCondition1.Text;
+
+  if not Assigned(CrudInfo.SelectDefault2) then
+    CrudInfo.SelectDefault2 := TCRUDWhereDefault.Create;
+  CrudInfo.SelectDefault2.Field := EdtField2.Text;
+  CrudInfo.SelectDefault2.Oper  := EdtOperator2.Text;
+  CrudInfo.SelectDefault2.Value := EdtValue2.Text;
+  CrudInfo.SelectDefault2.Condition := EdtCondition2.Text;
+
+  if not Assigned(CrudInfo.SelectDefault3) then
+    CrudInfo.SelectDefault3 := TCRUDWhereDefault.Create;
+  CrudInfo.SelectDefault3.Field := EdtField3.Text;
+  CrudInfo.SelectDefault3.Oper  := EdtOperator3.Text;
+  CrudInfo.SelectDefault3.Value := EdtValue3.Text;
+  CrudInfo.SelectDefault3.Condition := EdtCondition3.Text;
+
   CrudInfo.SaveToFile(GetCurrentDir+ PathDelim+'CRUD.ini');
   Close;
 end;

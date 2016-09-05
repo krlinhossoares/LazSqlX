@@ -8,6 +8,20 @@ uses
   Classes, SysUtils, IniFiles;
 
 type
+  {TCrudWhereDefault}
+  TCRUDWhereDefault = class
+    private
+      FCondition: String;
+      FField: String;
+      FOper: String;
+      FValue: String;
+    public
+      property Field: String read FField write FField;
+      property Oper: String read FOper write FOper;
+      property Value: String read FValue write FValue;
+      property Condition: String read FCondition write FCondition;
+  end;
+
   { TCRUDProc }
   TCRUDProc = class
   private
@@ -41,7 +55,9 @@ type
     FQueryPropDatabase: String;
     FQueryPropTransaction: String;
     FReturnException: string;
-    FSelectWhereDefault: String;
+    FSelectDefault1: TCRUDWhereDefault;
+    FSelectDefault2: TCRUDWhereDefault;
+    FSelectDefault3: TCRUDWhereDefault;
     FSQLCommand: String;
     FSQLConDatabase: String;
     FSQLConTransaction: String;
@@ -63,7 +79,6 @@ type
     property DirDAO: String read FDirDAO write FDirDAO;
     property ClassQuery: String read FClassQuery write FClassQuery;
     property ClassSQL: String read FClassSQL write FClassSQL;
-    property SelectWhereDefault: String read FSelectWhereDefault write FSelectWhereDefault;
     property QueryPropDatabase: String read FQueryPropDatabase write FQueryPropDatabase;
     property QueryConDatabase: String read FQueryConDatabase write FQueryConDatabase;
     property QueryPropTransaction: String read FQueryPropTransaction write FQueryPropTransaction;
@@ -85,6 +100,11 @@ type
     property ProcDelete: TCRUDProc read FProcDelete write FProcDelete;
     property ProcGetRecord: TCRUDProc read FProcGetRecord write FProcGetRecord;
     property ProcListRecords: TCRUDProc read FProcListRecords write FProcListRecords;
+
+    property SelectDefault1: TCRUDWhereDefault read FSelectDefault1 write FSelectDefault1;
+    property SelectDefault2: TCRUDWhereDefault read FSelectDefault2 write FSelectDefault2;
+    property SelectDefault3: TCRUDWhereDefault read FSelectDefault3 write FSelectDefault3;
+
   end;
 
 
@@ -138,7 +158,6 @@ begin
   CrudFile.WriteString('CRUD','QUERYPROPDATABASE', QueryPropDatabase);
   CrudFile.WriteString('CRUD','QUERYCONTRANSACTION', QueryConTransaction);
   CrudFile.WriteString('CRUD','QUERYPROPTRANSACTION', QueryPropTransaction);
-  CrudFile.WriteString('CRUD','SELECTWHEREDEFAULT', SelectWhereDefault);
   CrudFile.WriteString('CRUD','QUERYCOMMAND', QueryCommand);
 
   {--------------------------------------}
@@ -151,6 +170,22 @@ begin
   CrudFile.WriteString('CRUD','SQLPROPTRANSACTION', SQLPropTransaction);
   CrudFile.WriteString('CRUD','SQLCOMMAND', SQLCommand);
   {--------------------------------------}
+
+
+  CrudFile.WriteString('SELECTDEFAULT1','FIELD', SelectDefault1.Field);
+  CrudFile.WriteString('SELECTDEFAULT1','OPERATOR', SelectDefault1.Oper);
+  CrudFile.WriteString('SELECTDEFAULT1','VALUE', SelectDefault1.Value);
+  CrudFile.WriteString('SELECTDEFAULT1','CONDITION', SelectDefault1.Condition);
+
+  CrudFile.WriteString('SELECTDEFAULT2','FIELD', SelectDefault2.Field);
+  CrudFile.WriteString('SELECTDEFAULT2','OPERATOR', SelectDefault2.Oper);
+  CrudFile.WriteString('SELECTDEFAULT2','VALUE', SelectDefault2.Value);
+  CrudFile.WriteString('SELECTDEFAULT2','CONDITION', SelectDefault2.Condition);
+
+  CrudFile.WriteString('SELECTDEFAULT3','FIELD', SelectDefault3.Field);
+  CrudFile.WriteString('SELECTDEFAULT3','OPERATOR', SelectDefault3.Oper);
+  CrudFile.WriteString('SELECTDEFAULT3','VALUE', SelectDefault3.Value);
+  CrudFile.WriteString('SELECTDEFAULT3','CONDITION', SelectDefault3.Condition);
 
   CrudFile.UpdateFile;
   finally
@@ -193,8 +228,6 @@ begin
   QueryConTransaction:= CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');
   QueryPropTransaction:= CrudFile.ReadString('CRUD','QUERYPROPTRANSACTION', '');
   QueryCommand:= CrudFile.ReadString('CRUD','QUERYCOMMAND', 'Open');
-  SelectWhereDefault := CrudFile.ReadString('CRUD','SELECTWHEREDEFAULT', '');
-
   {--------------------------------------}
 
   {Propety Query Insert, Update and Delete functions}
@@ -206,6 +239,23 @@ begin
   SQLCommand:= CrudFile.ReadString('CRUD','SQLCOMMAND', 'ExecSQL');
   {--------------------------------------}
 
+  SelectDefault1           := TCRUDWhereDefault.Create;
+  SelectDefault1.Field     := CrudFile.ReadString('SELECTDEFAULT1','FIELD','' );
+  SelectDefault1.Oper      := CrudFile.ReadString('SELECTDEFAULT1','OPERATOR','');
+  SelectDefault1.Value     := CrudFile.ReadString('SELECTDEFAULT1','VALUE','' );
+  SelectDefault1.Condition := CrudFile.ReadString('SELECTDEFAULT1','CONDITION','' );
+
+  SelectDefault2           := TCRUDWhereDefault.Create;
+  SelectDefault2.Field     := CrudFile.ReadString('SELECTDEFAULT2','FIELD','' );
+  SelectDefault2.Oper      := CrudFile.ReadString('SELECTDEFAULT2','OPERATOR','' );
+  SelectDefault2.Value     := CrudFile.ReadString('SELECTDEFAULT2','VALUE','' );
+  SelectDefault2.Condition := CrudFile.ReadString('SELECTDEFAULT2','CONDITION','' );
+
+  SelectDefault3           := TCRUDWhereDefault.Create;
+  SelectDefault3.Field     := CrudFile.ReadString('SELECTDEFAULT3','FIELD','' );
+  SelectDefault3.Oper      := CrudFile.ReadString('SELECTDEFAULT3','OPERATOR','' );
+  SelectDefault3.Value     := CrudFile.ReadString('SELECTDEFAULT3','VALUE','' );
+  SelectDefault3.Condition := CrudFile.ReadString('SELECTDEFAULT3','CONDITION','' );
 
   if FileExists(GetCurrentDir+ PathDelim+'CodeException.ini') then
     ExceptionCode.LoadFromFile(GetCurrentDir+ PathDelim+'CodeException.ini');

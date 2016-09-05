@@ -1025,8 +1025,6 @@ begin
           vAux := vAux + ifThen(I = 0, '', ', ') + InfoTable.PrimaryKeys.Items[I].FieldName;
 
         Result.Add(' SELECT * FROM ' + InfoTable.Tablename + ' ');
-        if Trim(InfoCrud.SelectWhereDefault) <> '' then
-          Result.Add(StringReplace(InfoCrud.SelectWhereDefault,'"','',[rfReplaceAll]));
       end;
       qtSelectItem: //Retorna um unico registro de acordo com sua chave (Retorna todos os campos)
       begin
@@ -1112,7 +1110,6 @@ begin
   for J := 0 to StrList.Count - 1 do
     if Length(StrList.Strings[j]) + 2 > Comp then
        comp := Length(StrList.Strings[j]) + 2;
-  SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
   for J := 0 to StrList.Count - 1 do
   begin
     if J = 0 then //Primeira linha
@@ -1130,8 +1127,6 @@ begin
         SynEditDAO.Lines.Add(StringOfChar(' ', 6) + 'Qry.Sql.Add(' + QuotedStr(Alinha(StrList.Strings[J])) + ');');
     end;
   end;
-  SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
-  SynEditDAO.Lines.Add('');
 end;
 
 procedure TFrmModel.GeneratorCodeProcInsert;
@@ -1168,8 +1163,9 @@ begin
     WriteCreateSQL;
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
     SQL := GenerateSqlQuery(qtInsert);
-
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
     EscreveSqlSynEditDao(SQL);
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
 
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace := 0;
@@ -1241,7 +1237,9 @@ begin
     WriteCreateSQL;
     SynEditDAO.Lines.Add(Ident + Ident +'try');
     SQL := GenerateSqlQuery(qtUpdate);
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
     EscreveSqlSynEditDao(SQL);
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
 
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace := 0;
@@ -1312,8 +1310,9 @@ begin
     SynEditDAO.Lines.Add(Ident +Ident + 'try');
 
     SQL := GenerateSqlQuery(qtDelete);
-
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
     EscreveSqlSynEditDao(SQL);
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
 
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace:= 0;
@@ -1385,8 +1384,9 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
     SQL := GenerateSqlQuery(qtSelectItem);
 
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
     EscreveSqlSynEditDao(SQL);
-
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace:= 0;
     IdSpaceAux:=0;
@@ -1474,8 +1474,23 @@ begin
     WriteCreateQuery;
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
     SQL := GenerateSqlQuery(qtSelect);
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$REGION ''Comando SQL''}');
     EscreveSqlSynEditDao(SQL);
+    if (InfoCrud.SelectDefault1.Field <> '') OR
+       (InfoCrud.SelectDefault2.Field <> '') OR
+       (InfoCrud.SelectDefault3.Field <> '')then
+     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add('' WHERE '');');
 
+    if InfoCrud.SelectDefault1.Field <> '' then
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add('' ('+InfoCrud.SelectDefault1.Field + ' '+ InfoCrud.SelectDefault1.Oper+'''+'+InfoCrud.SelectDefault1.Value+
+        ifthen(InfoCrud.SelectDefault1.Condition <> '','+'') '+InfoCrud.SelectDefault1.Condition+' '');','+'') '');'));
+    if InfoCrud.SelectDefault2.Field <> '' then
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add('' ('+InfoCrud.SelectDefault2.Field + ' '+ InfoCrud.SelectDefault2.Oper+'''+'+InfoCrud.SelectDefault2.Value+
+      ifthen(InfoCrud.SelectDefault2.Condition <> '','+'') '+InfoCrud.SelectDefault2.Condition+' '');','+'') '');'));
+    if InfoCrud.SelectDefault3.Field <> '' then
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add('' ('+InfoCrud.SelectDefault3.Field + ' '+ InfoCrud.SelectDefault3.Oper+'''+'+InfoCrud.SelectDefault3.Value+
+      ifthen(InfoCrud.SelectDefault3.Condition <> '','+'') '+InfoCrud.SelectDefault3.Condition+' '');','+'') '');'));
+    SynEditDAO.Lines.Add(StringOfChar(' ', 6)+'{$ENDREGION}');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if Trim(WhereSQL) <> ' + QuotedStr('') + ' then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(WhereSQL);');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
