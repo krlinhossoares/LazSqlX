@@ -347,6 +347,7 @@ begin
   VarDAO := Trim(Copy(InfoTable.Tablename, InfoCrud.CopyTableName,
     Length(InfoTable.TableName))) + 'DAO';
   SynEditModel.Lines.Clear;
+  SynEditDAO.Lines.Add(InfoCrud.CabecalhoCode.Text);
   SynEditModel.Lines.Add('Unit ' + UnitNameModel + ';');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('interface');
@@ -355,7 +356,7 @@ begin
   SynEditModel.Lines.Add(Ident + InfoCrud.UsesDefault);
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('type');
-  SynEditModel.Lines.Add(ident + ClassNameModel + ' = class');
+  SynEditModel.Lines.Add(ident + ClassNameModel + '= class');
   //SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(ident + 'private');
   //Cria Variaveis das Propriedades.
@@ -389,7 +390,7 @@ begin
         StrFunctionNameInsert := StrFunctionNameInsert + InfoCrud.Connection;
 
       if StrFunctionNameInsert <> InfoCrud.ProcInsert.ProcName + '(' then
-        StrFunctionNameInsert := StrFunctionNameInsert + ';' + WithVar(VarModel) + ': ' + ClassNameModel
+        StrFunctionNameInsert := StrFunctionNameInsert + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
       else
         StrFunctionNameInsert := StrFunctionNameInsert + WithVar(VarModel) + ': ' + ClassNameModel;
 
@@ -415,7 +416,7 @@ begin
 
     if StrFunctionNameUpdate <>
       InfoCrud.ProcUpdate.ProcName + '(' then
-      StrFunctionNameUpdate := StrFunctionNameUpdate + ';' + WithVar(VarModel) + ': ' + ClassNameModel
+      StrFunctionNameUpdate := StrFunctionNameUpdate + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
     else
       StrFunctionNameUpdate := StrFunctionNameUpdate + WithVar(VarModel) + ': ' + ClassNameModel;
 
@@ -443,7 +444,7 @@ begin
 
     if StrFunctionNameDelete <>
       InfoCrud.ProcDelete.ProcName + '(' then
-      StrFunctionNameDelete := StrFunctionNameDelete + ';' + WithVar(VarModel) + ': ' + ClassNameModel
+      StrFunctionNameDelete := StrFunctionNameDelete + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
     else
       StrFunctionNameDelete := StrFunctionNameDelete + WithVar(VarModel) + ': ' + ClassNameModel;
 
@@ -469,7 +470,7 @@ begin
 
     if StrFunctionNameGet <>
       InfoCrud.ProcGetRecord.ProcName + '(' then
-      StrFunctionNameGet := StrFunctionNameGet + ';' + WithVar(VarModel) + ': ' + ClassNameModel
+      StrFunctionNameGet := StrFunctionNameGet + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
     else
       StrFunctionNameGet := StrFunctionNameGet + WithVar(VarModel) + ': ' + ClassNameModel;
 
@@ -836,6 +837,9 @@ begin
   VarModel       := Trim(Copy(InfoTable.Tablename, InfoCrud.CopyTableName, Length(InfoTable.TableName)));
 
   SynEditDAO.Lines.Clear;
+  SynEditDAO.Lines.Add(InfoCrud.CabecalhoCode.Text);
+
+
   SynEditDAO.Lines.Add('Unit ' + UnitNameDAO + ';');
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('interface');
@@ -845,6 +849,7 @@ begin
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('type');
   SynEditDAO.Lines.Add(ident + ClassNameDAO + ' = class');
+  SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add(ident + 'private');
 
   SynEditDAO.Lines.Add(ident + 'public');

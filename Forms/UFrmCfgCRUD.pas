@@ -93,12 +93,14 @@ type
     LbProcListRecord: TLabel;
     LbProcUpdate: TLabel;
     MmExceptionCode: TSynEdit;
+    MmHeaderCode: TSynEdit;
     MmUses: TMemo;
     PageControl1: TPageControl;
     SynPasSyn1: TSynPasSyn;
     SynSQLSyn1: TSynSQLSyn;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    TabSheet3: TTabSheet;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
     procedure EdtCondition1Change(Sender: TObject);
@@ -188,6 +190,7 @@ begin
   EdtCondition3.Text:= CrudInfo.SelectDefault3.Condition;
 
   MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
+  MmHeaderCode.Lines.Text := CrudInfo.CabecalhoCode.Text;
 end;
 
 procedure TFrmCfgCRUD.TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
@@ -237,6 +240,8 @@ begin
   CrudInfo.ExceptionCode.Text := MmExceptionCode.Lines.Text;
   CrudInfo.DirModel := EdtDirModel.Text;
   CrudInfo.DirDAO   := EdtDirDAO.Text;
+
+  CrudInfo.CabecalhoCode.Text := MmHeaderCode.Lines.Text;
 
   {Propety Query Select - Get and List}
   CrudInfo.ClassQuery           := EdtClassQuery.Text;

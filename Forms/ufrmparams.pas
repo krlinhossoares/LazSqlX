@@ -13,8 +13,8 @@ type
   { TFrmParams }
 
   TFrmParams = class(TForm)
-   BitBtn1: TBitBtn;
-   BitBtn2: TBitBtn;
+   BtnOK: TBitBtn;
+   BtnCancel: TBitBtn;
     Panel1: TPanel;
     Panel2: TPanel;
     SgParams: TStringGrid;
@@ -40,7 +40,7 @@ procedure TFrmParams.SgParamsKeyPress(Sender: TObject; var Key: char);
 begin
   if (Key=#13) then
     if SgParams.Row = SgParams.RowCount-1 then
-        SgParams.Row :=1
+       BtnOK.SetFocus
     else
       SgParams.Row := SgParams.Row+1;
 end;

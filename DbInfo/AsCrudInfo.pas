@@ -36,6 +36,7 @@ type
   TCRUDInfo = class
   private
     FAOwnerCreate: String;
+    FCabecalhoCode: TStringList;
     FClassQuery: String;
     FClassSQL: String;
     FConnection: string;
@@ -75,6 +76,7 @@ type
     property Connection: string read FConnection write FConnection;
     property ReturnException: string read FReturnException write FReturnException;
     property ExceptionCode: TStringList read FExceptionCode write FExceptionCode;
+    property CabecalhoCode: TStringList read FCabecalhoCode write FCabecalhoCode;
     property DirModel: String read FDirModel write FDirModel;
     property DirDAO: String read FDirDAO write FDirDAO;
     property ClassQuery: String read FClassQuery write FClassQuery;
@@ -125,6 +127,7 @@ begin
   ProcGetRecord := TCRUDProc.Create;
   ProcListRecords := TCRUDProc.Create;
   ExceptionCode := TStringList.Create;
+  CabecalhoCode := TStringList.Create;
 end;
 
 procedure TCRUDInfo.SaveToFile(FileName: String);
@@ -186,6 +189,8 @@ begin
   CrudFile.WriteString('SELECTDEFAULT3','OPERATOR', SelectDefault3.Oper);
   CrudFile.WriteString('SELECTDEFAULT3','VALUE', SelectDefault3.Value);
   CrudFile.WriteString('SELECTDEFAULT3','CONDITION', SelectDefault3.Condition);
+
+  CabecalhoCode.SaveToFile(GetCurrentDir+ PathDelim+'CabecalhoCode.txt');
 
   CrudFile.UpdateFile;
   finally
@@ -259,6 +264,9 @@ begin
 
   if FileExists(GetCurrentDir+ PathDelim+'CodeException.ini') then
     ExceptionCode.LoadFromFile(GetCurrentDir+ PathDelim+'CodeException.ini');
+  if FileExists(GetCurrentDir+ PathDelim+'CabecalhoCode.txt') then
+    CabecalhoCode.LoadFromFile(GetCurrentDir+ PathDelim+'CabecalhoCode.txt');
+
   CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);
