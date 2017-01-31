@@ -347,7 +347,8 @@ begin
   VarDAO := Trim(Copy(InfoTable.Tablename, InfoCrud.CopyTableName,
     Length(InfoTable.TableName))) + 'DAO';
   SynEditModel.Lines.Clear;
-  SynEditDAO.Lines.Add(InfoCrud.CabecalhoCode.Text);
+  For I:= 0 to InfoCrud.CabecalhoCode.Count -1 do
+    SynEditDAO.Lines.Add(InfoCrud.CabecalhoCode.Strings[I]+#13);
   SynEditModel.Lines.Add('Unit ' + UnitNameModel + ';');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('interface');
@@ -522,7 +523,7 @@ begin
   end;
   SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+ Copy(vAuxField, 1 , length(vAuxField) - 2)+ '); Overload;');
 
-  SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; ');
+  SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; override; ');
 
 
   SynEditModel.Lines.Add(ident + 'end; ');
@@ -571,8 +572,8 @@ begin
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Destructor ' + ClassNameModel + '.' + 'Destroy;');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + '(*Destructor*)');
   //SynEditModel.Lines.Add(ident + 'FreeAndNil('+ VarDAO + ');'); **O Dao nao precisa ser instanciado nem destruido
+  SynEditModel.Lines.Add(ident + 'Inherited;');
   SynEditModel.Lines.Add('end;');
   // ***FIM*** Implementacao dos metodos Construtores e Destrutores
 
@@ -837,8 +838,9 @@ begin
   VarModel       := Trim(Copy(InfoTable.Tablename, InfoCrud.CopyTableName, Length(InfoTable.TableName)));
 
   SynEditDAO.Lines.Clear;
-  SynEditDAO.Lines.Add(InfoCrud.CabecalhoCode.Text);
 
+  For I:= 0 to InfoCrud.CabecalhoCode.Count -1 do
+    SynEditDAO.Lines.Add(InfoCrud.CabecalhoCode.Strings[I]+#13);
 
   SynEditDAO.Lines.Add('Unit ' + UnitNameDAO + ';');
   SynEditDAO.Lines.Add('');

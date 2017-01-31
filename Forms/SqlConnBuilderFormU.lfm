@@ -1,11 +1,11 @@
 object SqlConnBuilderForm: TSqlConnBuilderForm
   Left = 392
-  Height = 387
+  Height = 373
   Top = 241
   Width = 563
   BorderStyle = bsDialog
   Caption = 'Connect to server'
-  ClientHeight = 387
+  ClientHeight = 373
   ClientWidth = 563
   Color = clBtnFace
   Font.Color = clWindowText
@@ -213,7 +213,7 @@ object SqlConnBuilderForm: TSqlConnBuilderForm
   object btnAccept: TBitBtn
     Left = 396
     Height = 22
-    Top = 360
+    Top = 346
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -226,7 +226,7 @@ object SqlConnBuilderForm: TSqlConnBuilderForm
   object btnCancel: TBitBtn
     Left = 482
     Height = 22
-    Top = 360
+    Top = 346
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -325,7 +325,7 @@ object SqlConnBuilderForm: TSqlConnBuilderForm
     Cursor = crHandPoint
     Left = 24
     Height = 13
-    Top = 369
+    Top = 355
     Width = 24
     Anchors = [akLeft, akBottom]
     Caption = 'More'

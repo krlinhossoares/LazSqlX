@@ -418,7 +418,7 @@ begin
   if chkAlternateLibLocation.Checked then
   begin
     FDBInfo.Properties.AddStrings(txtAdvancedProperties.Lines);
-    FDBInfo.LibraryLocation:=txtLibraryFilename.Text;
+    FDBInfo.AlternateLibrary:=txtLibraryFilename.Text;
   end;
 
   try

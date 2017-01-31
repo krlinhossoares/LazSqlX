@@ -1690,7 +1690,8 @@ end;
 
 function TAsDbConnectionInfo.ToFullString: string;
 begin
- Result:='aDbType='+ IntToStr(Integer(FDbType))+';aServer='+Server+';aDatabase='+FDatabase+';aUsername='+FUsername+';aPassword='+FPassword+';aPort='+IntToStr(FPort)+';'+'aDbEngineType='+ IntToStr(Integer(FDbEngine))+';'+'aAliasName='+FAliasName+';';
+ Result:='aDbType='+ IntToStr(Integer(FDbType))+';aServer='+Server+';aDatabase='+FDatabase+';aUsername='+FUsername+';aPassword='+FPassword+';aPort='+IntToStr(FPort)+';'+'aDbEngineType='+ IntToStr(Integer(FDbEngine))+';'+'aAliasName='+FAliasName+';' +
+ 'aAlternateLibrary='+FAlternateLibrary;
 end;
 
 procedure TAsDbConnectionInfo.Assign(Source: TPersistent);
