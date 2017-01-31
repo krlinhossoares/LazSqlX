@@ -525,6 +525,8 @@ begin
 
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; override; ');
 
+  SynEditModel.Lines.Add(Ident + Ident + 'procedure Assign(Source: '+ClassNameDAO+');');
+
 
   SynEditModel.Lines.Add(ident + 'end; ');
   SynEditModel.Lines.Add(ident + '');
@@ -756,6 +758,17 @@ begin
       Pos(':', InfoCrud.ReturnException) - 1) + ');');}
     SynEditModel.Lines.Add('end;');
   end;
+  SynEditModel.Lines.Add(ident + '');
+
+  SynEditModel.Lines.Add('procedure '+ClassNameDAO+'.Assign(Source: '+ClassNameDAO+');');
+  SynEditModel.Lines.Add('begin');
+  for I := 0 to InfoTable.AllFields.Count - 1 do
+  begin
+    SynEditModel.Lines.Add(Ident +
+      LPad(InfoTable.AllFields[I].FieldName, ' ', MaxField) + ' := Source.' +InfoTable.AllFields[I].FieldName+';');
+  end;
+  SynEditModel.Lines.Add('end;');
+
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('end.');
 end;
