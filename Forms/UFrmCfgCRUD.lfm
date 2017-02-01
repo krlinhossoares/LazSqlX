@@ -1,10 +1,10 @@
 object FrmCfgCRUD: TFrmCfgCRUD
-  Left = 295
-  Height = 531
-  Top = 201
+  Left = 354
+  Height = 595
+  Top = 92
   Width = 812
   Caption = 'Configuration CRUD'
-  ClientHeight = 531
+  ClientHeight = 595
   ClientWidth = 812
   OnCreate = FormCreate
   OnShow = FormShow
@@ -13,7 +13,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object btnAccept: TBitBtn
     Left = 640
     Height = 22
-    Top = 503
+    Top = 567
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -26,7 +26,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object btnCancel: TBitBtn
     Left = 726
     Height = 22
-    Top = 503
+    Top = 567
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -39,7 +39,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object EdtDirModel: TDirectoryEdit
     Left = 112
     Height = 23
-    Top = 8
+    Top = 40
     Width = 680
     OnAcceptDirectory = EdtDirModelAcceptDirectory
     ShowHidden = False
@@ -51,7 +51,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object EdtDirDAO: TDirectoryEdit
     Left = 112
     Height = 23
-    Top = 36
+    Top = 68
     Width = 680
     OnAcceptDirectory = EdtDirModelAcceptDirectory
     ShowHidden = False
@@ -63,7 +63,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object Label7: TLabel
     Left = 18
     Height = 15
-    Top = 12
+    Top = 44
     Width = 88
     Caption = 'Directory Model:'
     ParentColor = False
@@ -71,7 +71,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object Label8: TLabel
     Left = 27
     Height = 15
-    Top = 40
+    Top = 72
     Width = 79
     Caption = 'Directory DAO:'
     ParentColor = False
@@ -79,7 +79,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object Label24: TLabel
     Left = 386
     Height = 15
-    Top = 166
+    Top = 198
     Width = 11
     Caption = ':='
     ParentColor = False
@@ -87,7 +87,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object EdtConDatabase1: TEdit
     Left = 399
     Height = 23
-    Top = 162
+    Top = 194
     Width = 102
     TabOrder = 4
     Text = 'Con'
@@ -95,7 +95,7 @@ object FrmCfgCRUD: TFrmCfgCRUD
   object PageControl1: TPageControl
     Left = 16
     Height = 416
-    Top = 72
+    Top = 104
     Width = 776
     ActivePage = TabSheet1
     TabIndex = 0
@@ -104,7 +104,6 @@ object FrmCfgCRUD: TFrmCfgCRUD
       Caption = '1- Uses Default and Params'
       ClientHeight = 388
       ClientWidth = 768
-      OnContextPopup = TabSheet1ContextPopup
       object MmUses: TMemo
         Left = 8
         Height = 59
@@ -468,7 +467,6 @@ object FrmCfgCRUD: TFrmCfgCRUD
           Height = 23
           Top = 16
           Width = 80
-          OnChange = EdtCondition1Change
           TabOrder = 3
         end
         object EdtField2: TEdit
@@ -497,7 +495,6 @@ object FrmCfgCRUD: TFrmCfgCRUD
           Height = 23
           Top = 44
           Width = 80
-          OnChange = EdtCondition1Change
           TabOrder = 7
         end
         object EdtField3: TEdit
@@ -526,7 +523,6 @@ object FrmCfgCRUD: TFrmCfgCRUD
           Height = 23
           Top = 72
           Width = 80
-          OnChange = EdtCondition1Change
           TabOrder = 11
         end
       end
@@ -1685,18 +1681,35 @@ object FrmCfgCRUD: TFrmCfgCRUD
       end
     end
   end
+  object Label12: TLabel
+    Left = 27
+    Height = 15
+    Top = 12
+    Width = 41
+    Caption = 'Projeto:'
+    ParentColor = False
+  end
+  object CmbProjeto: TComboBox
+    Left = 75
+    Height = 23
+    Top = 8
+    Width = 717
+    ItemHeight = 15
+    OnExit = CmbProjetoExit
+    TabOrder = 6
+  end
   object SynPasSyn1: TSynPasSyn
     Enabled = False
     CompilerMode = pcmDelphi
     NestedComments = False
     left = 512
-    top = 560
+    top = 520
   end
   object SynSQLSyn1: TSynSQLSyn
     DefaultFilter = 'Arquivos SQL (*.sql)|*.sql'
     Enabled = False
     SQLDialect = sqlSybase
     left = 712
-    top = 96
+    top = 128
   end
 end

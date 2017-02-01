@@ -100,7 +100,8 @@ type
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
-    MenuItem5: TMenuItem;
+    MnItemProj: TMenuItem;
+    MmCRUD_Delphi: TMenuItem;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
     RTFExporter: TRTFExporter;
@@ -263,7 +264,6 @@ type
     procedure actClearSessionHistoryExecute(Sender: TObject);
     procedure actCopyRunProcedureTextExecute(Sender: TObject);
     procedure actCreateDAOExecute(Sender: TObject);
-    procedure actCreateCRUDDelphiExecute(Sender: TObject);
     procedure actDatabaseClonerExecute(Sender: TObject);
     procedure actCloseAllButThisExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
@@ -338,6 +338,7 @@ type
     procedure MenuItem7Click(Sender: TObject);
     procedure mitOpenDataClick(Sender: TObject);
     procedure mitRefreshTablesClick(Sender: TObject);
+    procedure MnItemProjClick(Sender: TObject);
     procedure OnCaretPosition(Line, Pos: integer);
     procedure OnDynamicEditKeyDown(Sender: TObject; var Key: word;
       Shift: TShiftState);
@@ -364,6 +365,7 @@ type
     procedure txtSearchTableExit(Sender: TObject);
     procedure txtSearchTableKeyPress(Sender: TObject; var Key: char);
     procedure ZSQLMonitor1LogTrace(Sender: TObject; Event: TZLoggingEvent);
+    procedure actCreateCRUDDelphiExecute(Sender: TObject);
   private
     FCrudInfo: TCRUDInfo;
 
@@ -400,6 +402,7 @@ type
     FContTimeSearch: word;
 
     {Ativa a pesquisa }
+    procedure CriaSubMenusProjetos;
     procedure SearchActive;
 
     {disconnectes sqldb/zeos}
@@ -486,8 +489,6 @@ type
     procedure LoadSession;
     {Saves queries in tabs to file called before disconnect, MainForm.OnClose, ApplicationProperties.OnException}
     procedure SaveSession;
-
-
 
   public
     {Main db connection }
@@ -1893,7 +1894,6 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   FDBInfo := TAsDbConnectionInfo.Create;
   FCrudInfo := TCRUDInfo.Create;
-  FCrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD.ini');
 
   AppVersion := TFileUtils.GetApplicationVersion;
 
@@ -1940,7 +1940,9 @@ begin
   FLoadingIndicator := TLoadingIndicator.Create(pnlIndicator);
   FLoadingIndicator.Parent := pnlIndicator;
   FLoadingIndicator.Align := alClient;
-
+  Self.WindowState := wsMaximized;
+  Self.Top:= 0;
+  Self.Left:= 0;
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
@@ -2230,6 +2232,7 @@ var
   ti: TAsTableInfos;
   t: TAsTableInfo;
 begin
+  CrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + TAction(Sender).Caption + PathDelim +'CRUD.ini');
   if trvTables.Selected = nil then
     Exit;
 
@@ -2250,7 +2253,6 @@ begin
     ti.Free;
     FreeAndNil(FrmModel);
   end;
-
 end;
 
 procedure TMainForm.actCloseExecute(Sender: TObject);
@@ -2695,6 +2697,7 @@ procedure TMainForm.FormShow(Sender: TObject);
 begin
   Caption := 'LazSqlX ' + AppVersion + ' (Beta)';
   pgcLeft.ActivePageIndex := 0;
+  CriaSubMenusProjetos;
 end;
 
 procedure TMainForm.GridPrinterGetValue(const ParName: string; var ParValue: variant);
@@ -2708,8 +2711,8 @@ begin
   try
     if not Assigned(FrmCfgCRUD) then
       FrmCfgCRUD := TFrmCFGCrud.Create(Application);
-    FrmCfgCRUD.CrudInfo := Self.CrudInfo;
     FrmCfgCRUD.ShowModal;
+    CriaSubMenusProjetos;
   finally
     FreeAndNil(FrmCfgCRUD);
   end;
@@ -2850,6 +2853,34 @@ begin
   FillTables;
 end;
 
+procedure TMainForm.MnItemProjClick(Sender: TObject);
+var
+  dbC: TAsDatabaseCloner;
+  ti: TAsTableInfos;
+  t: TAsTableInfo;
+begin
+  CrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + TMenuItem(Sender).Caption + PathDelim +'CRUD.ini');
+  if trvTables.Selected = nil then
+    Exit;
+
+  if trvTables.Selected.Level > 0 then
+    Exit;
+
+  dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
+  ti := TAsTableInfos.Create(nil, FDBInfo);
+  t := ti.Add(cmbSchema.Text, trvTables.Selected.Text);
+  try
+    if not Assigned(FrmModel) then
+      FrmModel := TFrmModel.Create(Application);
+    FrmModel.InfoTable := t;
+    FrmModel.InfoCrud := Self.CrudInfo;
+    FrmModel.ShowModal;
+  finally
+    dbc.Free;
+    ti.Free;
+    FreeAndNil(FrmModel);
+  end;
+end;
 procedure TMainForm.OnCaretPosition(Line, Pos: integer);
 begin
   sbMain.Panels[2].Text := 'Row: ' + IntToStr(Pos) + ' Col: ' + IntToStr(Line);
@@ -2892,5 +2923,32 @@ begin
   sbMain.Panels[2].Text := '';
   FPageControl.ScanNeeded;
 end;
+
+procedure TMainForm.CriaSubMenusProjetos;
+Var
+  MnI: TMenuItem;
+  Act: TAction;
+  Projetos: TStringList;
+  I: Integer;
+begin
+//  MmCRUD_Delphi.Clear;
+  Projetos := TStringList.Create;
+  try
+    Projetos.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + 'Projetos.Txt');
+    For I:= 0  to Projetos.Count -1 do
+    begin
+      if MmCRUD_Delphi.IndexOfCaption(Projetos[I]) = -1 then
+      begin
+        MnI         := TMenuItem.Create(MmCRUD_Delphi);
+        MnI.OnClick := MnItemProj.OnClick;
+        MnI.Caption := Projetos[I];
+        MmCRUD_Delphi.Add(MnI);
+      end;
+    end;
+  finally
+    FreeAndNil(Projetos);
+  end;
+end;
+
 
 end.

@@ -21,6 +21,7 @@ type
     ChCkInsert: TCheckBox;
     ChCkListRecords: TCheckBox;
     ChCkUpdate: TCheckBox;
+    CmbProjeto: TComboBox;
     EdtCondition2: TEdit;
     EdtCondition3: TEdit;
     EdtField1: TEdit;
@@ -64,6 +65,7 @@ type
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
+    Label12: TLabel;
     Label16: TLabel;
     Label17: TLabel;
     Label18: TLabel;
@@ -103,13 +105,12 @@ type
     TabSheet3: TTabSheet;
     procedure btnAcceptClick(Sender: TObject);
     procedure btnCancelClick(Sender: TObject);
-    procedure EdtCondition1Change(Sender: TObject);
+    procedure CmbProjetoExit(Sender: TObject);
     procedure EdtDirModelAcceptDirectory(Sender: TObject; var Value: String);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
-      var Handled: Boolean);
   private
+    procedure LoadConfiguracoesCRUD;
     { private declarations }
   public
     { public declarations }
@@ -127,76 +128,20 @@ implementation
 
 procedure TFrmCfgCRUD.FormCreate(Sender: TObject);
 begin
+  if not DirectoryExists(ExtractFilePath(Application.ExeName) + 'CRUD'+PathDelim) then
+    mkdir(ExtractFilePath(Application.ExeName) + 'CRUD' + PathDelim);
+  CmbProjeto.Clear;
+  if FileExists(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + 'Projetos.Txt') then
+    CmbProjeto.Items.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + 'Projetos.Txt');
 end;
 
 procedure TFrmCfgCRUD.FormShow(Sender: TObject);
 begin
-  EdtCopyTableName.Value:= CrudInfo.CopyTableName;
-
-  MmUses.Lines.Clear;
-  MmUses.Lines.Text := CrudInfo.UsesDefault;
-  EdtConnection.Text:= CrudInfo.Connection;
-  EdtException.Text := CrudInfo.ReturnException;
-  EdtDirModel.Text  := CrudInfo.DirModel;
-  EdtDirDAO.Text    := CrudInfo.DirDAO;
-
-  ChCkInsert.Checked    := CrudInfo.ProcInsert.Enable;
-  EdtProcNameInsert.Text:= CrudInfo.ProcInsert.ProcName;
-
-  ChCkUpdate.Checked    := CrudInfo.ProcUpdate.Enable;
-  EdtProcNameUpdate.Text:= CrudInfo.ProcUpdate.ProcName;
-
-  ChCkDelete.Checked    := CrudInfo.ProcDelete.Enable;
-  EdtProcNameDelete.Text:= CrudInfo.ProcDelete.ProcName;
-
-  ChCkGetRecord.Checked    := CrudInfo.ProcGetRecord.Enable;
-  EdtProcNameGetRecord.Text:= CrudInfo.ProcGetRecord.ProcName;
-
-  ChCkListRecords.Checked    := CrudInfo.ProcListRecords.Enable;
-  EdtProcNameListRecords.Text:= CrudInfo.ProcListRecords.ProcName;
-
-  {Propety Query Select - Get and List}
-  EdtClassQuery.Text:= CrudInfo.ClassQuery;
-  EdtConDatabase.Text:= CrudInfo.QueryConDatabase;
-  EdtQryPropDatabase.Text:= CrudInfo.QueryPropDatabase;
-  EdtConTransaction.Text:= CrudInfo.QueryConTransaction;
-  EdtQryPropTransaction.Text:= CrudInfo.QueryPropTransaction;
-  EdtClassQueryOpenCommand.Text := CrudInfo.QueryCommand;
-  {--------------------------------------}
-  {Propety Query Insert, Update and Delete functions}
-  EdtClassSQL.Text:= CrudInfo.ClassSQL;
-  EdtConDatabaseSQL.Text:= CrudInfo.SQLConDatabase;
-  EdtSQLPropDatabase.Text:= CrudInfo.SQLPropDatabase;
-  EdtConTransactionSQL.Text:= CrudInfo.SQLConTransaction;
-  EdtSQLPropTransaction.Text:= CrudInfo.SQLPropTransaction;
-  EdtClassSQLExecComand.Text := CrudInfo.SQLCommand;
-  {--------------------------------------}
-
-  EdtAownerCreate.Text:= CrudInfo.AOwnerCreate;
-
-  EdtField1.Text    := CrudInfo.SelectDefault1.Field;
-  EdtOperator1.Text := CrudInfo.SelectDefault1.Oper;
-  EdtValue1.Text    := CrudInfo.SelectDefault1.Value;
-  EdtCondition1.Text:= CrudInfo.SelectDefault1.Condition;
-
-  EdtField2.Text    := CrudInfo.SelectDefault2.Field;
-  EdtOperator2.Text := CrudInfo.SelectDefault2.Oper;
-  EdtValue2.Text    := CrudInfo.SelectDefault2.Value;
-  EdtCondition2.Text:= CrudInfo.SelectDefault2.Condition;
-
-  EdtField3.Text    := CrudInfo.SelectDefault3.Field;
-  EdtOperator3.Text := CrudInfo.SelectDefault3.Oper;
-  EdtValue3.Text    := CrudInfo.SelectDefault3.Value;
-  EdtCondition3.Text:= CrudInfo.SelectDefault3.Condition;
-
-  MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
-  MmHeaderCode.Lines.Text := CrudInfo.CabecalhoCode.Text;
-end;
-
-procedure TFrmCfgCRUD.TabSheet1ContextPopup(Sender: TObject; MousePos: TPoint;
-  var Handled: Boolean);
-begin
-
+  if CmbProjeto.Items.Count > 0 then
+  begin
+    CmbProjeto.ItemIndex:= 0;
+    LoadConfiguracoesCRUD;
+  end;
 end;
 
 procedure TFrmCfgCRUD.btnCancelClick(Sender: TObject);
@@ -204,9 +149,18 @@ begin
   Close;
 end;
 
-procedure TFrmCfgCRUD.EdtCondition1Change(Sender: TObject);
+procedure TFrmCfgCRUD.CmbProjetoExit(Sender: TObject);
+var
+   Proj:String;
 begin
-
+  if CmbProjeto.Text <> '' then
+  begin
+    Proj := CmbProjeto.Text;
+    if CmbProjeto.Items.IndexOf(Proj) = -1 then
+      CmbProjeto.Items.Add(Proj);
+    CmbProjeto.Items.SaveToFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + 'Projetos.Txt');
+        LoadConfiguracoesCRUD;
+  end;
 end;
 
 procedure TFrmCfgCRUD.EdtDirModelAcceptDirectory(Sender: TObject;
@@ -283,11 +237,78 @@ begin
   CrudInfo.SelectDefault3.Value := EdtValue3.Text;
   CrudInfo.SelectDefault3.Condition := EdtCondition3.Text;
 
-  CrudInfo.SaveToFile(GetCurrentDir+ PathDelim+'CRUD.ini');
+  CrudInfo.SaveToFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + CmbProjeto.Text + PathDelim +'CRUD.ini');
   Close;
 end;
 
+procedure TFrmCfgCRUD.LoadConfiguracoesCRUD;
+begin
+  CrudInfo := TCRUDInfo.Create;
+  if not DirectoryExists(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + CmbProjeto.Text + PathDelim) then
+    mkdir(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + CmbProjeto.Text + PathDelim);
 
+  CrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + CmbProjeto.Text + PathDelim +'CRUD.ini');
+  EdtCopyTableName.Value:= CrudInfo.CopyTableName;
+
+  MmUses.Lines.Clear;
+  MmUses.Lines.Text := CrudInfo.UsesDefault;
+  EdtConnection.Text:= CrudInfo.Connection;
+  EdtException.Text := CrudInfo.ReturnException;
+  EdtDirModel.Text  := CrudInfo.DirModel;
+  EdtDirDAO.Text    := CrudInfo.DirDAO;
+
+  ChCkInsert.Checked    := CrudInfo.ProcInsert.Enable;
+  EdtProcNameInsert.Text:= CrudInfo.ProcInsert.ProcName;
+
+  ChCkUpdate.Checked    := CrudInfo.ProcUpdate.Enable;
+  EdtProcNameUpdate.Text:= CrudInfo.ProcUpdate.ProcName;
+
+  ChCkDelete.Checked    := CrudInfo.ProcDelete.Enable;
+  EdtProcNameDelete.Text:= CrudInfo.ProcDelete.ProcName;
+
+  ChCkGetRecord.Checked    := CrudInfo.ProcGetRecord.Enable;
+  EdtProcNameGetRecord.Text:= CrudInfo.ProcGetRecord.ProcName;
+
+  ChCkListRecords.Checked    := CrudInfo.ProcListRecords.Enable;
+  EdtProcNameListRecords.Text:= CrudInfo.ProcListRecords.ProcName;
+
+  {Propety Query Select - Get and List}
+  EdtClassQuery.Text:= CrudInfo.ClassQuery;
+  EdtConDatabase.Text:= CrudInfo.QueryConDatabase;
+  EdtQryPropDatabase.Text:= CrudInfo.QueryPropDatabase;
+  EdtConTransaction.Text:= CrudInfo.QueryConTransaction;
+  EdtQryPropTransaction.Text:= CrudInfo.QueryPropTransaction;
+  EdtClassQueryOpenCommand.Text := CrudInfo.QueryCommand;
+  {--------------------------------------}
+  {Propety Query Insert, Update and Delete functions}
+  EdtClassSQL.Text:= CrudInfo.ClassSQL;
+  EdtConDatabaseSQL.Text:= CrudInfo.SQLConDatabase;
+  EdtSQLPropDatabase.Text:= CrudInfo.SQLPropDatabase;
+  EdtConTransactionSQL.Text:= CrudInfo.SQLConTransaction;
+  EdtSQLPropTransaction.Text:= CrudInfo.SQLPropTransaction;
+  EdtClassSQLExecComand.Text := CrudInfo.SQLCommand;
+  {--------------------------------------}
+
+  EdtAownerCreate.Text:= CrudInfo.AOwnerCreate;
+
+  EdtField1.Text    := CrudInfo.SelectDefault1.Field;
+  EdtOperator1.Text := CrudInfo.SelectDefault1.Oper;
+  EdtValue1.Text    := CrudInfo.SelectDefault1.Value;
+  EdtCondition1.Text:= CrudInfo.SelectDefault1.Condition;
+
+  EdtField2.Text    := CrudInfo.SelectDefault2.Field;
+  EdtOperator2.Text := CrudInfo.SelectDefault2.Oper;
+  EdtValue2.Text    := CrudInfo.SelectDefault2.Value;
+  EdtCondition2.Text:= CrudInfo.SelectDefault2.Condition;
+
+  EdtField3.Text    := CrudInfo.SelectDefault3.Field;
+  EdtOperator3.Text := CrudInfo.SelectDefault3.Oper;
+  EdtValue3.Text    := CrudInfo.SelectDefault3.Value;
+  EdtCondition3.Text:= CrudInfo.SelectDefault3.Condition;
+
+  MmExceptionCode.Lines.Text := CrudInfo.ExceptionCode.Text;
+  MmHeaderCode.Lines.Text := CrudInfo.CabecalhoCode.Text;
+end;
 
 end.
 

@@ -489,7 +489,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="18">
+    <Exceptions Count="19">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -544,6 +544,9 @@
       <Item18>
         <Name Value="EDatabaseError"/>
       </Item18>
+      <Item19>
+        <Name Value="EAbstractError"/>
+      </Item19>
     </Exceptions>
   </Debugging>
 </CONFIG>

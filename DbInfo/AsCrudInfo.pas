@@ -150,8 +150,9 @@ begin
   CrudFile.WriteString('CRUD','PROCNAMEGETRECORD', ProcGetRecord.ProcName);
   CrudFile.WriteBool('CRUD','CREATELISTRECORDS',ProcListRecords.Enable);
   CrudFile.WriteString('CRUD','PROCNAMELISTRECORDS', ProcListRecords.ProcName);
-  ExceptionCode.SaveToFile(GetCurrentDir+ PathDelim+'CodeException.ini');
-  CrudFile.WriteString('CRUD','EXCEPTIONCODE', GetCurrentDir+ PathDelim+'CodeException.ini');
+  ExceptionCode.SaveToFile(ExtractFilePath(FileName)+'CodeException.ini');
+
+  CrudFile.WriteString('CRUD','EXCEPTIONCODE', ExtractFilePath(FileName)+'CodeException.ini');
   CrudFile.WriteString('CRUD','DIRMODEL',DirModel);
   CrudFile.WriteString('CRUD','DIRDAO',DirDAO);
   CrudFile.WriteString('CRUD','AOWNERCREATE', AOwnerCreate);
@@ -190,7 +191,7 @@ begin
   CrudFile.WriteString('SELECTDEFAULT3','VALUE', SelectDefault3.Value);
   CrudFile.WriteString('SELECTDEFAULT3','CONDITION', SelectDefault3.Condition);
 
-  CabecalhoCode.SaveToFile(GetCurrentDir+ PathDelim+'CabecalhoCode.txt');
+  CabecalhoCode.SaveToFile(ExtractFilePath(FileName)+'CabecalhoCode.txt');
 
   CrudFile.UpdateFile;
   finally
@@ -204,70 +205,70 @@ Var
 begin
   CrudFile := TIniFile.Create(FileName);
   try
-  CopyTableName:= CrudFile.ReadInteger('CRUD','COPYTABLE',1);
-  UsesDefault  := CrudFile.ReadString('CRUD','USES', 'Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ZConnection, ZDataset, ContNrs;');
-  Connection  := CrudFile.ReadString('CRUD','CLASSCONNECTION', 'Con:TZConnection');
-  ReturnException := CrudFile.ReadString('CRUD','RETURNEXCEPTION','Erro: String' );
-  DirModel:= CrudFile.ReadString('CRUD','DIRMODEL',GetCurrentDir+ PathDelim);
-  DirDAO:= CrudFile.ReadString('CRUD','DIRDAO',GetCurrentDir+ PathDelim);
+    CopyTableName   := CrudFile.ReadInteger('CRUD','COPYTABLE',1);
+    UsesDefault     := CrudFile.ReadString('CRUD','USES', 'Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ZConnection, ZDataset, ContNrs;');
+    Connection      := CrudFile.ReadString('CRUD','CLASSCONNECTION', 'Con:TZConnection');
+    ReturnException := CrudFile.ReadString('CRUD','RETURNEXCEPTION','Erro: String' );
+    DirModel        := CrudFile.ReadString('CRUD','DIRMODEL',GetCurrentDir+ PathDelim);
+    DirDAO          := CrudFile.ReadString('CRUD','DIRDAO',GetCurrentDir+ PathDelim);
 
-  ProcInsert.Enable  := CrudFile.ReadBool('CRUD','CREATEINSERT',True);
-  ProcInsert.ProcName:= CrudFile.ReadString('CRUD','PROCNAMEINSERT', 'Insert');
+    ProcInsert.Enable        := CrudFile.ReadBool('CRUD','CREATEINSERT',True);
+    ProcInsert.ProcName      := CrudFile.ReadString('CRUD','PROCNAMEINSERT', 'Insert');
 
-  ProcUpdate.Enable   := CrudFile.ReadBool('CRUD','CREATEUPDATE',True);
-  ProcUpdate.ProcName := CrudFile.ReadString('CRUD','PROCNAMEUPDATE', 'Update');
+    ProcUpdate.Enable        := CrudFile.ReadBool('CRUD','CREATEUPDATE',True);
+    ProcUpdate.ProcName      := CrudFile.ReadString('CRUD','PROCNAMEUPDATE', 'Update');
 
-  ProcDelete.Enable   := CrudFile.ReadBool('CRUD','CREATEDELETE',True);
-  ProcDelete.ProcName := CrudFile.ReadString('CRUD','PROCNAMEDELETE', 'Delete');
+    ProcDelete.Enable        := CrudFile.ReadBool('CRUD','CREATEDELETE',True);
+    ProcDelete.ProcName      := CrudFile.ReadString('CRUD','PROCNAMEDELETE', 'Delete');
 
-  ProcGetRecord.Enable   := CrudFile.ReadBool('CRUD','CREATEGETRECORD',True);
-  ProcGetRecord.ProcName := CrudFile.ReadString('CRUD','PROCNAMEGETRECORD', 'GetRecord');
+    ProcGetRecord.Enable     := CrudFile.ReadBool('CRUD','CREATEGETRECORD',True);
+    ProcGetRecord.ProcName   := CrudFile.ReadString('CRUD','PROCNAMEGETRECORD', 'GetRecord');
 
-  ProcListRecords.Enable := CrudFile.ReadBool('CRUD','CREATELISTRECORDS',True);
-  ProcListRecords.ProcName := CrudFile.ReadString('CRUD','PROCNAMELISTRECORDS', 'ListRecords');
-  AOwnerCreate := CrudFile.ReadString('CRUD','AOWNERCREATE', 'Nil');
-  {Propety Query Select - Get and List}
-  ClassQuery := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
-  QueryConDatabase:= CrudFile.ReadString('CRUD','QUERYCONDATABASE', 'Con');
-  QueryPropDatabase:= CrudFile.ReadString('CRUD','QUERYPROPDATABASE', 'Connection');
-  QueryConTransaction:= CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');
-  QueryPropTransaction:= CrudFile.ReadString('CRUD','QUERYPROPTRANSACTION', '');
-  QueryCommand:= CrudFile.ReadString('CRUD','QUERYCOMMAND', 'Open');
-  {--------------------------------------}
+    ProcListRecords.Enable   := CrudFile.ReadBool('CRUD','CREATELISTRECORDS',True);
+    ProcListRecords.ProcName := CrudFile.ReadString('CRUD','PROCNAMELISTRECORDS', 'ListRecords');
+    AOwnerCreate             := CrudFile.ReadString('CRUD','AOWNERCREATE', 'Nil');
+    {Propety Query Select - Get and List}
+    ClassQuery           := CrudFile.ReadString('CRUD','CLASSQUERY', 'TzQuery');
+    QueryConDatabase     := CrudFile.ReadString('CRUD','QUERYCONDATABASE', 'Con');
+    QueryPropDatabase    := CrudFile.ReadString('CRUD','QUERYPROPDATABASE', 'Connection');
+    QueryConTransaction  := CrudFile.ReadString('CRUD','QUERYCONTRANSACTION', '');
+    QueryPropTransaction := CrudFile.ReadString('CRUD','QUERYPROPTRANSACTION', '');
+    QueryCommand         := CrudFile.ReadString('CRUD','QUERYCOMMAND', 'Open');
+    {--------------------------------------}
 
-  {Propety Query Insert, Update and Delete functions}
-  ClassSQL := CrudFile.ReadString('CRUD','CLASSSQL', 'TzQuery');
-  SQLConDatabase:= CrudFile.ReadString('CRUD','SQLCONDATABASE', 'Con');
-  SQLPropDatabase:= CrudFile.ReadString('CRUD','SQLPROPDATABASE', 'Connection');
-  SQLConTransaction:= CrudFile.ReadString('CRUD','SQLCONTRANSACTION', '');
-  SQLPropTransaction:= CrudFile.ReadString('CRUD','SQLPROPTRANSACTION', '');
-  SQLCommand:= CrudFile.ReadString('CRUD','SQLCOMMAND', 'ExecSQL');
-  {--------------------------------------}
+    {Propety Query Insert, Update and Delete functions}
+    ClassSQL           := CrudFile.ReadString('CRUD','CLASSSQL', 'TzQuery');
+    SQLConDatabase     := CrudFile.ReadString('CRUD','SQLCONDATABASE', 'Con');
+    SQLPropDatabase    := CrudFile.ReadString('CRUD','SQLPROPDATABASE', 'Connection');
+    SQLConTransaction  := CrudFile.ReadString('CRUD','SQLCONTRANSACTION', '');
+    SQLPropTransaction := CrudFile.ReadString('CRUD','SQLPROPTRANSACTION', '');
+    SQLCommand         := CrudFile.ReadString('CRUD','SQLCOMMAND', 'ExecSQL');
+    {--------------------------------------}
 
-  SelectDefault1           := TCRUDWhereDefault.Create;
-  SelectDefault1.Field     := CrudFile.ReadString('SELECTDEFAULT1','FIELD','' );
-  SelectDefault1.Oper      := CrudFile.ReadString('SELECTDEFAULT1','OPERATOR','');
-  SelectDefault1.Value     := CrudFile.ReadString('SELECTDEFAULT1','VALUE','' );
-  SelectDefault1.Condition := CrudFile.ReadString('SELECTDEFAULT1','CONDITION','' );
+    SelectDefault1           := TCRUDWhereDefault.Create;
+    SelectDefault1.Field     := CrudFile.ReadString('SELECTDEFAULT1','FIELD','' );
+    SelectDefault1.Oper      := CrudFile.ReadString('SELECTDEFAULT1','OPERATOR','');
+    SelectDefault1.Value     := CrudFile.ReadString('SELECTDEFAULT1','VALUE','' );
+    SelectDefault1.Condition := CrudFile.ReadString('SELECTDEFAULT1','CONDITION','' );
 
-  SelectDefault2           := TCRUDWhereDefault.Create;
-  SelectDefault2.Field     := CrudFile.ReadString('SELECTDEFAULT2','FIELD','' );
-  SelectDefault2.Oper      := CrudFile.ReadString('SELECTDEFAULT2','OPERATOR','' );
-  SelectDefault2.Value     := CrudFile.ReadString('SELECTDEFAULT2','VALUE','' );
-  SelectDefault2.Condition := CrudFile.ReadString('SELECTDEFAULT2','CONDITION','' );
+    SelectDefault2           := TCRUDWhereDefault.Create;
+    SelectDefault2.Field     := CrudFile.ReadString('SELECTDEFAULT2','FIELD','' );
+    SelectDefault2.Oper      := CrudFile.ReadString('SELECTDEFAULT2','OPERATOR','' );
+    SelectDefault2.Value     := CrudFile.ReadString('SELECTDEFAULT2','VALUE','' );
+    SelectDefault2.Condition := CrudFile.ReadString('SELECTDEFAULT2','CONDITION','' );
 
-  SelectDefault3           := TCRUDWhereDefault.Create;
-  SelectDefault3.Field     := CrudFile.ReadString('SELECTDEFAULT3','FIELD','' );
-  SelectDefault3.Oper      := CrudFile.ReadString('SELECTDEFAULT3','OPERATOR','' );
-  SelectDefault3.Value     := CrudFile.ReadString('SELECTDEFAULT3','VALUE','' );
-  SelectDefault3.Condition := CrudFile.ReadString('SELECTDEFAULT3','CONDITION','' );
+    SelectDefault3           := TCRUDWhereDefault.Create;
+    SelectDefault3.Field     := CrudFile.ReadString('SELECTDEFAULT3','FIELD','' );
+    SelectDefault3.Oper      := CrudFile.ReadString('SELECTDEFAULT3','OPERATOR','' );
+    SelectDefault3.Value     := CrudFile.ReadString('SELECTDEFAULT3','VALUE','' );
+    SelectDefault3.Condition := CrudFile.ReadString('SELECTDEFAULT3','CONDITION','' );
 
-  if FileExists(GetCurrentDir+ PathDelim+'CodeException.ini') then
-    ExceptionCode.LoadFromFile(GetCurrentDir+ PathDelim+'CodeException.ini');
-  if FileExists(GetCurrentDir+ PathDelim+'CabecalhoCode.txt') then
-    CabecalhoCode.LoadFromFile(GetCurrentDir+ PathDelim+'CabecalhoCode.txt');
+    if FileExists(ExtractFilePath(FileName) + 'CodeException.ini') then
+      ExceptionCode.LoadFromFile(ExtractFilePath(FileName) + 'CodeException.ini');
+    if FileExists(ExtractFilePath(FileName)+'CabecalhoCode.txt') then
+      CabecalhoCode.LoadFromFile(ExtractFilePath(FileName)+'CabecalhoCode.txt');
 
-  CrudFile.UpdateFile;
+    CrudFile.UpdateFile;
   finally
     FreeAndNil(CrudFile);
   end;

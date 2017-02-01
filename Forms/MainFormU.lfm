@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 230
+  Left = 226
   Height = 596
-  Top = 257
+  Top = 146
   Width = 1012
   Anchors = []
   BorderStyle = bsSingle
@@ -3921,8 +3921,8 @@ object MainForm: TMainForm
       }
       Hint = 'Create class Model and DAO.'
       ImageIndex = 62
-      object MenuItem5: TMenuItem
-        Action = actCreateCRUDDelphi
+      object MmCRUD_Delphi: TMenuItem
+        Caption = 'Delphi'
         Bitmap.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000064000000640000000000000000000000000000000000
@@ -3959,6 +3959,13 @@ object MainForm: TMainForm
           00114646462F4747472F4747472F4747472F4747472F4747472F4747472F4747
           472F4747472F4747472F4747472F4A4A4A2D0404040500000000
         }
+        Hint = 'Create class Model and DAO.'
+        ImageIndex = 64
+        object MnItemProj: TMenuItem
+          Caption = 'New Item35'
+          Visible = False
+          OnClick = MnItemProjClick
+        end
       end
       object MenuItem6: TMenuItem
         Action = ActCreateCRUDJava

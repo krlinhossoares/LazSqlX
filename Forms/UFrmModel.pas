@@ -525,7 +525,7 @@ begin
 
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; override; ');
 
-  SynEditModel.Lines.Add(Ident + Ident + 'procedure Assign(Source: '+ClassNameDAO+');');
+  SynEditModel.Lines.Add(Ident + Ident + 'procedure Assign(Source: '+ClassNameModel+');');
 
 
   SynEditModel.Lines.Add(ident + 'end; ');
@@ -760,7 +760,7 @@ begin
   end;
   SynEditModel.Lines.Add(ident + '');
 
-  SynEditModel.Lines.Add('procedure '+ClassNameDAO+'.Assign(Source: '+ClassNameDAO+');');
+  SynEditModel.Lines.Add('procedure '+ClassNameDAO+'.Assign(Source: '+ClassNameModel+');');
   SynEditModel.Lines.Add('begin');
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
