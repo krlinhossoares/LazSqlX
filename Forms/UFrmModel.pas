@@ -7,8 +7,8 @@ interface
 uses
   Classes, SysUtils, FileUtil, SynEdit, SynHighlighterPas, SynHighlighterAny,
   SynCompletion, SynHighlighterJava, SynHighlighterSQL, Forms, Controls,
-  Graphics, Dialogs, math, ComCtrls, ZDataset, ZConnection, AsTableInfo,
-  AsCrudInfo, AsSqlGenerator, AsDbType, StrUtils;
+  Graphics, Dialogs, math, ComCtrls, ExtCtrls, StdCtrls, ZDataset, ZConnection,
+  AsTableInfo, AsCrudInfo, AsSqlGenerator, AsDbType, StrUtils;
 
 type
 
@@ -16,7 +16,11 @@ type
 
   TFrmModel = class(TForm)
     ApplicationImages: TImageList;
+    LbProjeto: TLabel;
+    LbDirModel: TLabel;
+    LbDirDAO: TLabel;
     PageControl1: TPageControl;
+    Panel1: TPanel;
     PascalSyntax: TSynPasSyn;
     SynEditModel: TSynEdit;
     SynEditDAO: TSynEdit;
@@ -70,6 +74,7 @@ type
     { public declarations }
     InfoTable: TAsTableInfo;
     InfoCrud: TCRUDInfo;
+    Projeto: String;
 
   end;
 
@@ -89,8 +94,13 @@ const
 
 procedure TFrmModel.FormShow(Sender: TObject);
 begin
+  LbProjeto.Caption := '           Projeto: ' + Projeto;
+  LbDirModel.Caption:= '   Diretório Model: ' + InfoCrud.DirModel;
+  LbDirDAO.Caption  := '     Diretório DAO: ' + InfoCrud.DirDAO;
   GeneratorPascalClass;
   GeneratorDAOClass;
+  Self.Top:=0;
+  Self.Left:= 0;
 end;
 
 procedure TFrmModel.ToolButton2Click(Sender: TObject);

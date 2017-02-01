@@ -2872,6 +2872,7 @@ begin
   try
     if not Assigned(FrmModel) then
       FrmModel := TFrmModel.Create(Application);
+    FrmModel.Projeto:= TMenuItem(Sender).Caption;
     FrmModel.InfoTable := t;
     FrmModel.InfoCrud := Self.CrudInfo;
     FrmModel.ShowModal;
