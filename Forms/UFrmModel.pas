@@ -513,8 +513,8 @@ begin
     else
       StrFunctionNameList := StrFunctionNameList + WithVar(InfoCrud.ReturnException);
 
-    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameList+ '):Boolean;');
-    StrFunctionNameList := 'function ' + ClassNameModel + '.' +StrFunctionNameList + '):Boolean;';
+    SynEditModel.Lines.Add(Ident + Ident + 'class function ' + StrFunctionNameList+ '):Boolean;');
+    StrFunctionNameList := 'class function ' + ClassNameModel + '.' +StrFunctionNameList + '):Boolean;';
 
   end;
 
