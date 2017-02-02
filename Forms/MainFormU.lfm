@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 226
+  Left = 229
   Height = 596
-  Top = 146
+  Top = 81
   Width = 1012
   Anchors = []
   BorderStyle = bsSingle
@@ -16,7 +16,7 @@ object MainForm: TMainForm
   OnKeyDown = FormKeyDown
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.2.0'
   WindowState = wsMaximized
   object tlbMain: TToolBar
     Left = 0
@@ -1256,7 +1256,7 @@ object MainForm: TMainForm
     Panels = <    
       item
         Text = 'Not connected'
-        Width = 200
+        Width = 500
       end    
       item
         Width = 20

@@ -770,7 +770,7 @@ begin
   end;
   SynEditModel.Lines.Add(ident + '');
 
-  SynEditModel.Lines.Add('procedure '+ClassNameDAO+'.Assign(Source: '+ClassNameModel+');');
+  SynEditModel.Lines.Add('procedure '+ClassNameModel+'.Assign(Source: '+ClassNameModel+');');
   SynEditModel.Lines.Add('begin');
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin

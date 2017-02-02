@@ -8,7 +8,7 @@ object FrmModel: TFrmModel
   ClientWidth = 633
   OnShow = FormShow
   Position = poDesktopCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.6.2.0'
   WindowState = wsMaximized
   object ToolBar1: TToolBar
     Left = 0
