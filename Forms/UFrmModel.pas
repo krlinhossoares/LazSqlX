@@ -377,7 +377,7 @@ begin
       'F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ': ' +
       LPad(TypeDBToTypePascal(InfoTable.AllFields[I].FieldType), ' ', MaxType) + ';');
   end;
-  SynEditModel.Lines.Add(ident + 'public');
+  SynEditModel.Lines.Add(ident + 'published');
   //Cria Propriedades.
   SynEditModel.Lines.Add(Ident + Ident + '//Propertys Model');
   for I := 0 to InfoTable.AllFields.Count - 1 do
@@ -390,6 +390,7 @@ begin
   end;
   SynEditModel.Lines.Add('');
   //Cria Funcoes e Procedures CRUD;
+  SynEditModel.Lines.Add(ident + 'public');
   SynEditModel.Lines.Add(Ident + Ident + '//Functions and Procedures Model CRUD');
 
   if InfoCrud.ProcInsert.Enable then
@@ -518,6 +519,9 @@ begin
 
   end;
 
+  SynEditModel.Lines.Add('');
+  SynEditModel.Lines.Add(Ident + Ident + 'procedure Assign(const Source: '+ClassNameModel+');');
+
   //Metodos Create...
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(Ident + Ident + '//Metodos Construtores e Destrutores');
@@ -533,9 +537,11 @@ begin
   end;
   SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+ Copy(vAuxField, 1 , length(vAuxField) - 2)+ '); Overload;');
 
+  SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create(const Source: '+ClassNameModel+'); Overload;');
+
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; override; ');
 
-  SynEditModel.Lines.Add(Ident + Ident + 'procedure Assign(Source: '+ClassNameModel+');');
+
 
 
   SynEditModel.Lines.Add(ident + 'end; ');
@@ -580,6 +586,16 @@ begin
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
     SynEditModel.Lines.Add(ident + LPad('Self.'+ InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) + ' := ' + 'A'+InfoTable.PrimaryKeys.Items[I].FieldName +';');
   SynEditModel.Lines.Add('end;');
+
+  {$Region 'Instancia o objeto fazendo um assign '}
+  SynEditModel.Lines.Add(ident + '');
+  SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create(const Source: '+ClassNameModel+');');
+  SynEditModel.Lines.Add('begin');
+  SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
+  SynEditModel.Lines.Add(ident + 'Self'+'.'+'Assign(Source);');
+  SynEditModel.Lines.Add('end;');
+  {$endRegion}
+
 
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Destructor ' + ClassNameModel + '.' + 'Destroy;');
@@ -756,22 +772,38 @@ begin
     else
       StrFunctionNameList := StrFunctionNameList + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
-
     StrFunctionNameList:=  StrFunctionNameList + ');';
     SynEditModel.Lines.Add(StrFunctionNameList);
 
-
-    {SynEditModel.Lines.Add(Ident + 'Result := ' +
-      VarDAO + '.' + InfoCrud.ProcListRecords.ProcName + '(' +
-      Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1)) + ', ' +
-      'ObjLst, ' + 'WhereSQL, ' + Copy(InfoCrud.ReturnException, 1,
-      Pos(':', InfoCrud.ReturnException) - 1) + ');');}
     SynEditModel.Lines.Add('end;');
   end;
+
   SynEditModel.Lines.Add(ident + '');
 
-  SynEditModel.Lines.Add('procedure '+ClassNameModel+'.Assign(Source: '+ClassNameModel+');');
-  SynEditModel.Lines.Add('begin');
+  {$region 'Metodo Assign'};
+  SynEditModel.Lines.Add('procedure '+ClassNameModel+'.Assign(const Source: '+ClassNameModel+');  ');
+  SynEditModel.Lines.Add('var                                                                     ');
+  SynEditModel.Lines.Add('  PropList: TPropList;                                                  ');
+  SynEditModel.Lines.Add('  PropCount, i: integer;                                                ');
+  SynEditModel.Lines.Add('  Value: variant;                                                       ');
+  SynEditModel.Lines.Add('begin                                                                   ');
+  SynEditModel.Lines.Add('                                                                        ');
+  SynEditModel.Lines.Add('  PropCount := GetPropList(Source.ClassInfo, tkAny, @PropList);         ');
+  SynEditModel.Lines.Add('  for i := 0 to PropCount - 1 do                                        ');
+  SynEditModel.Lines.Add('  begin                                                                 ');
+  SynEditModel.Lines.Add('    if (PropList[i]^.SetProc <> nil) then                               '); //Verifica se possui acesso a escrita na propriedade
+  SynEditModel.Lines.Add('    begin                                                               ');
+  SynEditModel.Lines.Add('      Value := GetPropValue(Source, PropList[i]^.Name);                 ');
+  SynEditModel.Lines.Add('      SetPropValue(Self, PropList[i]^.Name, Value);                     ');
+  SynEditModel.Lines.Add('    end;                                                                ');
+  SynEditModel.Lines.Add('  end;                                                                  ');
+  SynEditModel.Lines.Add('                                                                        ');
+  SynEditModel.Lines.Add('end;                                                                    ');
+  SynEditModel.Lines.Add('                                                                        ');
+  SynEditModel.Lines.Add('end.                                                                    ');
+  {$endRegion}
+
+{  SynEditModel.Lines.Add('begin');
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
     SynEditModel.Lines.Add(Ident +
@@ -780,7 +812,7 @@ begin
   SynEditModel.Lines.Add('end;');
 
   SynEditModel.Lines.Add(ident + '');
-  SynEditModel.Lines.Add('end.');
+  SynEditModel.Lines.Add('end.');}
 end;
 
 procedure TFrmModel.WriteCreateQuery;
