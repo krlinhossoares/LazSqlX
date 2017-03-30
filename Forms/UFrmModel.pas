@@ -231,7 +231,7 @@ begin
               else if S = 'char'          then Result := 'AsString'
                 else if S = 'float'         then Result := 'AsFloat'
                   else if S = 'currency'      then Result := 'AsFloat'
-                    else if S = 'date'          then Result := 'AsDate'
+                    else if S = 'date'          then Result := 'AsDateTime'
                       else if S = 'time'          then Result := 'AsTime'
                         else if S = 'dateTime'      then Result := 'AsDateTime'
                           else if S = 'blob'          then Result := 'AsString'
@@ -259,7 +259,7 @@ begin
               else if S = 'char'          then Result := 'AsString'
                 else if S = 'float'         then Result := 'AsFloat'
                   else if S = 'currency'      then Result := 'AsFloat'
-                    else if S = 'date'          then Result := 'AsDate'
+                    else if S = 'date'          then Result := 'AsDateTime'
                       else if S = 'time'          then Result := 'AsTime'
                         else if S = 'dateTime'      then Result := 'AsDateTime'
                           else if S = 'blob'          then Result := 'AsString'
@@ -1243,7 +1243,31 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
+      if InfoTable.AllFields[J].AllowNull then
+      begin
+        if (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Integer')   or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Float')     or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Double')    or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDateTime') or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDate')     or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TTime')     or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'SmallInt') then
+        begin
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'if ('+VarModel + '.' + InfoTable.AllFields[J].FieldName+' > 0) then ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'else ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
+        end
+        else
+        begin
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'if (Trim('+VarModel + '.' + InfoTable.AllFields[J].FieldName+') <> '''') then ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'else ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
+        end;
+      end
+      else
+        SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
     end;
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
@@ -1319,7 +1343,31 @@ begin
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
-      SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
+      if InfoTable.AllFields[J].AllowNull then
+      begin
+        if (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Integer')   or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Float')     or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Double')    or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDateTime') or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDate')     or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TTime')     or
+           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'SmallInt') then
+        begin
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'if ('+VarModel + '.' + InfoTable.AllFields[J].FieldName+' > 0) then ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'else ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
+        end
+        else
+        begin
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'if (Trim('+VarModel + '.' + InfoTable.AllFields[J].FieldName+') <> '''') then ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'else ');
+          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
+        end;
+      end
+      else
+        SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
     end;
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident +'Qry.' + InfoCrud.SQLCommand+ ';');
