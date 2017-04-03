@@ -2241,7 +2241,7 @@ begin
 
   dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
   ti := TAsTableInfos.Create(nil, FDBInfo);
-  t := ti.Add(cmbSchema.Text, trvTables.Selected.Text);
+  t := ti.LoadTable(cmbSchema.Text, trvTables.Selected.Text, False);
   try
     if not Assigned(FrmModel) then
       FrmModel := TFrmModel.Create(Application);
@@ -2873,6 +2873,8 @@ begin
     if not Assigned(FrmModel) then
       FrmModel := TFrmModel.Create(Application);
     FrmModel.Projeto:= TMenuItem(Sender).Caption;
+    FrmModel.SchemaText := cmbSchema.Text;
+    FrmModel.TablesInfos := ti;
     FrmModel.InfoTable := t;
     FrmModel.InfoCrud := Self.CrudInfo;
     FrmModel.ShowModal;

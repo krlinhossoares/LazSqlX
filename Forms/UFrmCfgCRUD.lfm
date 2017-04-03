@@ -526,6 +526,14 @@ object FrmCfgCRUD: TFrmCfgCRUD
           TabOrder = 11
         end
       end
+      object ChCkLazy: TCheckBox
+        Left = 200
+        Height = 19
+        Top = 12
+        Width = 167
+        Caption = 'Generate Lazy Dependences'
+        TabOrder = 8
+      end
     end
     object TabSheet2: TTabSheet
       Caption = '2 - Functions and Procedures'

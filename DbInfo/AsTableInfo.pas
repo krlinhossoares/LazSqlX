@@ -322,6 +322,7 @@ type
     function GetCompatibleControlName(Tablename,SqlFieldName:string):string;
     function GetTableNameAsControl(TableName:string):string;
     function GetControlType(SqlType:string):TAsControlType;
+
     procedure SetDBInfo(AValue: TAsDbConnectionInfo);
     procedure SetItem(Index: Integer; AValue: TAsTableInfo);
     procedure WriteLog(msg:string);
@@ -351,6 +352,8 @@ type
     property Items[Index:Integer]:TAsTableInfo read GetItem write SetItem;default;
     {Database information object}
     property DbInfo:TAsDbConnectionInfo read FDBinfo write SetDBInfo;
+    function LoadTable(Schema: string; Tablename: string; FullInfo: Boolean
+          ): TAsTableInfo;
  end;
 
  { TAsDbTables }
@@ -1611,6 +1614,134 @@ begin
    Result := table;
 
 end;
+
+function TAsTableInfos.LoadTable(Schema: string; Tablename: string;
+ FullInfo: Boolean): TAsTableInfo;
+var
+ lstPKs,lstIdentity:Tstringlist;
+ field,pkField,idField,nField:TAsFieldInfo;
+ strSqlCastExpr:string;
+ tis:TAsTriggerInfos;
+ ii:TAsIndexInfos;
+ iks:TAsImportedKeyInfos;
+ columns:TAsColumns=nil;
+ c:TAsColumn;
+ ds:TAsQuery=nil;
+ sql:string;
+begin
+
+   try
+     Screen.Cursor:=crHourGlass;
+     Result := TAsTableInfo.Create(nil);
+     Result.Tablename := Tablename;
+     Result.TableNameAsControlName:=GetTableNameAsControl(Tablename);
+
+     lstIdentity := TStringList.Create;
+     lstPKs := TAsDbUtils.GetPrimaryKeys(FDBinfo,Tablename);
+
+     if FDBinfo.DbType=dtSQLite then Schema:='';
+     if FDBinfo.DbType = dtSQLite then Schema:='';
+     Result.Schema := Schema;
+
+     iks := Result.ImportedKeys;
+     //ii:=Result.Indexes;
+     //tis := Result.Triggers;
+
+     columns := TAsDbUtils.GetColumns(FDBinfo,Tablename);
+
+     GetImportedKeyInfos(Schema,Tablename,iks);
+
+     if FullInfo then
+     begin
+      GetIndexeInfos(Schema,Tablename,ii);
+      GetTriggersInfos(Schema,Tablename,tis);
+     end;
+
+     ds := TAsQuery.Create(FDBinfo);
+     //Get FIELD INFOS
+     for c in columns do
+     begin
+
+      field := Result.AllFields.Add;
+      field.FieldName := c.Column_Name;
+      field.FieldType := LowerCase(c.Data_Type);
+      if field.FieldType='int identity' then field.FieldType:='int';
+      if FDBinfo.DbType in [dtOracle,dtMySql] then
+        field.Length := (c.Max_Length DIV 4 )
+      else
+        field.Length := c.Max_Length;
+
+      field.Precision := c.Data_Precision;
+
+      strSqlCastExpr:='';
+
+      if FDBinfo.DbType= dtMsSql then
+      begin
+          if (field.FieldType='nchar') or (field.FieldType='nvarchar')
+          then
+            field.Length := c.Max_Length div 2;
+          if (field.FieldType='ntext') then
+          strSqlCastExpr:='text';
+          if (field.FieldType='nvarchar') or (field.FieldType='xml') then
+          strSqlCastExpr:='varchar(max)';
+      end;
+
+      try
+        ds.Open(TAsDbUtils.GetTopRecordsSelect(FDBinfo.DbType,Schema,Tablename, field.FieldName,1));
+
+        field.DataType := ds.Fields[0].DataType;
+        field.FieldRef := ds.Fields[0];
+        field.AllowNull := c.Allow_Null;
+        field.CSharpType := GetCSharpType(field.FieldType);
+        field.CSharpName := GetCompatibleControlName(Tablename,field.FieldName);
+        field.Validate := (not field.AllowNull) or (lstPKs.IndexOf(field.FieldName)>-1);
+
+        if Result.ImportedKeys.ContainsColumn(field.FieldName) then
+        begin
+          field.ControlType := ctComboBox;
+          field.IsReference := True;
+        end else
+        begin
+          field.ControlType := GetControlType(field.FieldType);
+        end;
+
+        if lstPKs.IndexOf(field.FieldName)>-1 then
+        begin
+          field.IsPrimaryKey := True;
+          pkField := Result.PrimaryKeys.Add;
+          pkField.Assign(field);
+        end else
+        begin
+         field.IsPrimaryKey := False;
+         nField := Result.Fields.Add;
+         nField.Assign(field);
+        end;
+
+        if (field.DataType=ftAutoInc) then
+        begin
+          field.IsIdentity := True;
+          idField := Result.Identities.Add;
+          idField.Assign(field);
+        end;
+        field.FieldDbType:=FDBinfo.DbType;
+        //Application.MessageBox(PChar(Field.FieldType + ' - Len: '+IntToStr(field.Length)),'');
+      except
+        if Assigned(field) then
+        field.Free;
+      end;
+     end;
+
+   finally
+    Screen.Cursor:=crDefault;
+    lstIdentity.Free;
+    lstPKs.Free;
+    if columns<>nil then
+      columns.Free;
+    if ds<>nil then
+      ds.Free;
+   end;
+end;
+
 
 function TAsTableInfos.TableByName(Tablename: string): TAsTableInfo;
 var

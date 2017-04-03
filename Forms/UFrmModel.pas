@@ -34,7 +34,10 @@ type
   private
     { private declarations }
     UnitNameDAO, ClassNameDAO, VarDAO, UnitNameModel, ClassNameModel, VarModel: string;
+    MmLazyCodeFunctions: TStringList;
 
+    function FieldExist(FieldsKey: TStringList; Field:String): Boolean;
+    procedure GenerateLazy;
     function GenerateSqlQuery(queryType: TQueryType): TStringList;
     procedure EscreveSqlSynEditDao(StrList: TStringList);
     procedure GeneratorCodeProcDelete;
@@ -72,6 +75,8 @@ type
     procedure WriteDestroyQuery;
   public
     { public declarations }
+    SchemaText: String;
+    TablesInfos: TAsTableInfos;
     InfoTable: TAsTableInfo;
     InfoCrud: TCRUDInfo;
     Projeto: String;
@@ -327,13 +332,18 @@ end;
 
 procedure TFrmModel.GeneratorPascalClass;
 var
-  I: integer;
+  I, J, K: integer;
   MaxField, MaxType, MaxVar: integer;
   StrFunctionNameInsert, StrFunctionNameUpdate, StrFunctionNameDelete, StrFunctionNameGet, StrFunctionNameList, vAuxField, vAuxType, vAuxOldType: String;
+  Aux, UnitLazyAnt: String;
+  InfoTableAux: TAsTableInfo;
 begin
   MaxField := 0;
   MaxType := 0;
   MaxVar := 0;
+  {$Region 'Variaveis para geração Lazy'}
+  MmLazyCodeFunctions := TStringList.Create;
+  {$EndRegion}
 
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
@@ -365,17 +375,102 @@ begin
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('uses ');
   SynEditModel.Lines.Add(Ident + InfoCrud.UsesDefault);
+  IF InfoCrud.GenerateLazyDependencies THEN
+  begin
+    SynEditModel.Lines[SynEditModel.Lines.Count-1] := StringReplace(SynEditModel.Lines[SynEditModel.Lines.Count-1],';',', ',[rfReplaceAll]);
+    SynEditModel.Lines.Add(Ident + Ident + '//Uses unidades Lazy ');
+    for I := 0 to InfoTable.ImportedKeys.Count - 1 do
+    begin
+      if UnitLazyAnt <> InfoTable.ImportedKeys[I].ForeignTableName then
+      begin
+        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[I].ForeignTableName,False);
+        try
+          UnitLazyAnt := InfoTableAux.Tablename;
+          Aux := Aux + 'U' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ ', ';
+        finally
+          FreeAndNil(InfoTableAux);
+        end;
+      end;
+    end;
+    Aux[Length(Aux)-1] := ';';
+    SynEditModel.Lines.Add(Ident + Aux);
+  end;
+
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('type');
   SynEditModel.Lines.Add(ident + ClassNameModel + '= class');
   //SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(ident + 'private');
+
+  SynEditModel.Lines.Add(ident + ident + 'F' + Trim(StringReplace(InfoCrud.Connection,'var','',[rfReplaceAll]))+';');
+  if Trim(InfoCrud.ReturnException) <> '' then
+    SynEditModel.Lines.Add(ident + ident + 'F' + Trim(StringReplace(InfoCrud.ReturnException,'var','',[rfReplaceAll]))+';');
+
   //Cria Variaveis das Propriedades.
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
     SynEditModel.Lines.Add(Ident + Ident +
       'F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ': ' +
       LPad(TypeDBToTypePascal(InfoTable.AllFields[I].FieldType), ' ', MaxType) + ';');
+  end;
+  if InfoCrud.GenerateLazyDependencies then
+  begin
+    {$Region 'Cria Variaveis Lazy'}
+    SynEditModel.Lines.Add(Ident + Ident + '//Variaveis Lazy ');
+    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
+    begin
+      Application.ProcessMessages;
+      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      begin
+        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
+        try
+          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
+
+          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+          try
+            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+          except
+            Aux := '';
+          end;
+
+          SynEditModel.Lines.Add(Ident + Ident + 'F' +
+            LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxField) + ': ' +
+            LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) + ';');
+          Application.ProcessMessages;
+        finally
+          FreeAndNil(InfoTableAux);
+        end;
+      end;
+    end;
+    {$ENDREGION}
+
+    {$Region 'Gera Functions Get Lazy'}
+    SynEditModel.Lines.Add(Ident + Ident + '//Function Get Lazy Propertys');
+    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
+    begin
+      Application.ProcessMessages;
+      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      begin
+        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
+        try
+          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
+
+          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+          try
+            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+          except
+            Aux := '';
+          end;
+          SynEditModel.Lines.Add(Ident + Ident + 'function ' +
+           LPad('Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux, ' ', MaxVar) + ': ' +
+            LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) + ';');
+              Application.ProcessMessages;
+        finally
+          FreeAndNil(InfoTableAux);
+        end;
+      end;
+    end;
+    {$EndRegion}
   end;
   SynEditModel.Lines.Add(ident + 'published');
   //Cria Propriedades.
@@ -389,6 +484,39 @@ begin
       ' write F' + LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ';');
   end;
   SynEditModel.Lines.Add('');
+
+  if InfoCrud.GenerateLazyDependencies then
+  begin
+    {$Region 'Geração das Property Lazy'}
+    SynEditModel.Lines.Add(Ident + Ident + '//Propertys Lazy ');
+    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
+    begin
+      Application.ProcessMessages;
+      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      begin
+        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
+        try
+          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
+
+          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+          try
+            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+          except
+            Aux := '';
+          end;
+           SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
+            LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxField) + ': ' +
+            LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) +
+            ' read ' + LPad('Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxVar) + ';');
+            Application.ProcessMessages;
+        finally
+          FreeAndNil(InfoTableAux);
+        end;
+      end;
+    end;
+    {$ENDREGION}
+  end;
+
   //Cria Funcoes e Procedures CRUD;
   SynEditModel.Lines.Add(ident + 'public');
   SynEditModel.Lines.Add(Ident + Ident + '//Functions and Procedures Model CRUD');
@@ -539,6 +667,11 @@ begin
 
   SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create(const Source: '+ClassNameModel+'); Overload;');
 
+  if Trim(InfoCrud.ReturnException) <> '' then
+    SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+InfoCrud.Connection + '; ' +WithVar(InfoCrud.ReturnException)+'); Overload;')
+  else
+    SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+InfoCrud.Connection +'); Overload;');
+
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; override; ');
 
 
@@ -596,11 +729,63 @@ begin
   SynEditModel.Lines.Add('end;');
   {$endRegion}
 
+  SynEditModel.Lines.Add(ident + '');
+  if Trim(InfoCrud.ReturnException) <> '' then
+    SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoCrud.Connection + '; ' +WithVar(InfoCrud.ReturnException)+'); ')
+  else
+    SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoCrud.Connection +'); ');
+  SynEditModel.Lines.Add('begin');
+  SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
+  SynEditModel.Lines.Add(ident + 'Self'+'.'+'F' + Trim(IfThen(
+                                                              Pos('var', InfoCrud.Connection) > 0,
+                                                                   StringReplace(Copy(InfoCrud.Connection, Pos('var', InfoCrud.Connection) +3,
+                                                                   Pos(':', InfoCrud.Connection)-2),':','',[rfReplaceAll]),
+                                                                  StringReplace(Copy(InfoCrud.Connection, 0, Pos(':',InfoCrud.Connection)-1),'var','',[rfReplaceAll])
+                                                              )
+                                                       ) +
+                                                              ' := ' +
+                                                              StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.Connection)-1),'var','',[rfReplaceAll])+';');
+  if Trim(InfoCrud.ReturnException) <> '' then
+  begin
+    SynEditModel.Lines.Add(ident + 'Self'+'.'+'F' + Trim(IfThen(
+                                                                Pos('var', InfoCrud.ReturnException) > 0,
+                                                                StringReplace(Copy(InfoCrud.Connection, Pos('var', InfoCrud.ReturnException) +3,
+                                                                     Pos(':', InfoCrud.ReturnException)-1),':','',[rfReplaceAll]),
+                                                                StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])
+                                                                )
+                                                         ) + ' := ' +
+                                                                StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])+';');
+  end;
+  SynEditModel.Lines.Add('end;');
 
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Destructor ' + ClassNameModel + '.' + 'Destroy;');
   SynEditModel.Lines.Add('begin');
-  //SynEditModel.Lines.Add(ident + 'FreeAndNil('+ VarDAO + ');'); **O Dao nao precisa ser instanciado nem destruido
+  if InfoCrud.GenerateLazyDependencies then
+  begin
+    {$REGION 'Gera Destroy Variaveis Lazy'}
+    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
+    begin
+      Application.ProcessMessages;
+      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      begin
+        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
+        try
+          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
+          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+          try
+            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+          except
+            Aux := '';
+          end;
+          SynEditModel.Lines.Add(Ident + 'FreeAndNil(F' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+ ');');
+        finally
+          FreeAndNil(InfoTableAux);
+        end;
+      end;
+    end;
+    {$EndRegion}
+  end;
   SynEditModel.Lines.Add(ident + 'Inherited;');
   SynEditModel.Lines.Add('end;');
   // ***FIM*** Implementacao dos metodos Construtores e Destrutores
@@ -800,19 +985,16 @@ begin
   SynEditModel.Lines.Add('                                                                        ');
   SynEditModel.Lines.Add('end;                                                                    ');
   SynEditModel.Lines.Add('                                                                        ');
-  SynEditModel.Lines.Add('end.                                                                    ');
   {$endRegion}
 
-{  SynEditModel.Lines.Add('begin');
-  for I := 0 to InfoTable.AllFields.Count - 1 do
+  if InfoCrud.GenerateLazyDependencies then
   begin
-    SynEditModel.Lines.Add(Ident +
-      LPad(InfoTable.AllFields[I].FieldName, ' ', MaxField) + ' := Source.' +InfoTable.AllFields[I].FieldName+';');
+    GenerateLazy;
+    For J:= 0 to MmLazyCodeFunctions.Count - 1 do
+      SynEditModel.Lines.Add( MmLazyCodeFunctions.Strings[J]);
   end;
-  SynEditModel.Lines.Add('end;');
 
-  SynEditModel.Lines.Add(ident + '');
-  SynEditModel.Lines.Add('end.');}
+  SynEditModel.Lines.Add('end.                                                                    ');
 end;
 
 procedure TFrmModel.WriteCreateQuery;
@@ -1668,5 +1850,182 @@ begin
   Result := Trim(A);
 end;
 
+function TFrmModel.FieldExist(FieldsKey: TStringList; Field:String): Boolean;
+var
+  Idx: Integer;
+begin
+  idx := FieldsKey.IndexOf(Field);
+  ResulT := Idx > -1;
+end;
+
+procedure TFrmModel.GenerateLazy;
+Var
+   IK: Integer;
+   J, K: Integer;
+   Aux, LazyAnt: String;
+   MaxField, MaxType, MaxVar: integer;
+   MaxVarAux,MaxVarFunction: integer;
+   StrFunctionNameGet: String;
+   InfoTableAux: TAsTableInfo;
+   FieldsKeys, FieldsKeysAux: TStringList;
+   Procedure LoadPrimaryKey;
+   var PK: Integer;
+      FF: STRING;
+   begin
+
+     if Assigned(FieldsKeys) then
+       FreeAndNil(FieldsKeys);
+     FieldsKeys := TStringList.Create;
+     FieldsKeys.Clear;
+     For PK:= 0 to InfoTable.AllFields.Count-1 do
+     begin
+       FF := InfoTable.AllFields[pk].FieldName;
+       FieldsKeys.Add(FF);
+     end;
+   end;
+   Procedure LoadPrimaryKeyAux;
+   var PK: Integer;
+   begin
+     if Assigned(FieldsKeysAux) then
+       FreeAndNil(FieldsKeysAux);
+     FieldsKeysAux := TStringList.Create;
+     FieldsKeysAux.Clear;
+     For PK:= 0 to InfoTableAux.PrimaryKeys.Count-1 do
+       FieldsKeysAux.Add(InfoTableAux.PrimaryKeys[pk].FieldName);
+   end;
+begin
+  FieldsKeysAux := Nil;
+  FieldsKeys := Nil;
+  MmLazyCodeFunctions.Clear;
+  MmLazyCodeFunctions.Add('//Metodos Get Lazy');
+  LoadPrimaryKey;
+  for IK := 0 to InfoTable.ImportedKeys.Count - 1 do
+  begin
+    Application.ProcessMessages;
+
+    if LazyAnt <> InfoTable.ImportedKeys[IK].ConstraintName then
+    begin
+      InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[IK].ForeignTableName, False);
+      try
+        LoadPrimaryKeyAux;
+        LazyAnt := InfoTable.ImportedKeys[IK].ConstraintName;
+        Aux := Copy(LazyAnt,Length(LazyAnt),1);
+        try
+          StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+        except
+          Aux := '';
+        end;
+        Application.ProcessMessages;
+        {$Region 'Metodos Get Lazy'}
+
+        MaxVarFunction:=0;
+        MaxVarAux:=0;
+        for K := 0 to FieldsKeysAux.Count - 1 do
+        begin
+          Application.ProcessMessages;
+          if MaxVarAux < (Length('(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+
+             '.' + FieldsKeysAux[k]) + 1) then
+            MaxVarAux := (Length('F''(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+
+             '.' + FieldsKeysAux[k]) + 1);
+
+          if MaxVar < (Length('Self.' + FieldsKeysAux[k]) + 1) then
+            MaxVar := (Length('Self.' + FieldsKeysAux[k]) + 1);
+        end;
+        MmLazyCodeFunctions.Add('function ' +ClassNameModel+'.'+
+         'Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux + ': ' +
+          'T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + ';');
+        MmLazyCodeFunctions.Add('begin');
+        MmLazyCodeFunctions.Add(Ident + 'if not Assigned(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') or ');
+        MmLazyCodeFunctions.Add(Ident + Ident +'( ');
+        for J:= 0 to FieldsKeysAux.Count-1 do
+        begin
+          Application.ProcessMessages;
+          if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
+          begin
+           Application.ProcessMessages;
+            if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
+              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
+               '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') ')
+            else
+              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
+               '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') or ');
+          end
+          else
+          begin
+            Application.ProcessMessages;
+            if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
+              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
+               '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+') ')
+            else
+              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
+               '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+') or ');
+          end;
+        end;
+        Application.ProcessMessages;
+        MmLazyCodeFunctions.Add(Ident + Ident +') then ');
+        MmLazyCodeFunctions.Add(Ident + Ident +'begin');
+        MmLazyCodeFunctions.Add(Ident + Ident +Ident +'if not Assigned(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') then');
+        MmLazyCodeFunctions.Add(Ident + Ident +Ident + Ident + 'F' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux + ' := '+
+        'T' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+'.Create;');
+        for J:= 0 to FieldsKeysAux.Count-1 do
+        begin
+          Application.ProcessMessages;
+          if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
+          begin
+            StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
+                '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J]+AUX)+ ';';
+            MmLazyCodeFunctions.Add(StrFunctionNameGet);
+          end
+          else
+          begin
+            StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
+                '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J])+ ';';
+            MmLazyCodeFunctions.Add(StrFunctionNameGet);
+          end;
+        end;
+        Application.ProcessMessages;
+        //Gera Chamada do Get da Classe
+        StrFunctionNameGet := '';
+        StrFunctionNameGet := Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux+
+            '.' + InfoCrud.ProcGetRecord.ProcName + '(';
+
+        if (StrFunctionNameGet <> Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
+            '.' + InfoCrud.ProcGetRecord.ProcName + '(') and
+          (Trim(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1))<>'') then
+          StrFunctionNameGet := StrFunctionNameGet  +', ' + 'F'+Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1))
+        else
+          StrFunctionNameGet := StrFunctionNameGet  + 'F'+Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1));
+
+        if (StrFunctionNameGet <> Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
+            '.' + InfoCrud.ProcGetRecord.ProcName + '(') then
+          StrFunctionNameGet := StrFunctionNameGet  +', ' + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux
+        else
+          StrFunctionNameGet := StrFunctionNameGet  + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux;
+
+           Application.ProcessMessages;
+        if (StrFunctionNameGet <> (Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
+            '.' +InfoCrud.ProcGetRecord.ProcName + '(')) and
+           (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <> '') then
+          StrFunctionNameGet := StrFunctionNameGet + ', ' + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
+        else
+          StrFunctionNameGet := StrFunctionNameGet + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
+            Application.ProcessMessages;
+        StrFunctionNameGet:=  StrFunctionNameGet + ');';
+        MmLazyCodeFunctions.Add(StrFunctionNameGet);
+        MmLazyCodeFunctions.Add(Ident + Ident +'end;');
+        MmLazyCodeFunctions.Add(Ident +  Ident +  'Result  := F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux);
+        MmLazyCodeFunctions.Add('end;');
+        MmLazyCodeFunctions.Add(Ident + Ident +'');
+       {$EndRegion}
+       Application.ProcessMessages;
+
+      finally
+        InfoTableAux.Destroy;
+        //FreeAndNil(InfoTableAux);
+      end;
+    end;
+  end;
+  Application.ProcessMessages;
+end;
 
 end.

@@ -21,6 +21,7 @@ type
     ChCkInsert: TCheckBox;
     ChCkListRecords: TCheckBox;
     ChCkUpdate: TCheckBox;
+    ChCkLazy: TCheckBox;
     CmbProjeto: TComboBox;
     EdtCondition2: TEdit;
     EdtCondition3: TEdit;
@@ -191,6 +192,7 @@ begin
 
   CrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + CmbProjeto.Text + PathDelim +'CRUD.ini');
   EdtCopyTableName.Value:= CrudInfo.CopyTableName;
+  ChCkLazy.Checked:= CrudInfo.GenerateLazyDependencies;
 
   MmUses.Lines.Clear;
   MmUses.Lines.Text := CrudInfo.UsesDefault;
@@ -254,10 +256,11 @@ end;
 
 procedure TFrmCfgCRUD.SalvaCfgCrud;
 begin
-  CrudInfo.CopyTableName   := EdtCopyTableName.Value;
-  CrudInfo.UsesDefault     := MmUses.Lines.Text;
-  CrudInfo.Connection      := EdtConnection.Text;
-  CrudInfo.ReturnException := EdtException.Text;
+  CrudInfo.CopyTableName            := EdtCopyTableName.Value;
+  CrudInfo.GenerateLazyDependencies := ChCkLazy.Checked;
+  CrudInfo.UsesDefault              := MmUses.Lines.Text;
+  CrudInfo.Connection               := EdtConnection.Text;
+  CrudInfo.ReturnException          := EdtException.Text;
 
   CrudInfo.ProcInsert.Enable   := ChCkInsert.Checked;
   CrudInfo.ProcInsert.ProcName := EdtProcNameInsert.Text;

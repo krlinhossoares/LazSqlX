@@ -44,6 +44,7 @@ type
     FDirDAO: String;
     FDirModel: String;
     FExceptionCode: TStringList;
+    FGenerateLazyDependencies: Boolean;
     FHasReturnException: boolean;
     FProcDelete: TCRUDProc;
     FProcGetRecord: TCRUDProc;
@@ -107,6 +108,8 @@ type
     property SelectDefault2: TCRUDWhereDefault read FSelectDefault2 write FSelectDefault2;
     property SelectDefault3: TCRUDWhereDefault read FSelectDefault3 write FSelectDefault3;
 
+    property GenerateLazyDependencies: Boolean read FGenerateLazyDependencies write FGenerateLazyDependencies;
+
   end;
 
 
@@ -128,6 +131,7 @@ begin
   ProcListRecords := TCRUDProc.Create;
   ExceptionCode := TStringList.Create;
   CabecalhoCode := TStringList.Create;
+  GenerateLazyDependencies:= False;
 end;
 
 procedure TCRUDInfo.SaveToFile(FileName: String);
@@ -137,6 +141,7 @@ begin
   CrudFile := TIniFile.Create(FileName);
   try
   CrudFile.WriteInteger('CRUD','COPYTABLE', CopyTableName);
+  CrudFile.WriteBool('CRUD','GENERATELAZY', GenerateLazyDependencies);
   CrudFile.WriteString('CRUD','USES', UsesDefault);
   CrudFile.WriteString('CRUD','CLASSCONNECTION', Connection);
   CrudFile.WriteString('CRUD','RETURNEXCEPTION', ReturnException);
@@ -211,6 +216,9 @@ begin
     ReturnException := CrudFile.ReadString('CRUD','RETURNEXCEPTION','Erro: String' );
     DirModel        := CrudFile.ReadString('CRUD','DIRMODEL',GetCurrentDir+ PathDelim);
     DirDAO          := CrudFile.ReadString('CRUD','DIRDAO',GetCurrentDir+ PathDelim);
+
+    GenerateLazyDependencies := CrudFile.ReadBool('CRUD','GENERATELAZY',False);
+
 
     ProcInsert.Enable        := CrudFile.ReadBool('CRUD','CREATEINSERT',True);
     ProcInsert.ProcName      := CrudFile.ReadString('CRUD','PROCNAMEINSERT', 'Insert');
