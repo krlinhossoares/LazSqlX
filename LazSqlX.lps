@@ -8,7 +8,7 @@
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <TopLine Value="4"/>
         <CursorPos Y="29"/>
         <UsageCount Value="223"/>
@@ -65,7 +65,7 @@
         <ComponentName Value="DesignTableForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="15"/>
         <TopLine Value="828"/>
         <CursorPos X="57" Y="852"/>
         <UsageCount Value="223"/>
@@ -76,8 +76,8 @@
         <Filename Value="DbInfo\AsDbType.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="752"/>
-        <CursorPos Y="768"/>
+        <TopLine Value="335"/>
+        <CursorPos X="28" Y="334"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit6>
@@ -92,9 +92,9 @@
       <Unit8>
         <Filename Value="DbInfo\AsTableInfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="15"/>
-        <TopLine Value="608"/>
-        <CursorPos Y="625"/>
+        <EditorIndex Value="16"/>
+        <TopLine Value="1623"/>
+        <CursorPos X="41" Y="1640"/>
         <UsageCount Value="223"/>
         <Loaded Value="True"/>
       </Unit8>
@@ -464,10 +464,11 @@
       <Unit50>
         <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="151"/>
-        <CursorPos X="32" Y="166"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="73"/>
+        <CursorPos X="8" Y="81"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit50>
       <Unit51>
         <Filename Value="DbInfo\DbMetadata\AsSqliteMetadata.pas"/>
@@ -510,16 +511,16 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="11"/>
-        <TopLine Value="714"/>
-        <CursorPos X="102" Y="725"/>
-        <FoldState Value=" TJog323V"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="1907"/>
+        <CursorPos X="51" Y="1919"/>
+        <FoldState Value=" TJog32312}"/>
         <UsageCount Value="203"/>
         <Bookmarks Count="4">
           <Item0 X="38" Y="99" ID="4"/>
           <Item1 X="10" Y="519" ID="1"/>
           <Item2 X="12" Y="1019" ID="9"/>
-          <Item3 X="46" Y="1919" ID="2"/>
+          <Item3 X="15" Y="1919" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -530,7 +531,7 @@
         <ComponentName Value="FrmCfgCRUD"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="168"/>
         <CursorPos Y="185"/>
         <UsageCount Value="200"/>
@@ -540,7 +541,7 @@
       <Unit57>
         <Filename Value="DbInfo\AsCrudInfo.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <TopLine Value="200"/>
         <CursorPos X="25" Y="209"/>
         <UsageCount Value="201"/>
@@ -567,7 +568,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="64"/>
         <CursorPos X="42" Y="66"/>
-        <UsageCount Value="193"/>
+        <UsageCount Value="194"/>
       </Unit59>
       <Unit60>
         <Filename Value="Resources\TableInfoReserved.dt"/>
@@ -748,10 +749,10 @@
       <Unit83>
         <Filename Value="C:\lazarus\components\synedit\synedit.pp"/>
         <UnitName Value="SynEdit"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <TopLine Value="4492"/>
         <CursorPos X="10" Y="4509"/>
-        <UsageCount Value="17"/>
+        <UsageCount Value="18"/>
         <Loaded Value="True"/>
       </Unit83>
       <Unit84>
@@ -890,10 +891,10 @@
       </Unit102>
       <Unit103>
         <Filename Value="C:\lazarus\lcl\include\control.inc"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <TopLine Value="2723"/>
         <CursorPos X="139" Y="2730"/>
-        <UsageCount Value="33"/>
+        <UsageCount Value="34"/>
         <Loaded Value="True"/>
       </Unit103>
       <Unit104>
@@ -1032,26 +1033,26 @@
         <Filename Value="..\..\SuperView\trunk\fontes\SuperServer\UPrincipal.pas"/>
         <HasResources Value="True"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit124>
       <Unit125>
         <Filename Value="D:\ProjetosDelphi\V3D2010\Normalizacao\Server\Rules\uSelPessoaRG.pas"/>
         <EditorIndex Value="3"/>
         <TopLine Value="4"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit125>
       <Unit126>
         <Filename Value="D:\ProjetosDelphi\V3D2010\Normalizacao\Server\Rules\uSelPrecoRG.pas"/>
         <EditorIndex Value="4"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit126>
       <Unit127>
         <Filename Value="D:\ProjetosDelphi\V3D2010\BlocoK\Server\Persistence\uAPARELHODAO.pas"/>
         <EditorIndex Value="5"/>
-        <UsageCount Value="34"/>
+        <UsageCount Value="35"/>
         <Loaded Value="True"/>
       </Unit127>
       <Unit128>
@@ -1060,7 +1061,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="277"/>
         <CursorPos X="14" Y="285"/>
-        <UsageCount Value="32"/>
+        <UsageCount Value="33"/>
         <Loaded Value="True"/>
       </Unit128>
       <Unit129>
@@ -1103,124 +1104,124 @@
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1939" TopLine="1926"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="113" TopLine="97"/>
       </Position1>
       <Position2>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1940" TopLine="1926"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position2>
       <Position3>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1942" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="114" TopLine="97"/>
       </Position3>
       <Position4>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position4>
       <Position5>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1944" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="115" TopLine="97"/>
       </Position5>
       <Position6>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position6>
       <Position7>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1944" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="116" TopLine="97"/>
       </Position7>
       <Position8>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position8>
       <Position9>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1944" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="117" TopLine="97"/>
       </Position9>
       <Position10>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position10>
       <Position11>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1946" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="118" TopLine="97"/>
       </Position11>
       <Position12>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1945" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position12>
       <Position13>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1946" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="119" TopLine="97"/>
       </Position13>
       <Position14>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1945" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position14>
       <Position15>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1946" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="120" TopLine="97"/>
       </Position15>
       <Position16>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1945" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position16>
       <Position17>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1948" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="121" TopLine="97"/>
       </Position17>
       <Position18>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1940" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="122" TopLine="97"/>
       </Position18>
       <Position19>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1942" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="124" TopLine="107"/>
       </Position19>
       <Position20>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="126" TopLine="107"/>
       </Position20>
       <Position21>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1944" TopLine="1932"/>
+        <Filename Value="DbInfo\DbMetadata\AsFirebirdMetadata.pas"/>
+        <Caret Line="129" Column="61" TopLine="111"/>
       </Position21>
       <Position22>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\AsTableInfo.pas"/>
+        <Caret Line="1636" Column="42" TopLine="1623"/>
       </Position22>
       <Position23>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1944" TopLine="1932"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="1281" Column="3" TopLine="1276"/>
       </Position23>
       <Position24>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1943" TopLine="1932"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="334" Column="29" TopLine="317"/>
       </Position24>
       <Position25>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1989" TopLine="1972"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="398" Column="35" TopLine="371"/>
       </Position25>
       <Position26>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1896" TopLine="1879"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="1276" Column="42" TopLine="1263"/>
       </Position26>
       <Position27>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="2038" Column="62" TopLine="1917"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="1283" Column="33" TopLine="1263"/>
       </Position27>
       <Position28>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1892" Column="54" TopLine="1872"/>
+        <Filename Value="DbInfo\AsTableInfo.pas"/>
+        <Caret Line="1640" Column="41" TopLine="1623"/>
       </Position28>
       <Position29>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="736" TopLine="718"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="346" Column="2" TopLine="329"/>
       </Position29>
       <Position30>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="678" Column="176" TopLine="662"/>
+        <Filename Value="DbInfo\AsDbType.pas"/>
+        <Caret Line="1281" Column="3" TopLine="1276"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

@@ -105,7 +105,7 @@ var
   fk:TAsForeignKey;
 begin
  Result := TAsForeignKeys.Create;
-
+                                                    {
  sql:='SELECT drc.rdb$constraint_name as CONSTRAINT_NAME,'+
         ''''+Schema+''' as SCHEMA, '+
         ' drc.rdb$relation_name as TABLE_NAME, '+
@@ -119,8 +119,33 @@ begin
 ' JOIN rdb$relation_constraints mrc ON rdb$ref_constraints.rdb$const_name_uq = mrc.rdb$constraint_name '+
 ' JOIN rdb$index_segments mis ON mrc.rdb$index_name = mis.rdb$index_name '+
 ' WHERE drc.rdb$constraint_type = ''FOREIGN KEY'' '+
-' AND drc.rdb$relation_name = '''+TableName+'''';
+' AND drc.rdb$relation_name = '''+TableName+'''';  }
 
+
+ sql := 'SELECT DISTINCT DRC.RDB$CONSTRAINT_NAME AS CONSTRAINT_NAME, '+ #13 +
+                ''''+Schema+''' AS SCHEMA, ' + #13 +
+                'DRC.RDB$RELATION_NAME AS TABLE_NAME, ' + #13 +
+                'DIS.RDB$FIELD_NAME AS COLUMN_NAME,   ' + #13 +
+                ''''+Schema+''' as FOREIGN_SCHEMA, ' + #13 +
+                'MRC.RDB$RELATION_NAME AS FOREIGN_TABLE_NAME, ' + #13 +
+                ' (SELECT  DISTINCT MIS1.RDB$FIELD_NAME AS FOREIGN_COLUMN_NAME ' + #13 +
+                '          FROM RDB$RELATION_CONSTRAINTS DRC1 ' + #13 +
+                ' INNER JOIN RDB$INDEX_SEGMENTS DIS1 ON DRC1.RDB$INDEX_NAME = DIS1.RDB$INDEX_NAME ' + #13 +
+                ' INNER JOIN RDB$REF_CONSTRAINTS ON DRC1.RDB$CONSTRAINT_NAME = RDB$REF_CONSTRAINTS.RDB$CONSTRAINT_NAME ' + #13 +
+                ' INNER JOIN RDB$RELATION_CONSTRAINTS MRC1 ON RDB$REF_CONSTRAINTS.RDB$CONST_NAME_UQ = MRC1.RDB$CONSTRAINT_NAME ' + #13 +
+                ' INNER JOIN RDB$INDEX_SEGMENTS MIS1 ON MRC1.RDB$INDEX_NAME = MIS1.RDB$INDEX_NAME ' + #13 +
+                '         WHERE DRC1.RDB$CONSTRAINT_TYPE = ''FOREIGN KEY'' ' + #13 +
+                '               AND DRC1.RDB$RELATION_NAME = DRC.RDB$RELATION_NAME ' + #13 +
+                '               AND MRC1.RDB$RELATION_NAME = MRC.RDB$RELATION_NAME ' + #13 +
+                '               AND MIS1.RDB$FIELD_POSITION = DIS.RDB$FIELD_POSITION) AS FOREIGN_COLUMN_NAME ' + #13 +
+        ' FROM RDB$RELATION_CONSTRAINTS DRC ' + #13 +
+        '  INNER JOIN RDB$INDEX_SEGMENTS DIS ON DRC.RDB$INDEX_NAME = DIS.RDB$INDEX_NAME ' + #13 +
+        ' INNER JOIN RDB$REF_CONSTRAINTS ON DRC.RDB$CONSTRAINT_NAME = RDB$REF_CONSTRAINTS.RDB$CONSTRAINT_NAME ' + #13 +
+        ' INNER JOIN RDB$RELATION_CONSTRAINTS MRC ON RDB$REF_CONSTRAINTS.RDB$CONST_NAME_UQ = MRC.RDB$CONSTRAINT_NAME ' + #13 +
+        ' INNER JOIN RDB$INDEX_SEGMENTS MIS ON MRC.RDB$INDEX_NAME = MIS.RDB$INDEX_NAME ' + #13 +
+        ' WHERE DRC.RDB$CONSTRAINT_TYPE = ''FOREIGN KEY''' + #13 +
+        ' AND DRC.RDB$RELATION_NAME = '''+TableName+'''' + #13 +
+        ' ORDER by DRC.RDB$CONSTRAINT_NAME, DIS.RDB$FIELD_POSITION ';
  ds := TAsQuery.Create(FDBInfo);
 
   try
@@ -134,6 +159,7 @@ begin
        fk.Column_Name:= Trim(ds.FieldByName('COLUMN_NAME').AsString);
        fk.Foreign_Schema:= Trim(ds.FieldByName('FOREIGN_SCHEMA').AsString);
        fk.Foreign_Table:= Trim(ds.FieldByName('FOREIGN_TABLE_NAME').AsString);
+
        fk.Foreign_Column:= Trim(ds.FieldByName('FOREIGN_COLUMN_NAME').AsString);
        Result.Add(fk);
        ds.Next;

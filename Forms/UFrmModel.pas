@@ -1916,7 +1916,7 @@ Var
      FieldsKeys := TStringList.Create;
      FieldsKeys.Clear;
      //for downto devido ao laz trazer os fields fora de ordem
-     For PK:= InfoTable.ImportedKeys.Count-1 downto 0 do
+     For PK:= 0 TO InfoTable.ImportedKeys.Count-1  do
      begin
        if ConstraintName = InfoTable.ImportedKeys[PK].ConstraintName then
        begin
