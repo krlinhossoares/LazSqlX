@@ -1785,6 +1785,7 @@ var
   S: string;
   J, IdSpaceAux, IdSpace: integer;
   StrFunctionName: String;
+  ConnectionStr, ReturnExceptionStr: String;
 begin
    if InfoCrud.ProcListRecords.Enable then
   begin
@@ -1841,7 +1842,16 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.First;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'While not Qry.Eof do ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create;');
+
+    ConnectionStr:= Trim(StringReplace(InfoCrud.Connection,'var','',[rfReplaceAll]));
+    ReturnExceptionStr:= Trim(StringReplace(InfoCrud.ReturnException,'var','',[rfReplaceAll]));
+
+    if Trim(InfoCrud.ReturnException) <> '' then
+       SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create('+Copy(ConnectionStr,1,Pos(':',ConnectionStr)-1) + ', ' +
+                                                                                                           Copy(ReturnExceptionStr,1,Pos(':',ReturnExceptionStr)-1)+');')
+    else
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel + ':= ' + ClassNameModel + '.Create('+Copy(ConnectionStr,1,Pos(':',ConnectionStr)-1)+');');
+
     //Pega a maior sequencia de caracteres existente nos parametros, para alinhar a codificacao
     IdSpace:= 0;
     IdSpaceAux:=0;
