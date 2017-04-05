@@ -674,7 +674,10 @@ begin
     vAuxField := 'A'+InfoTable.PrimaryKeys.Items[I].FieldName + IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
     vAuxOldType := vAuxType;
   end;
-  SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+ Copy(vAuxField, 1 , length(vAuxField) - 2)+ '); Overload;');
+  if Trim(InfoCrud.ReturnException) <> '' then
+    SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+InfoCrud.Connection + '; ' +WithVar(InfoCrud.ReturnException)+ '; '+Copy(vAuxField, 1 , length(vAuxField) - 2)+'); Overload;')
+  else
+    SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create('+InfoCrud.Connection + '; '+Copy(vAuxField, 1 , length(vAuxField) - 2)+'); Overload;');
 
   SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create(const Source: '+ClassNameModel+'); Overload;');
 
@@ -716,7 +719,10 @@ begin
   end;
 
   SynEditModel.Lines.Add(ident + '');
-  SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+Copy(vAuxField, 1 , length(vAuxField) - 2)+ ');');
+  if Trim(InfoCrud.ReturnException) <> '' then
+    SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoCrud.Connection + '; ' +WithVar(InfoCrud.ReturnException)+'; '+Copy(vAuxField, 1 , length(vAuxField) - 2)+'); ')
+  else
+    SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoCrud.Connection +'; '+Copy(vAuxField, 1 , length(vAuxField) - 2)+'); ');
   SynEditModel.Lines.Add('begin');
   SynEditModel.Lines.Add(ident + 'Self'+'.'+'Create;');
 
@@ -729,6 +735,26 @@ begin
 
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
     SynEditModel.Lines.Add(ident + LPad('Self.'+ InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) + ' := ' + 'A'+InfoTable.PrimaryKeys.Items[I].FieldName +';');
+  SynEditModel.Lines.Add(ident + 'Self'+'.'+'F' + Trim(IfThen(
+                                                                Pos('var', InfoCrud.Connection) > 0,
+                                                                     StringReplace(Copy(InfoCrud.Connection, Pos('var', InfoCrud.Connection) +3,
+                                                                     Pos(':', InfoCrud.Connection)-2),':','',[rfReplaceAll]),
+                                                                    StringReplace(Copy(InfoCrud.Connection, 0, Pos(':',InfoCrud.Connection)-1),'var','',[rfReplaceAll])
+                                                                )
+                                                         ) +
+                                                                ' := ' +
+                                                                StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.Connection)-1),'var','',[rfReplaceAll])+';');
+  if Trim(InfoCrud.ReturnException) <> '' then
+  begin
+    SynEditModel.Lines.Add(ident + 'Self'+'.'+'F' + Trim(IfThen(
+                                                                Pos('var', InfoCrud.ReturnException) > 0,
+                                                                StringReplace(Copy(InfoCrud.Connection, Pos('var', InfoCrud.ReturnException) +3,
+                                                                     Pos(':', InfoCrud.ReturnException)-1),':','',[rfReplaceAll]),
+                                                                StringReplace(Copy(InfoCrud.ReturnException, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])
+                                                                )
+                                                         ) + ' := ' +
+                                                                StringReplace(Copy(InfoCrud.ReturnException, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])+';');
+  end;
   SynEditModel.Lines.Add('end;');
 
   {$Region 'Instancia o objeto fazendo um assign '}
@@ -1881,19 +1907,23 @@ Var
    StrFunctionNameGet: String;
    InfoTableAux: TAsTableInfo;
    FieldsKeys, FieldsKeysAux: TStringList;
-   Procedure LoadPrimaryKey;
+   Procedure LoadPrimaryKey(ConstraintName: String);
    var PK: Integer;
-      FF: STRING;
+       FF: STRING;
    begin
-
      if Assigned(FieldsKeys) then
        FreeAndNil(FieldsKeys);
      FieldsKeys := TStringList.Create;
      FieldsKeys.Clear;
-     For PK:= 0 to InfoTable.AllFields.Count-1 do
+     //for downto devido ao laz trazer os fields fora de ordem
+     For PK:= InfoTable.ImportedKeys.Count-1 downto 0 do
      begin
-       FF := InfoTable.AllFields[pk].FieldName;
-       FieldsKeys.Add(FF);
+       if ConstraintName = InfoTable.ImportedKeys[PK].ConstraintName then
+       begin
+         FF := InfoTable.ImportedKeys[pk].ColumnName;
+         if FieldsKeys.IndexOf(FF) = -1 then
+           FieldsKeys.Add(FF);
+       end;
      end;
    end;
    Procedure LoadPrimaryKeyAux;
@@ -1913,13 +1943,12 @@ begin
   if InfoTable.ImportedKeys.Count > 0 then
   begin
     MmLazyCodeFunctions.Add('//Metodos Get Lazy');
-    LoadPrimaryKey;
     for IK := 0 to InfoTable.ImportedKeys.Count - 1 do
     begin
       Application.ProcessMessages;
-
       if LazyAnt <> InfoTable.ImportedKeys[IK].ConstraintName then
       begin
+        LoadPrimaryKey(InfoTable.ImportedKeys[IK].ConstraintName);
         InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[IK].ForeignTableName, False);
         try
           LoadPrimaryKeyAux;
@@ -1960,20 +1989,20 @@ begin
              Application.ProcessMessages;
               if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
-                 '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') ')
+                 '.' + FieldsKeys[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') ')
               else
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
-                 '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') or ');
+                 '.' + FieldsKeys[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') or ');
             end
             else
             begin
               Application.ProcessMessages;
               if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
-                 '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+') ')
+                 '.' + FieldsKeys[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+') ')
               else
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
-                 '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+') or ');
+                 '.' + FieldsKeys[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+') or ');
             end;
           end;
           Application.ProcessMessages;
@@ -1988,13 +2017,13 @@ begin
             if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
             begin
               StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
-                  '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J]+AUX)+ ';';
+                  '.' + FieldsKeys[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J]+AUX)+ ';';
               MmLazyCodeFunctions.Add(StrFunctionNameGet);
             end
             else
             begin
               StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
-                  '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J])+ ';';
+                  '.' + FieldsKeys[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J])+ ';';
               MmLazyCodeFunctions.Add(StrFunctionNameGet);
             end;
           end;
