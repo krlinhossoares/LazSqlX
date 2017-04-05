@@ -2052,7 +2052,7 @@ begin
              (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <> '') then
             StrFunctionNameGet := StrFunctionNameGet + ', F' + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
           else
-            StrFunctionNameGet := StrFunctionNameGet + 'F'+Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
+            StrFunctionNameGet := StrFunctionNameGet +Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
               Application.ProcessMessages;
           StrFunctionNameGet:=  StrFunctionNameGet + ');';
           MmLazyCodeFunctions.Add(StrFunctionNameGet);
