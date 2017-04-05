@@ -817,7 +817,8 @@ begin
           except
             Aux := '';
           end;
-          SynEditModel.Lines.Add(Ident + 'FreeAndNil(F' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+ ');');
+          SynEditModel.Lines.Add(Ident + 'if Assigned(F' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') then ');
+          SynEditModel.Lines.Add(Ident + Ident + 'FreeAndNil(F' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+ ');');
         finally
           FreeAndNil(InfoTableAux);
         end;
