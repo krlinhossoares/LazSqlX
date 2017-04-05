@@ -377,23 +377,26 @@ begin
   SynEditModel.Lines.Add(Ident + InfoCrud.UsesDefault);
   IF InfoCrud.GenerateLazyDependencies THEN
   begin
-    SynEditModel.Lines[SynEditModel.Lines.Count-1] := StringReplace(SynEditModel.Lines[SynEditModel.Lines.Count-1],';',', ',[rfReplaceAll]);
-    SynEditModel.Lines.Add(Ident + Ident + '//Uses unidades Lazy ');
-    for I := 0 to InfoTable.ImportedKeys.Count - 1 do
+    if InfoTable.ImportedKeys.Count > 0 then
     begin
-      if UnitLazyAnt <> InfoTable.ImportedKeys[I].ForeignTableName then
+      SynEditModel.Lines[SynEditModel.Lines.Count-1] := StringReplace(SynEditModel.Lines[SynEditModel.Lines.Count-1],';',', ',[rfReplaceAll]);
+      SynEditModel.Lines.Add(Ident + Ident + '//Uses unidades Lazy ');
+      for I := 0 to InfoTable.ImportedKeys.Count - 1 do
       begin
-        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[I].ForeignTableName,False);
-        try
-          UnitLazyAnt := InfoTableAux.Tablename;
-          Aux := Aux + 'U' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ ', ';
-        finally
-          FreeAndNil(InfoTableAux);
+        if UnitLazyAnt <> InfoTable.ImportedKeys[I].ForeignTableName then
+        begin
+          InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[I].ForeignTableName,False);
+          try
+            UnitLazyAnt := InfoTableAux.Tablename;
+            Aux := Aux + 'U' +Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ ', ';
+          finally
+            FreeAndNil(InfoTableAux);
+          end;
         end;
       end;
+      Aux[Length(Aux)-1] := ';';
+      SynEditModel.Lines.Add(Ident + Aux);
     end;
-    Aux[Length(Aux)-1] := ';';
-    SynEditModel.Lines.Add(Ident + Aux);
   end;
 
   SynEditModel.Lines.Add('');
@@ -415,62 +418,66 @@ begin
   end;
   if InfoCrud.GenerateLazyDependencies then
   begin
-    {$Region 'Cria Variaveis Lazy'}
-    SynEditModel.Lines.Add(Ident + Ident + '//Variaveis Lazy ');
-    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
+    if InfoTable.ImportedKeys.Count > 0 then
     begin
-      Application.ProcessMessages;
-      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      {$Region 'Cria Variaveis Lazy'}
+      SynEditModel.Lines.Add(Ident + Ident + '//Variaveis Lazy ');
+      for J := 0 to InfoTable.ImportedKeys.Count - 1 do
       begin
-        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
-        try
-          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
-
-          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+        Application.ProcessMessages;
+        if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+        begin
+          InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
           try
-            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
-          except
-            Aux := '';
-          end;
+            UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
 
-          SynEditModel.Lines.Add(Ident + Ident + 'F' +
-            LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxField) + ': ' +
-            LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) + ';');
-          Application.ProcessMessages;
-        finally
-          FreeAndNil(InfoTableAux);
+            Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+            try
+              StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+            except
+              Aux := '';
+            end;
+
+            SynEditModel.Lines.Add(Ident + Ident + 'F' +
+              LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxField) + ': ' +
+              LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) + ';');
+            Application.ProcessMessages;
+          finally
+            FreeAndNil(InfoTableAux);
+          end;
         end;
       end;
-    end;
-    {$ENDREGION}
+      {$ENDREGION}
 
-    {$Region 'Gera Functions Get Lazy'}
-    SynEditModel.Lines.Add(Ident + Ident + '//Function Get Lazy Propertys');
-    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
-    begin
-      Application.ProcessMessages;
-      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      UnitLazyAnt := '';
+      {$Region 'Gera Functions Get Lazy'}
+      SynEditModel.Lines.Add(Ident + Ident + '//Function Get Lazy Propertys');
+      for J := 0 to InfoTable.ImportedKeys.Count - 1 do
       begin
-        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
-        try
-          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
-
-          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+        Application.ProcessMessages;
+        if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+        begin
+          InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
           try
-            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
-          except
-            Aux := '';
+            UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
+
+            Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+            try
+              StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+            except
+              Aux := '';
+            end;
+            SynEditModel.Lines.Add(Ident + Ident + 'function ' +
+             LPad('Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux, ' ', MaxVar) + ': ' +
+              LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) + ';');
+                Application.ProcessMessages;
+          finally
+            FreeAndNil(InfoTableAux);
           end;
-          SynEditModel.Lines.Add(Ident + Ident + 'function ' +
-           LPad('Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux, ' ', MaxVar) + ': ' +
-            LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) + ';');
-              Application.ProcessMessages;
-        finally
-          FreeAndNil(InfoTableAux);
         end;
       end;
+      {$EndRegion}
     end;
-    {$EndRegion}
   end;
   SynEditModel.Lines.Add(ident + 'published');
   //Cria Propriedades.
@@ -485,36 +492,40 @@ begin
   end;
   SynEditModel.Lines.Add('');
 
+  UnitLazyAnt := '';
   if InfoCrud.GenerateLazyDependencies then
   begin
-    {$Region 'Geração das Property Lazy'}
-    SynEditModel.Lines.Add(Ident + Ident + '//Propertys Lazy ');
-    for J := 0 to InfoTable.ImportedKeys.Count - 1 do
+    if InfoTable.ImportedKeys.Count > 0 then
     begin
-      Application.ProcessMessages;
-      if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+      {$Region 'Geração das Property Lazy'}
+      SynEditModel.Lines.Add(Ident + Ident + '//Propertys Lazy ');
+      for J := 0 to InfoTable.ImportedKeys.Count - 1 do
       begin
-        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
-        try
-          UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
-
-          Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+        Application.ProcessMessages;
+        if UnitLazyAnt <> InfoTable.ImportedKeys[J].ConstraintName then
+        begin
+          InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[J].ForeignTableName, False);
           try
-            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
-          except
-            Aux := '';
+            UnitLazyAnt := InfoTable.ImportedKeys[J].ConstraintName;
+
+            Aux := Copy(UnitLazyAnt,Length(UnitLazyAnt),1);
+            try
+              StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+            except
+              Aux := '';
+            end;
+             SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
+              LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxField) + ': ' +
+              LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) +
+              ' read ' + LPad('Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxVar) + ';');
+              Application.ProcessMessages;
+          finally
+            FreeAndNil(InfoTableAux);
           end;
-           SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
-            LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxField) + ': ' +
-            LPad('T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)), ' ', MaxType) +
-            ' read ' + LPad('Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux, ' ', MaxVar) + ';');
-            Application.ProcessMessages;
-        finally
-          FreeAndNil(InfoTableAux);
         end;
       end;
+      {$ENDREGION}
     end;
-    {$ENDREGION}
   end;
 
   //Cria Funcoes e Procedures CRUD;
@@ -730,6 +741,7 @@ begin
   {$endRegion}
 
   SynEditModel.Lines.Add(ident + '');
+
   if Trim(InfoCrud.ReturnException) <> '' then
     SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create('+InfoCrud.Connection + '; ' +WithVar(InfoCrud.ReturnException)+'); ')
   else
@@ -751,10 +763,10 @@ begin
                                                                 Pos('var', InfoCrud.ReturnException) > 0,
                                                                 StringReplace(Copy(InfoCrud.Connection, Pos('var', InfoCrud.ReturnException) +3,
                                                                      Pos(':', InfoCrud.ReturnException)-1),':','',[rfReplaceAll]),
-                                                                StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])
+                                                                StringReplace(Copy(InfoCrud.ReturnException, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])
                                                                 )
                                                          ) + ' := ' +
-                                                                StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])+';');
+                                                                StringReplace(Copy(InfoCrud.ReturnException, 0, Pos(':', InfoCrud.ReturnException)-1),'var','',[rfReplaceAll])+';');
   end;
   SynEditModel.Lines.Add('end;');
 
@@ -763,6 +775,7 @@ begin
   SynEditModel.Lines.Add('begin');
   if InfoCrud.GenerateLazyDependencies then
   begin
+    UnitLazyAnt := '';
     {$REGION 'Gera Destroy Variaveis Lazy'}
     for J := 0 to InfoTable.ImportedKeys.Count - 1 do
     begin
@@ -1897,131 +1910,134 @@ begin
   FieldsKeysAux := Nil;
   FieldsKeys := Nil;
   MmLazyCodeFunctions.Clear;
-  MmLazyCodeFunctions.Add('//Metodos Get Lazy');
-  LoadPrimaryKey;
-  for IK := 0 to InfoTable.ImportedKeys.Count - 1 do
+  if InfoTable.ImportedKeys.Count > 0 then
   begin
-    Application.ProcessMessages;
-
-    if LazyAnt <> InfoTable.ImportedKeys[IK].ConstraintName then
+    MmLazyCodeFunctions.Add('//Metodos Get Lazy');
+    LoadPrimaryKey;
+    for IK := 0 to InfoTable.ImportedKeys.Count - 1 do
     begin
-      InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[IK].ForeignTableName, False);
-      try
-        LoadPrimaryKeyAux;
-        LazyAnt := InfoTable.ImportedKeys[IK].ConstraintName;
-        Aux := Copy(LazyAnt,Length(LazyAnt),1);
+      Application.ProcessMessages;
+
+      if LazyAnt <> InfoTable.ImportedKeys[IK].ConstraintName then
+      begin
+        InfoTableAux := TablesInfos.LoadTable(SchemaText, InfoTable.ImportedKeys[IK].ForeignTableName, False);
         try
-          StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
-        except
-          Aux := '';
-        end;
-        Application.ProcessMessages;
-        {$Region 'Metodos Get Lazy'}
-
-        MaxVarFunction:=0;
-        MaxVarAux:=0;
-        for K := 0 to FieldsKeysAux.Count - 1 do
-        begin
+          LoadPrimaryKeyAux;
+          LazyAnt := InfoTable.ImportedKeys[IK].ConstraintName;
+          Aux := Copy(LazyAnt,Length(LazyAnt),1);
+          try
+            StrToInt(Aux); //Devido a poder ter mais de uma FK com a mesma tabela
+          except
+            Aux := '';
+          end;
           Application.ProcessMessages;
-          if MaxVarAux < (Length('(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+
-             '.' + FieldsKeysAux[k]) + 1) then
-            MaxVarAux := (Length('F''(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+
-             '.' + FieldsKeysAux[k]) + 1);
+          {$Region 'Metodos Get Lazy'}
 
-          if MaxVar < (Length('Self.' + FieldsKeysAux[k]) + 1) then
-            MaxVar := (Length('Self.' + FieldsKeysAux[k]) + 1);
-        end;
-        MmLazyCodeFunctions.Add('function ' +ClassNameModel+'.'+
-         'Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux + ': ' +
-          'T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + ';');
-        MmLazyCodeFunctions.Add('begin');
-        MmLazyCodeFunctions.Add(Ident + 'if not Assigned(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') or ');
-        MmLazyCodeFunctions.Add(Ident + Ident +'( ');
-        for J:= 0 to FieldsKeysAux.Count-1 do
-        begin
-          Application.ProcessMessages;
-          if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
-          begin
-           Application.ProcessMessages;
-            if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
-              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
-               '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') ')
-            else
-              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
-               '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') or ');
-          end
-          else
+          MaxVarFunction:=0;
+          MaxVarAux:=0;
+          for K := 0 to FieldsKeysAux.Count - 1 do
           begin
             Application.ProcessMessages;
-            if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
-              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
-               '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+') ')
-            else
-              MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
-               '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+') or ');
+            if MaxVarAux < (Length('(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+
+               '.' + FieldsKeysAux[k]) + 1) then
+              MaxVarAux := (Length('F''(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+
+               '.' + FieldsKeysAux[k]) + 1);
+
+            if MaxVar < (Length('Self.' + FieldsKeysAux[k]) + 1) then
+              MaxVar := (Length('Self.' + FieldsKeysAux[k]) + 1);
           end;
-        end;
-        Application.ProcessMessages;
-        MmLazyCodeFunctions.Add(Ident + Ident +') then ');
-        MmLazyCodeFunctions.Add(Ident + Ident +'begin');
-        MmLazyCodeFunctions.Add(Ident + Ident +Ident +'if not Assigned(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') then');
-        MmLazyCodeFunctions.Add(Ident + Ident +Ident + Ident + 'F' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux + ' := '+
-        'T' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+'.Create;');
-        for J:= 0 to FieldsKeysAux.Count-1 do
-        begin
-          Application.ProcessMessages;
-          if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
+          MmLazyCodeFunctions.Add('function ' +ClassNameModel+'.'+
+           'Get'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux + ': ' +
+            'T'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + ';');
+          MmLazyCodeFunctions.Add('begin');
+          MmLazyCodeFunctions.Add(Ident + 'if not Assigned(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') or ');
+          MmLazyCodeFunctions.Add(Ident + Ident +'( ');
+          for J:= 0 to FieldsKeysAux.Count-1 do
           begin
-            StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
-                '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J]+AUX)+ ';';
-            MmLazyCodeFunctions.Add(StrFunctionNameGet);
-          end
-          else
-          begin
-            StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
-                '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J])+ ';';
-            MmLazyCodeFunctions.Add(StrFunctionNameGet);
-          end;
-        end;
-        Application.ProcessMessages;
-        //Gera Chamada do Get da Classe
-        StrFunctionNameGet := '';
-        StrFunctionNameGet := Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux+
-            '.' + InfoCrud.ProcGetRecord.ProcName + '(';
-
-        if (StrFunctionNameGet <> Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
-            '.' + InfoCrud.ProcGetRecord.ProcName + '(') and
-          (Trim(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1))<>'') then
-          StrFunctionNameGet := StrFunctionNameGet  +', ' + 'F'+Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1))
-        else
-          StrFunctionNameGet := StrFunctionNameGet  + 'F'+Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1));
-
-        if (StrFunctionNameGet <> Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
-            '.' + InfoCrud.ProcGetRecord.ProcName + '(') then
-          StrFunctionNameGet := StrFunctionNameGet  +', ' + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux
-        else
-          StrFunctionNameGet := StrFunctionNameGet  + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux;
-
-           Application.ProcessMessages;
-        if (StrFunctionNameGet <> (Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
-            '.' +InfoCrud.ProcGetRecord.ProcName + '(')) and
-           (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <> '') then
-          StrFunctionNameGet := StrFunctionNameGet + ', ' + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
-        else
-          StrFunctionNameGet := StrFunctionNameGet + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
             Application.ProcessMessages;
-        StrFunctionNameGet:=  StrFunctionNameGet + ');';
-        MmLazyCodeFunctions.Add(StrFunctionNameGet);
-        MmLazyCodeFunctions.Add(Ident + Ident +'end;');
-        MmLazyCodeFunctions.Add(Ident +  Ident +  'Result  := F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux);
-        MmLazyCodeFunctions.Add('end;');
-        MmLazyCodeFunctions.Add(Ident + Ident +'');
-       {$EndRegion}
-       Application.ProcessMessages;
+            if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
+            begin
+             Application.ProcessMessages;
+              if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
+                MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
+                 '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') ')
+              else
+                MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
+                 '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') or ');
+            end
+            else
+            begin
+              Application.ProcessMessages;
+              if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
+                MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
+                 '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+') ')
+              else
+                MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
+                 '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+') or ');
+            end;
+          end;
+          Application.ProcessMessages;
+          MmLazyCodeFunctions.Add(Ident + Ident +') then ');
+          MmLazyCodeFunctions.Add(Ident + Ident +'begin');
+          MmLazyCodeFunctions.Add(Ident + Ident +Ident +'if not Assigned(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+') then');
+          MmLazyCodeFunctions.Add(Ident + Ident +Ident + Ident + 'F' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux + ' := '+
+          'T' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+'.Create;');
+          for J:= 0 to FieldsKeysAux.Count-1 do
+          begin
+            Application.ProcessMessages;
+            if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
+            begin
+              StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
+                  '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J]+AUX)+ ';';
+              MmLazyCodeFunctions.Add(StrFunctionNameGet);
+            end
+            else
+            begin
+              StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
+                  '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J])+ ';';
+              MmLazyCodeFunctions.Add(StrFunctionNameGet);
+            end;
+          end;
+          Application.ProcessMessages;
+          //Gera Chamada do Get da Classe
+          StrFunctionNameGet := '';
+          StrFunctionNameGet := Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux+
+              '.' + InfoCrud.ProcGetRecord.ProcName + '(';
 
-      finally
-        InfoTableAux.Destroy;
-        //FreeAndNil(InfoTableAux);
+          if (StrFunctionNameGet <> Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
+              '.' + InfoCrud.ProcGetRecord.ProcName + '(') and
+            (Trim(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1))<>'') then
+            StrFunctionNameGet := StrFunctionNameGet  +', ' + 'F'+Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1))
+          else
+            StrFunctionNameGet := StrFunctionNameGet  + 'F'+Limpa(Copy(InfoCrud.Connection, 1,Pos(':', InfoCrud.Connection) - 1));
+
+          if (StrFunctionNameGet <> Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
+              '.' + InfoCrud.ProcGetRecord.ProcName + '(') then
+            StrFunctionNameGet := StrFunctionNameGet  +', ' + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux
+          else
+            StrFunctionNameGet := StrFunctionNameGet  + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux;
+
+          Application.ProcessMessages;
+          if (StrFunctionNameGet <> (Ident +  Ident + Ident + 'F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux +
+              '.' +InfoCrud.ProcGetRecord.ProcName + '(')) and
+             (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <> '') then
+            StrFunctionNameGet := StrFunctionNameGet + ', F' + Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
+          else
+            StrFunctionNameGet := StrFunctionNameGet + 'F'+Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
+              Application.ProcessMessages;
+          StrFunctionNameGet:=  StrFunctionNameGet + ');';
+          MmLazyCodeFunctions.Add(StrFunctionNameGet);
+          MmLazyCodeFunctions.Add(Ident + Ident +'end;');
+          MmLazyCodeFunctions.Add(Ident +  Ident +  'Result  := F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+ Aux);
+          MmLazyCodeFunctions.Add('end;');
+          MmLazyCodeFunctions.Add(Ident + Ident +'');
+         {$EndRegion}
+         Application.ProcessMessages;
+
+        finally
+          InfoTableAux.Destroy;
+          //FreeAndNil(InfoTableAux);
+        end;
       end;
     end;
   end;
