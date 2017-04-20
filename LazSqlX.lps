@@ -4,14 +4,15 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Win32"/>
-    <Units Count="129">
+    <Units Count="130">
       <Unit0>
         <Filename Value="LazSqlX.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="4"/>
-        <CursorPos Y="29"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="16"/>
+        <CursorPos X="45" Y="28"/>
         <UsageCount Value="223"/>
+        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="Forms\BlobFieldFormU.pas"/>
@@ -62,12 +63,10 @@
         <ComponentName Value="DesignTableForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="828"/>
         <CursorPos X="38" Y="835"/>
         <UsageCount Value="223"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="DbInfo\AsDbType.pas"/>
@@ -506,15 +505,15 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="496"/>
-        <CursorPos X="16" Y="538"/>
-        <FoldState Value=" TJp0323 pibqg3721 p0!4B{J T0p5270G4 pj5o12KE"/>
+        <TopLine Value="2169"/>
+        <CursorPos X="24" Y="2189"/>
+        <FoldState Value=" TJp0323 T0p5270G4j"/>
         <UsageCount Value="203"/>
         <Bookmarks Count="4">
           <Item0 X="18" Y="1440" ID="3"/>
-          <Item1 X="69" Y="1855" ID="7"/>
-          <Item2 Y="1630" ID="1"/>
-          <Item3 X="91" Y="1660" ID="4"/>
+          <Item1 X="69" Y="1910" ID="7"/>
+          <Item2 Y="1662" ID="1"/>
+          <Item3 X="91" Y="1715" ID="4"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -1046,132 +1045,138 @@
       </Unit127>
       <Unit128>
         <Filename Value="..\..\ZeosLib\zeoslib-code-0-3909-trunk\src\dbc\ZDbcInterbase6.pas"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="251"/>
         <CursorPos X="40" Y="268"/>
         <UsageCount Value="14"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit128>
+      <Unit129>
+        <Filename Value="D:\ProjetosDelphi\Merge\V3BK\uSoliRomaneio.pas"/>
+        <HasResources Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="92" Y="10"/>
+        <UsageCount Value="10"/>
+      </Unit129>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1039" Column="63" TopLine="1033"/>
+        <Caret Line="1446" Column="105" TopLine="1422"/>
       </Position1>
       <Position2>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1301" Column="17" TopLine="1284"/>
+        <Caret Line="1438" Column="107" TopLine="1420"/>
       </Position2>
       <Position3>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1631" Column="54" TopLine="1618"/>
+        <Caret Line="1042" Column="30" TopLine="1042"/>
       </Position3>
       <Position4>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1455" Column="57" TopLine="1425"/>
+        <Caret Line="1620" TopLine="1619"/>
       </Position4>
       <Position5>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="43" Column="38" TopLine="27"/>
+        <Caret Line="1442" TopLine="1417"/>
       </Position5>
       <Position6>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1042" Column="31" TopLine="1029"/>
+        <Caret Line="1612" Column="56" TopLine="1609"/>
       </Position6>
       <Position7>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1041" TopLine="1074"/>
+        <Caret Line="1654" Column="11" TopLine="1644"/>
       </Position7>
       <Position8>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1623" Column="24" TopLine="1607"/>
+        <Caret Line="1626" TopLine="1609"/>
       </Position8>
       <Position9>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1446" Column="105" TopLine="1422"/>
+        <Caret Line="1653" Column="14" TopLine="1617"/>
       </Position9>
       <Position10>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1438" Column="107" TopLine="1420"/>
+        <Caret Line="1433" TopLine="1420"/>
       </Position10>
       <Position11>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1042" Column="30" TopLine="1042"/>
+        <Caret Line="1657" Column="70" TopLine="1642"/>
       </Position11>
       <Position12>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1620" TopLine="1619"/>
+        <Caret Line="18" TopLine="18"/>
       </Position12>
       <Position13>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1442" TopLine="1417"/>
       </Position13>
       <Position14>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1612" Column="56" TopLine="1609"/>
+        <Caret Line="840" Column="63" TopLine="790"/>
       </Position14>
       <Position15>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1654" Column="11" TopLine="1644"/>
+        <Caret Line="1621" Column="87" TopLine="1600"/>
       </Position15>
       <Position16>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1626" TopLine="1609"/>
       </Position16>
       <Position17>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1653" Column="14" TopLine="1617"/>
+        <Caret Line="672" Column="60" TopLine="533"/>
       </Position17>
       <Position18>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1433" TopLine="1420"/>
+        <Caret Line="1848" Column="270" TopLine="1833"/>
       </Position18>
       <Position19>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1657" Column="70" TopLine="1642"/>
+        <Caret Line="213" Column="3" TopLine="200"/>
       </Position19>
       <Position20>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="18" TopLine="18"/>
+        <Caret Line="1543" Column="74" TopLine="1533"/>
       </Position20>
       <Position21>
         <Filename Value="Forms\UFrmModel.pas"/>
+        <Caret Line="120" Column="3" TopLine="118"/>
       </Position21>
       <Position22>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="840" Column="63" TopLine="790"/>
+        <Caret Line="172" Column="45" TopLine="166"/>
       </Position22>
       <Position23>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1621" Column="87" TopLine="1600"/>
+        <Caret Line="1453" Column="54" TopLine="1428"/>
       </Position23>
       <Position24>
         <Filename Value="Forms\UFrmModel.pas"/>
+        <Caret Line="1650" TopLine="1616"/>
       </Position24>
       <Position25>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="672" Column="60" TopLine="533"/>
+        <Caret Line="1453" Column="83" TopLine="1437"/>
       </Position25>
       <Position26>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1848" Column="270" TopLine="1833"/>
+        <Caret Line="1459" Column="83" TopLine="1439"/>
       </Position26>
       <Position27>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="213" Column="3" TopLine="200"/>
+        <Caret Line="1637" Column="50" TopLine="1628"/>
       </Position27>
       <Position28>
-        <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="1543" Column="74" TopLine="1533"/>
+        <Filename Value="LazSqlX.lpr"/>
+        <Caret Line="29" TopLine="4"/>
       </Position28>
       <Position29>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="120" Column="3" TopLine="118"/>
+        <Caret Line="1699" Column="71" TopLine="1677"/>
       </Position29>
       <Position30>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="172" Column="45" TopLine="166"/>
+        <Caret Line="342" Column="3" TopLine="1048"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

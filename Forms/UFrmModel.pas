@@ -375,7 +375,7 @@ begin
   SynEditModel.Lines.Add('interface');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('uses ');
-  SynEditModel.Lines.Add(Ident + InfoCrud.UsesDefault);
+  SynEditModel.Lines.Add(Ident + 'Rtti, ' + InfoCrud.UsesDefault);
   IF InfoCrud.GenerateLazyDependencies THEN
   begin
     if InfoTable.ImportedKeys.Count > 0 then
@@ -1165,7 +1165,7 @@ begin
   SynEditDAO.Lines.Add('interface');
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('uses ');
-  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + InfoCrud.UsesDefault);
+  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault);
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('type');
   SynEditDAO.Lines.Add(ident + ClassNameDAO + ' = class');
@@ -1428,7 +1428,7 @@ var
 begin
   CmdLn := ' UPDATE ' + InfoTable.Tablename + ' SET ';
   SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'Qry.Sql.Add(' + QuotedStr(CmdLn) + ');');
-  for I := 0 to InfoTable.AllFields.Count - 1 do
+  {for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
     if InfoTable.PrimaryKeys.GetIndex(InfoTable.AllFields[I].FieldName) = -1 then
     begin
@@ -1447,7 +1447,19 @@ begin
           IfNull(InfoTable.AllFields[I]))+ ');');
       end;
     end;
-  end;
+  end;}
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + '{$REGION '+QuotedStr('RTTI - Gera comando Update conforme necessidade Old e New Value')+'}');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'CtxRtti  := TRttiContext.Create;');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'TpRtti   := CtxRtti.GetType('+VarModel+'.ClassType);');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'for PropRtti in TpRtti.GetProperties do');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'begin');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +Ident + 'PropNameRtti := PropRtti.Name;');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +Ident + 'if PropRtti.PropertyType.TypeKind in [tkInteger, tkChar,');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +Ident + Ident + Ident +'tkFloat,   tkString]  then');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +Ident + Ident +'if PropRtti.GetValue('+VarModel+').ToString <> GetOldValue then');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +Ident + Ident + Ident +'Qry.Sql.Add(Separator + propRtti.Name+''= :''+  propRtti.Name);');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'end;');
+  SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + '{$EndRegion}');
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
   begin
     SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'Qry.Sql.Add(' + QuotedStr(ifthen(I = 0, ' WHERE (', Ident + ' AND (') + InfoTable.PrimaryKeys.Items[I].FieldName +
@@ -1515,6 +1527,15 @@ begin
     SynEditDAO.Lines.Add(StrFunctionName + '):Boolean;');
     SynEditDAO.Lines.Add('var');
     SynEditDAO.Lines.Add(Ident + 'Qry: ' + InfoCrud.ClassSQL + ';');
+    {$REGION 'Variaveis RTTI'}
+    SynEditDAO.Lines.Add(Ident + '{$Region '+QuotedStr('Variaveis RTTI NewValue')+'}');
+    SynEditDAO.Lines.Add(Ident + 'CtxRtti     : TRttiContext;');
+    SynEditDAO.Lines.Add(Ident + 'TpRtti      : TRttiType;');
+    SynEditDAO.Lines.Add(Ident + 'PropRtti    : TRttiProperty;');
+    SynEditDAO.Lines.Add(Ident + 'PropNameRtti: String;');
+    SynEditDAO.Lines.Add(Ident + '{$ENDREGION}');
+    {$EndRegion}
+
     SynEditDAO.Lines.Add('begin');
     WriteCreateSQL;
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
@@ -1534,6 +1555,33 @@ begin
       IdSpaceAux := Length('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]));
       IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
     end;
+
+
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +  '{$Region '+QuotedStr('RTTI - Atribui valores para os Paramentros caso necessario ')+'}');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + 'CtxRtti  := TRttiContext.Create;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + 'TpRtti   := CtxRtti.GetType('+VarModel+'.ClassType);');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + 'for PropRtti in TpRtti.GetProperties do');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +  'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar]) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'if (Trim(PropRtti.GetValue('+VarModel+').ToString) <> '+QuotedStr('')+') then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := propRtti.GetValue('+VarModel+').ToString');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger, tkFloat]) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident +Ident +'(propRtti.GetValue('+VarModel+').ToString <> '''') then ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue('+VarModel+').AsVariant');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + '{$EndRegion}');
+
+    {
 
     for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
@@ -1562,7 +1610,7 @@ begin
       end
       else
         SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
-    end;
+    end;   }
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Result := True;');
@@ -1616,6 +1664,26 @@ begin
     SynEditDAO.Lines.Add('var');
     SynEditDAO.Lines.Add(Ident + 'Qry: ' + InfoCrud.ClassSQL + ';');
 
+    {$REGION 'Variaveis RTTI'}
+    SynEditDAO.Lines.Add(Ident + '{$Region '+QuotedStr('Variaveis RTTI NewValue')+'}');
+    SynEditDAO.Lines.Add(Ident + 'CtxRtti     : TRttiContext;');
+    SynEditDAO.Lines.Add(Ident + 'TpRtti      : TRttiType;');
+    SynEditDAO.Lines.Add(Ident + 'PropRtti    : TRttiProperty;');
+    SynEditDAO.Lines.Add(Ident + 'PropNameRtti: String;');
+    SynEditDAO.Lines.Add(Ident + '{$ENDREGION}');
+    {$EndRegion}
+    SynEditDAO.Lines.Add(Ident + 'function GetOldValue: String;');
+    SynEditDAO.Lines.Add(Ident + 'var');
+    SynEditDAO.Lines.Add(Ident + Ident + 'CtxRttiOld: TRttiContext;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'TpRttiOld: TRttiType;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'PropRttiOld: TRttiProperty;');
+    SynEditDAO.Lines.Add(Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Result := '+QuotedStr('')+';');
+    SynEditDAO.Lines.Add(Ident + Ident + 'CtxRttiOld  := TRttiContext.Create;');
+    SynEditDAO.Lines.Add(Ident + Ident + 'TpRttiOld   := CtxRttiOld.GetType('+VarModel+'.Original.ClassType);');
+    SynEditDAO.Lines.Add(Ident + Ident + 'PropRttiOld := TpRttiOld.GetProperty(PropNameRtti);');
+    SynEditDAO.Lines.Add(Ident + Ident + 'Result      := PropRttiOld.GetValue('+VarModel+'.Original).ToString;');
+    SynEditDAO.Lines.Add(Ident + 'end;');
 
     SynEditDAO.Lines.Add(Ident + 'function Separator : String; ');
     SynEditDAO.Lines.Add(Ident + 'begin                        ');
@@ -1643,7 +1711,31 @@ begin
       IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
     end;
 
-    for J := 0 to InfoTable.AllFields.Count - 1 do
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  '{$Region '+QuotedStr('RTTI - Atribui valores para os Paramentros caso necessario ')+'}');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'for PropRtti in TpRtti.GetProperties do');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar]) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'if (Trim(PropRtti.GetValue('+VarModel+').ToString) <> '+QuotedStr('')+') and');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + '   (PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := propRtti.GetValue('+VarModel+').ToString');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger, tkFloat]) and');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident +  '(PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident +Ident +'(propRtti.GetValue('+VarModel+').ToString <> '''') then ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue('+VarModel+').AsVariant');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + '{$EndRegion}');
+
+   { for J := 0 to InfoTable.AllFields.Count - 1 do
     begin
       if InfoTable.AllFields[J].AllowNull then
       begin
@@ -1678,7 +1770,7 @@ begin
       end
       else
         SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
-    end;
+    end; }
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident +Ident +Ident +'end;');
@@ -2094,20 +2186,20 @@ begin
              Application.ProcessMessages;
               if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
-                 '.' + FieldsKeys[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') ')
+                 '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeys[J]+Aux+') ')
               else
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
-                 '.' + FieldsKeys[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+Aux+') or ');
+                 '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeys[J]+Aux+') or ');
             end
             else
             begin
               Application.ProcessMessages;
               if (FieldsKeysAux.Count = 1) or (J = FieldsKeysAux.Count-1) then
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux+
-                 '.' + FieldsKeys[J] + ' <> ' + 'Self.'+FieldsKeysAux[J]+') ')
+                 '.' + FieldsKeysAux[J] + ' <> ' + 'Self.'+FieldsKeys[J]+') ')
               else
                 MmLazyCodeFunctions.Add(Ident + Ident + Ident +'(F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+Aux +
-                 '.' + FieldsKeys[J]+ ' <> ' + 'Self.'+FieldsKeysAux[J]+') or ');
+                 '.' + FieldsKeysAux[J]+ ' <> ' + 'Self.'+FieldsKeys[J]+') or ');
             end;
           end;
           Application.ProcessMessages;
@@ -2122,13 +2214,13 @@ begin
             if FieldExist(FieldsKeys, FieldsKeysAux[J] + Aux) then
             begin
               StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
-                  '.' + FieldsKeys[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J]+AUX)+ ';';
+                  '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeys[J]+AUX)+ ';';
               MmLazyCodeFunctions.Add(StrFunctionNameGet);
             end
             else
             begin
               StrFunctionNameGet := Ident + Ident + Ident +LPad('F'+Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+AUX+
-                  '.' + FieldsKeys[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeysAux[J])+ ';';
+                  '.' + FieldsKeysAux[J],' ', MaxVarAux) + ' := ' + Trim('Self.'+FieldsKeys[J])+ ';';
               MmLazyCodeFunctions.Add(StrFunctionNameGet);
             end;
           end;
