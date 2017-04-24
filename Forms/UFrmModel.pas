@@ -1570,47 +1570,30 @@ begin
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'end');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger, tkFloat]) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger]) then');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident +Ident +'(propRtti.GetValue('+VarModel+').ToString <> '''') then ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident +Ident +'(propRtti.GetValue('+VarModel+').ToString <> '''') then ');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue('+VarModel+').AsVariant');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkFloat]) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + '   (propRtti.GetValue('+VarModel+').ToString <> '+ QuotedStr('') +') then ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident +'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident +'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue('+VarModel+').AsExtended');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident +'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue('+VarModel+').AsExtended');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + 'end;');
+
     SynEditDAO.Lines.Add(Ident +Ident +Ident + 'end;');
     SynEditDAO.Lines.Add(Ident +Ident +Ident + '{$EndRegion}');
-
-    {
-
-    for J := 0 to InfoTable.AllFields.Count - 1 do
-    begin
-      if InfoTable.AllFields[J].AllowNull then
-      begin
-        if (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Integer')   or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Float')     or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Double')    or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDateTime') or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDate')     or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TTime')     or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'SmallInt') then
-        begin
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'if ('+VarModel + '.' + InfoTable.AllFields[J].FieldName+' > 0) then ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'else ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
-        end
-        else
-        begin
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'if (Trim('+VarModel + '.' + InfoTable.AllFields[J].FieldName+') <> '''') then ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  'else ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
-        end;
-      end
-      else
-        SynEditDAO.Lines.Add(Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
-    end;   }
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Result := True;');
@@ -1711,66 +1694,43 @@ begin
       IdSpace := IfThen(IdSpaceAux > IdSpace, IdSpaceAux, IdSpace);
     end;
 
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  '{$Region '+QuotedStr('RTTI - Atribui valores para os Paramentros caso necessario ')+'}');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'for PropRtti in TpRtti.GetProperties do');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'begin');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'PropNameRtti := PropRtti.Name;');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar]) then');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'if (Trim(PropRtti.GetValue('+VarModel+').ToString) <> '+QuotedStr('')+') and');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + '   (PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := propRtti.GetValue('+VarModel+').ToString');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'end');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger, tkFloat]) and');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident +  '(PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident +Ident +'(propRtti.GetValue('+VarModel+').ToString <> '''') then ');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue('+VarModel+').AsVariant');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
-    SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident +  '{$Region '+QuotedStr('RTTI - Atribui valores para os Paramentros caso necessario ')+'}');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident +  'for PropRtti in TpRtti.GetProperties do');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident +  'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar]) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'if (Trim(PropRtti.GetValue('+VarModel+').ToString) <> '+QuotedStr('')+') and');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + '   (PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := propRtti.GetValue('+VarModel+').ToString');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger]) and');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident +  '(PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident +Ident +'(propRtti.GetValue('+VarModel+').ToString <> '''') then ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue('+VarModel+').AsVariant');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkFloat]) and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + '        (PropRtti.GetValue('+VarModel+').ToString <> GetOldValue) then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident +'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'if (propRtti.GetValue('+VarModel+').ToString <> ''0'') and ');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + '   (PropRtti.GetValue('+VarModel+').ToString <> '+QuotedStr('')+') then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue('+VarModel+').AsExtended');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue('+VarModel+').AsExtended');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'end');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident +Ident +Ident + Ident + Ident +'end;');
     SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + 'end;');
     SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident + '{$EndRegion}');
-
-   { for J := 0 to InfoTable.AllFields.Count - 1 do
-    begin
-      if InfoTable.AllFields[J].AllowNull then
-      begin
-        if (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Integer')   or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Float')     or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'Double')    or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDateTime') or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TDate')     or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'TTime')     or
-           (TypeDBToTypePascal(InfoTable.AllFields[J].FieldType) = 'SmallInt') then
-        begin
-          SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'if ('+VarModel+'.'+InfoTable.AllFields[J].FieldName +' <> '+
-                    VarModel+'.Original.'+InfoTable.AllFields[J].FieldName+') then ');
-          SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'begin');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  'if ('+VarModel + '.' + InfoTable.AllFields[J].FieldName+' > 0) then ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident + Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  'else ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
-          SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'end;');
-        end
-        else
-        begin
-          SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'if ('+VarModel+'.'+InfoTable.AllFields[J].FieldName +' <> '+
-                    VarModel+'.Original.'+InfoTable.AllFields[J].FieldName+') then ');
-          SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'begin');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  'if (Trim('+VarModel + '.' + InfoTable.AllFields[J].FieldName+') <> '''') then ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + '');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  'else ');
-          SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +Ident +  Ident +  'Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').Clear' + ';');
-          SynEditDAO.Lines.Add(Ident +Ident +Ident +Ident +  'end;');
-        end;
-      end
-      else
-        SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +  LPad('Qry.ParamByName(' + QuotedStr(InfoTable.AllFields[J].FieldName) + ').' + TypeDBToTypePascalParams(InfoTable.AllFields[J]),' ', IdSpace)  + ' := ' + VarModel + '.' + InfoTable.AllFields[J].FieldName + ';');
-    end; }
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +'Qry.' + InfoCrud.SQLCommand+ ';');
     SynEditDAO.Lines.Add(Ident +Ident +Ident +'end;');
