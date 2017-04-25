@@ -510,6 +510,7 @@ begin
       LPad(InfoTable.AllFields[I].FieldName, ' ', MaxVar) + ': ' +
       LPad(TypeDBToTypePascal(InfoTable.AllFields[I].FieldType), ' ', MaxType) + ';');
   end;
+
   SynEditModel.Lines.Add(Ident + Ident + 'F' + LPad('Original', ' ', MaxVar) +
     ': ' + LPad(ClassNameModel, ' ', MaxType) + ';');
   if InfoCrud.GenerateLazyDependencies then
@@ -642,6 +643,7 @@ begin
     '//Não fazer alteracoes na propriedade Original.');
   SynEditModel.Lines.Add(Ident + Ident +
     '//Pois a mesma é utilizada para montar o UPDATE apenas dos campos alterados.');
+  SynEditModel.Lines.Add(Ident + Ident + '[TFieldReadOnly]');
   SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
     LPad('Original', ' ', MaxField) + ': ' + LPad(ClassNameModel, ' ', MaxType) +
     ' read F' + LPad('Original', ' ', MaxVar) + ' write F' +
@@ -856,8 +858,7 @@ begin
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create;');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'Inherited Create;');
-  //SynEditModel.Lines.Add(ident + VarDAO + ' := ' + ClassNameDAO + '.' + 'Create;'); **O Dao nao precisa ser instanciado nem destruido
+  SynEditModel.Lines.Add(ident + 'raise Exception.Create(''Favor utilizar metodo Create passando a classe de conexao como parametro.'');');
   SynEditModel.Lines.Add('end;');
 
   vAuxField := '';
@@ -879,7 +880,7 @@ begin
     SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' +
       'Create(' + InfoCrud.Connection + '; ' + Copy(vAuxField, 1, length(vAuxField) - 2) + '); ');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'Self' + '.' + 'Create;');
+  SynEditModel.Lines.Add(ident + 'Inherited Create;');
 
 
   MaxVar := 0;
@@ -931,7 +932,7 @@ begin
   SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' +
     'Create(const Source: ' + ClassNameModel + ');');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'Self' + '.' + 'Create;');
+  SynEditModel.Lines.Add(ident + 'Inherited Create;');
   SynEditModel.Lines.Add(ident + 'Self' + '.' + 'Assign(Source);');
   SynEditModel.Lines.Add('end;');
   {$endRegion}
@@ -945,7 +946,7 @@ begin
     SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' +
       'Create(' + InfoCrud.Connection + '); ');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'Self' + '.' + 'Create;');
+  SynEditModel.Lines.Add(ident + 'Inherited Create;');
   SynEditModel.Lines.Add(ident + 'Self' + '.' + 'F' + Trim(IfThen(Pos('var', InfoCrud.Connection) > 0, StringReplace(
     Copy(InfoCrud.Connection, Pos('var', InfoCrud.Connection) + 3, Pos(':', InfoCrud.Connection) - 2), ':', '', [rfReplaceAll]),
     StringReplace(Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.Connection) - 1), 'var', '', [rfReplaceAll]))) +' := ' +
@@ -1690,7 +1691,7 @@ begin
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'if PropRtti.PropertyType.TypeKind in [tkInteger, tkChar,');
-  SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'tkFloat,   tkString]  then');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'tkFloat,   tkString, tkUString]  then');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if (PropRtti.GetValue(' + VarModel + ').ToString <> GetOldValue) and (not '+ClassNameDAO+'.IsFieldReadOnly(PropNameRtti, ' + VarModel + ')) then');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.Sql.Add(Separator + propRtti.Name+''= :''+  propRtti.Name);');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
@@ -1718,6 +1719,8 @@ begin
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('WHERE') +');');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'StrAux := '''';');
   SynEditDAO.Lines.Add(Ident + Ident + Ident +'{$REGION ' + QuotedStr('RTTI - Monta Clausula Where') + '}');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'CtxRtti  := TRttiContext.Create;');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'TpRtti   := CtxRtti.GetType(' + VarModel + '.ClassType);');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
@@ -1738,6 +1741,8 @@ begin
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('WHERE') +');');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'StrAux := '''';');
   SynEditDAO.Lines.Add(Ident + Ident + Ident +'{$REGION ' + QuotedStr('RTTI - Monta Clausula Where') + '}');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'CtxRtti  := TRttiContext.Create;');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'TpRtti   := CtxRtti.GetType(' + VarModel + '.ClassType);');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
@@ -1758,6 +1763,8 @@ begin
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('WHERE') +');');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'StrAux := '''';');
   SynEditDAO.Lines.Add(Ident + Ident + Ident +'{$REGION ' + QuotedStr('RTTI - Monta Clausula Where') + '}');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'CtxRtti  := TRttiContext.Create;');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'TpRtti   := CtxRtti.GetType(' + VarModel + '.ClassType);');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
@@ -1796,13 +1803,13 @@ begin
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
-  SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, ' + VarModel + ') then');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isFieldReadOnly(PropNameRtti, ' + VarModel + ')) then');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'Qry.Sql.Add(StrAux + '':''+propRtti.Name);');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'StrAux := '', '';');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');
-  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('') +');');
+  SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr(')') +');');
   SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$EndRegion}');
 end;
 
@@ -1929,7 +1936,9 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti,'+VarModel+') then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
@@ -1939,7 +1948,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if ((propRtti.GetValue(' + VarModel + ').ToString <> ''0'') and');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + '(propRtti.GetValue(' + VarModel + ').ToString <> ' + QuotedStr('') + ')) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
+
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
@@ -2106,7 +2118,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if ((propRtti.GetValue(' + VarModel + ').ToString <> ''0'') and');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + '(PropRtti.GetValue(' + VarModel + ').ToString <> ' + QuotedStr('') + '))  then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
+
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
@@ -2301,29 +2316,21 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident +
       'for PropRtti in TpRtti.GetProperties do');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +
-      'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti,'+VarModel+') then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident +
-      Ident + 'if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar, tkInteger]) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar, tkInteger]) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +
-      Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue(' +
-      VarModel + ').AsVariant');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue(' + VarModel + ').AsVariant');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +
-      'else if (propRtti.PropertyType.TypeKind in [tkFloat]) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkFloat]) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +
-      Ident + 'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +
-      Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' +
-      VarModel + ').AsExtended');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +
-      Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' +
-      VarModel + ').AsExtended');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');
@@ -2417,7 +2424,9 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkFloat]) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
@@ -2432,10 +2441,20 @@ begin
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +'PropNameRtti := PropRtti.Name;');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).Value))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'if not IsFieldReadOnly(PropNameRtti, '+VarModel+') then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident +'   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident +'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsDateTime))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''String'', propRtti.PropertyType.Name) = 0 ) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsString))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else if (CompareText(''Integer'', propRtti.PropertyType.Name) = 0 ) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsInteger))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).Value));');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
-
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel + '.Original := ' +
       ClassNameModel + '.Create(' + VarModel + ');');
@@ -2596,9 +2615,23 @@ begin
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +'PropNameRtti := PropRtti.Name;');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident +'PropRtti.SetValue('+ VarModel +', TValue.From(Qry.FieldByName(PropNameRTTI).Value))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'if not IsFieldReadOnly(PropNameRtti, '+VarModel+') then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident +'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsDateTime))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''String'', propRtti.PropertyType.Name) = 0 ) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsString))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else if (CompareText(''Integer'', propRtti.PropertyType.Name) = 0 ) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsInteger))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).Value));');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
+
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel + '.Original := ' +
+      ClassNameModel + '.Create(' + VarModel + ');');
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'ObjLst.Add(' +
       VarModel + ');');
