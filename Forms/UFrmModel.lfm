@@ -1,11 +1,11 @@
 object FrmModel: TFrmModel
-  Left = 366
-  Height = 473
-  Top = 102
-  Width = 633
+  Left = -8
+  Height = 705
+  Top = -8
+  Width = 1366
   Caption = 'Create Model and DAO (CRUD)'
-  ClientHeight = 473
-  ClientWidth = 633
+  ClientHeight = 705
+  ClientWidth = 1366
   OnShow = FormShow
   Position = poDesktopCenter
   LCLVersion = '1.6.2.0'
@@ -14,7 +14,7 @@ object FrmModel: TFrmModel
     Left = 0
     Height = 26
     Top = 0
-    Width = 633
+    Width = 1366
     Caption = 'ToolBar1'
     Images = ApplicationImages
     TabOrder = 0
@@ -29,22 +29,22 @@ object FrmModel: TFrmModel
   end
   object PageControl1: TPageControl
     Left = 0
-    Height = 377
+    Height = 609
     Top = 96
-    Width = 633
+    Width = 1366
     ActivePage = TabSheet1
     Align = alClient
     TabIndex = 0
     TabOrder = 1
     object TabSheet1: TTabSheet
       Caption = 'Model'
-      ClientHeight = 349
-      ClientWidth = 625
+      ClientHeight = 581
+      ClientWidth = 1358
       inline SynEditModel: TSynEdit
         Left = 0
-        Height = 349
+        Height = 581
         Top = 0
-        Width = 625
+        Width = 1358
         Align = alClient
         Font.Height = -13
         Font.Name = 'Courier New'
@@ -1045,10 +1045,10 @@ object FrmModel: TFrmModel
     Left = 0
     Height = 70
     Top = 26
-    Width = 633
+    Width = 1366
     Align = alTop
     ClientHeight = 70
-    ClientWidth = 633
+    ClientWidth = 1366
     TabOrder = 2
     object LbProjeto: TLabel
       Left = 4
