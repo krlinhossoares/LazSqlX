@@ -2840,19 +2840,21 @@ begin
             'var', '', [rfReplaceAll]));
           if Trim(InfoCrud.ReturnException) <> '' then
           Begin
-            MmLazyCodeFunctions.Add(Ident + Ident + Ident + 'if not Assigned('+VarModel+') then ');
-            MmLazyCodeFunctions.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) +
+            MmLazyCodeFunctions.Add(Ident + Ident + Ident + 'if not Assigned('+'F' + Copy(InfoTableAux.Tablename,InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+') then ');
+            MmLazyCodeFunctions.Add(Ident + Ident + Ident + Ident + 'F' + Copy(InfoTableAux.Tablename,
+                InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) +':= ' + 'T' + Copy(InfoTableAux.Tablename,
+                InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + '.Create(F' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) +
               ', ' + Copy(ReturnExceptionStr, 1, Pos(':', ReturnExceptionStr) - 1) + ');')
           end
           else
           begin
-            MmLazyCodeFunctions.Add(Ident + Ident + Ident + 'if not Assigned('+VarModel+') then ');
-            MmLazyCodeFunctions.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) + ');');
+            MmLazyCodeFunctions.Add(Ident + Ident + Ident + 'if not Assigned('+'F' + Copy(InfoTableAux.Tablename,
+                InfoCrud.CopyTableName, Length(InfoTableAux.Tablename))+') then ');
+            MmLazyCodeFunctions.Add(Ident + Ident + Ident + Ident + 'F' + Copy(InfoTableAux.Tablename,
+                InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) +':= ' + 'T' + Copy(InfoTableAux.Tablename,
+                InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + '.Create(F' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) + ');');
           end;
 
-{          MmLazyCodeFunctions.Add(Ident + Ident + Ident + 'if not Assigned(F' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + Aux + ') then');
-          MmLazyCodeFunctions.Add(Ident + Ident + Ident + Ident + 'F' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) +
-            Aux + ' := ' + 'T' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + '.Create;');}
           for J := 0 to FieldsKeysAux.Count - 1 do
           begin
             Application.ProcessMessages;
