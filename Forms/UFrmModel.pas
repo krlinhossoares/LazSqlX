@@ -620,6 +620,7 @@ begin
             except
               Aux := '';
             end;
+            SynEditModel.Lines.Add(Ident + Ident + '[TFieldReadOnly]');
             SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
               LPad(Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName,
               Length(InfoTableAux.Tablename)) + Aux, ' ', MaxField) + ': ' +
@@ -2071,8 +2072,6 @@ begin
     end;
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + '{$Region ' + QuotedStr('RTTI - Atribui valores para os Paramentros caso necessario ') + '}');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'CtxRtti  := TRttiContext.Create;');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'TpRtti   := CtxRtti.GetType(' + VarModel + '.ClassType);');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
@@ -2110,7 +2109,14 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkFloat]) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti,'+VarModel+') then');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue(' + VarModel + ').AsVariant');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (PropRtti.GetValue(' + VarModel + ').ToString <> GetOldValue) and (not '+ClassNameDAO+'.IsFieldReadOnly(PropNameRtti,'+VarModel+')) then');
@@ -2121,7 +2127,6 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (CompareText(''TDateTime'', propRtti.PropertyType.Name) = 0 ) or');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TDate'', propRtti.PropertyType.Name) = 0) or');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + '   (CompareText(''TTime'', propRtti.PropertyType.Name) = 0) then');
-
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsDateTime := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
@@ -2530,6 +2535,20 @@ begin
     SynEditDAO.Lines.Add('begin');
     WriteCreateQuery;
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
+    ConnectionStr := Trim(StringReplace(InfoCrud.Connection, 'var', '', [rfReplaceAll]));
+    ReturnExceptionStr := Trim(StringReplace(InfoCrud.ReturnException,
+      'var', '', [rfReplaceAll]));
+    if Trim(InfoCrud.ReturnException) <> '' then
+    Begin
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not Assigned('+VarModel+') then ');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) +
+        ', ' + Copy(ReturnExceptionStr, 1, Pos(':', ReturnExceptionStr) - 1) + ');')
+    end
+    else
+    begin
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not Assigned('+VarModel+') then ');
+      SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) + ');');
+    end;
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$REGION ''Comando SQL''}');
     GenerateSqlQueryListaRecords;
@@ -2608,10 +2627,14 @@ begin
       'var', '', [rfReplaceAll]));
 
     if Trim(InfoCrud.ReturnException) <> '' then
-      SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) +
+    Begin
+     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) +
         ', ' + Copy(ReturnExceptionStr, 1, Pos(':', ReturnExceptionStr) - 1) + ');')
+    end
     else
+    begin
       SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + VarModel +':= ' + ClassNameModel + '.Create(' + Copy(ConnectionStr, 1, Pos(':', ConnectionStr) - 1) + ');');
+    end;
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
@@ -2635,6 +2658,7 @@ begin
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'ObjLst.Add(' +
       VarModel + ');');
+
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Next;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');

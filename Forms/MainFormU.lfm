@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 222
+  Left = 209
   Height = 596
-  Top = 111
+  Top = 197
   Width = 1012
   Anchors = []
   BorderStyle = bsSingle

@@ -505,15 +505,15 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
-        <TopLine Value="948"/>
-        <CursorPos X="140" Y="949"/>
+        <TopLine Value="2072"/>
+        <CursorPos Y="2074"/>
         <UsageCount Value="203"/>
         <Bookmarks Count="5">
           <Item0 X="13" Y="1388" ID="3"/>
           <Item1 X="66" Y="1976" ID="7"/>
           <Item2 Y="1584" ID="1"/>
           <Item3 X="220" Y="1695" ID="4"/>
-          <Item4 X="65" Y="2527" ID="2"/>
+          <Item4 X="65" Y="2525" ID="2"/>
         </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -529,7 +529,6 @@
         <CursorPos Y="185"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit56>
       <Unit57>
         <Filename Value="DbInfo\AsCrudInfo.pas"/>
@@ -946,7 +945,7 @@
         <Filename Value="..\..\SuperView\trunk\fontes\SuperServer\UPrincipal.pas"/>
         <HasResources Value="True"/>
         <EditorIndex Value="2"/>
-        <UsageCount Value="51"/>
+        <UsageCount Value="52"/>
         <Loaded Value="True"/>
       </Unit114>
       <Unit115>
@@ -971,7 +970,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="277"/>
         <CursorPos X="14" Y="285"/>
-        <UsageCount Value="49"/>
+        <UsageCount Value="50"/>
         <Loaded Value="True"/>
       </Unit118>
       <Unit119>
@@ -1027,7 +1026,7 @@
         <UsageCount Value="8"/>
       </Unit125>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
         <Filename Value="Forms\UFrmModel.pas"/>
       </Position1>
@@ -1139,12 +1138,8 @@
       </Position28>
       <Position29>
         <Filename Value="Forms\UFrmModel.pas"/>
-        <Caret Line="949" Column="140" TopLine="978"/>
-      </Position29>
-      <Position30>
-        <Filename Value="Forms\UFrmModel.pas"/>
         <Caret Line="2456" TopLine="2439"/>
-      </Position30>
+      </Position29>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
