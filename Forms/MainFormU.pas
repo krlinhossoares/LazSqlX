@@ -75,6 +75,7 @@ type
     ActExportXML: TAction;
     ActExportRTF: TAction;
     ActExportJSon: TAction;
+    ActCreateORMAllTables: TAction;
     ActScriptExecutive: TAction;
     actPdfHelp: TAction;
     actRefreshProcedures: TAction;
@@ -100,10 +101,12 @@ type
     MenuItem1: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
+    MnCreateORMAllTables: TMenuItem;
     MnItemProj: TMenuItem;
     MmCRUD_Delphi: TMenuItem;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
+    PpSchemaORM: TPopupMenu;
     RTFExporter: TRTFExporter;
     JSonExport: TSimpleJSONExporter;
     XMLExporter: TSimpleXMLExporter;
@@ -264,6 +267,7 @@ type
     procedure actClearSessionHistoryExecute(Sender: TObject);
     procedure actCopyRunProcedureTextExecute(Sender: TObject);
     procedure actCreateDAOExecute(Sender: TObject);
+    procedure ActCreateORMAllTablesExecute(Sender: TObject);
     procedure actDatabaseClonerExecute(Sender: TObject);
     procedure actCloseAllButThisExecute(Sender: TObject);
     procedure actConnectExecute(Sender: TObject);
@@ -335,6 +339,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure GridPrinterGetValue(const ParName: string; var ParValue: variant);
     procedure MenuItem4Click(Sender: TObject);
+    procedure MnCreateORMAllTablesClick(Sender: TObject);
     procedure MenuItem7Click(Sender: TObject);
     procedure mitOpenDataClick(Sender: TObject);
     procedure mitRefreshTablesClick(Sender: TObject);
@@ -403,6 +408,7 @@ type
 
     {Ativa a pesquisa }
     procedure CriaSubMenusProjetos;
+    procedure CriaSubMenusProjetosCreateORMALLTables;
     procedure SearchActive;
 
     {disconnectes sqldb/zeos}
@@ -2226,6 +2232,11 @@ begin
 
 end;
 
+procedure TMainForm.ActCreateORMAllTablesExecute(Sender: TObject);
+begin
+
+end;
+
 procedure TMainForm.actCreateCRUDDelphiExecute(Sender: TObject);
 var
   dbC: TAsDatabaseCloner;
@@ -2698,6 +2709,7 @@ begin
   Caption := 'LazSqlX ' + AppVersion + ' (Beta)';
   pgcLeft.ActivePageIndex := 0;
   CriaSubMenusProjetos;
+  CriaSubMenusProjetosCreateORMALLTables;
 end;
 
 procedure TMainForm.GridPrinterGetValue(const ParName: string; var ParValue: variant);
@@ -2715,6 +2727,51 @@ begin
     CriaSubMenusProjetos;
   finally
     FreeAndNil(FrmCfgCRUD);
+  end;
+end;
+
+procedure TMainForm.MnCreateORMAllTablesClick(Sender: TObject);
+var
+  dbC: TAsDatabaseCloner;
+  ti: TAsTableInfos;
+  t: TAsTableInfo;
+  I: Integer;
+  Item:String;
+begin
+  CrudInfo.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + TMenuItem(Sender).Caption + PathDelim +'CRUD.ini');
+  try
+    ProgressForm.Show;
+    ProgressForm.Reset;
+    ProgressForm.Message     := 'Create Code ORM';
+    ProgressForm.MaxProgress := trvTables.Items.Count;
+    For I:= 0 to trvTables.Items.Count -1 do
+    begin
+      dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
+      ti := TAsTableInfos.Create(nil, FDBInfo);
+      Item := trvTables.Items[I].Text;
+      if Trim(Item) <> '' then
+      begin
+        ProgressForm.Message         := 'Create Code ORM - ' + Item;
+        ProgressForm.CurrentProgress := ProgressForm.CurrentProgress + 1;
+        Application.ProcessMessages;
+
+        t := ti.LoadTable(cmbSchema.Text, Item, False);
+        try
+          if not Assigned(FrmModel) then
+            FrmModel := TFrmModel.Create(Application);
+          FrmModel.InfoTable := t;
+          FrmModel.InfoCrud := Self.CrudInfo;
+          FrmModel.CreateCodeORM;
+          FrmModel.ToolButton2.Click;
+        finally
+          dbc.Free;
+          ti.Free;
+          FreeAndNil(FrmModel);
+        end;
+      end;
+    end;
+  finally
+    ProgressForm.Close;
   end;
 end;
 
@@ -2884,6 +2941,7 @@ begin
     FreeAndNil(FrmModel);
   end;
 end;
+
 procedure TMainForm.OnCaretPosition(Line, Pos: integer);
 begin
   sbMain.Panels[2].Text := 'Row: ' + IntToStr(Pos) + ' Col: ' + IntToStr(Line);
@@ -2952,6 +3010,33 @@ begin
     FreeAndNil(Projetos);
   end;
 end;
+
+procedure TMainForm.CriaSubMenusProjetosCreateORMALLTables;
+Var
+  MnI: TMenuItem;
+  Act: TAction;
+  Projetos: TStringList;
+  I: Integer;
+begin
+//  MmCRUD_Delphi.Clear;
+  Projetos := TStringList.Create;
+  try
+    Projetos.LoadFromFile(GetCurrentDir + PathDelim + 'CRUD' + PathDelim + 'Projetos.Txt');
+    For I:= 0  to Projetos.Count -1 do
+    begin
+      if MnCreateORMAllTables.IndexOfCaption(Projetos[I]) = -1 then
+      begin
+        MnI         := TMenuItem.Create(MnCreateORMAllTables);
+        MnI.OnClick := MnCreateORMAllTables.OnClick;
+        MnI.Caption := Projetos[I];
+        MnCreateORMAllTables.Add(MnI);
+      end;
+    end;
+  finally
+    FreeAndNil(Projetos);
+  end;
+end;
+
 
 
 end.

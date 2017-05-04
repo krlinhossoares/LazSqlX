@@ -36,6 +36,7 @@ type
     UnitNameDAO, ClassNameDAO, VarDAO, UnitNameModel, ClassNameModel, VarModel: string;
     MmLazyCodeFunctions: TStringList;
 
+
     function FieldExist(FieldsKey: TStringList; Field: string): boolean;
     procedure GenerateLazy;
     function GenerateSqlQuery(queryType: TQueryType): TStringList;
@@ -89,6 +90,8 @@ type
     InfoCrud: TCRUDInfo;
     Projeto: string;
 
+    procedure CreateCodeORM;
+
   end;
 
 var
@@ -106,6 +109,11 @@ const
 { TFrmModel }
 
 procedure TFrmModel.FormShow(Sender: TObject);
+begin
+  CreateCodeORM;
+end;
+
+procedure TFrmModel.CreateCodeORM;
 begin
   LbProjeto.Caption := '           Projeto: ' + Projeto;
   LbDirModel.Caption := '   Diretório Model: ' + InfoCrud.DirModel;
@@ -2463,6 +2471,8 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else if (CompareText(''Integer'', propRtti.PropertyType.Name) = 0 ) or ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + '        (CompareText(''Smallint'', propRtti.PropertyType.Name) = 0 ) then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsInteger))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else if (CompareText(''Double'', propRtti.PropertyType.Name) = 0 ) then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsFloat))');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).Value));');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
@@ -2656,6 +2666,8 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else if (CompareText(''Integer'', propRtti.PropertyType.Name) = 0 ) or');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + '        (CompareText(''Smallint'', propRtti.PropertyType.Name) = 0 ) then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsInteger))');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else if (CompareText(''Double'', propRtti.PropertyType.Name) = 0 ) then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).AsFloat))');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'PropRtti.SetValue('+VarModel+', TValue.From(Qry.FieldByName(PropNameRTTI).Value));');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');

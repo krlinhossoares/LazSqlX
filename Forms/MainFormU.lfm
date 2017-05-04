@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 347
+  Left = 274
   Height = 596
-  Top = 65
+  Top = 137
   Width = 1012
   Anchors = []
   BorderStyle = bsSingle
@@ -1147,6 +1147,7 @@ object MainForm: TMainForm
         Align = alTop
         ItemHeight = 15
         OnChange = cmbSchemaChange
+        PopupMenu = PpSchemaORM
         Style = csDropDownList
         TabOrder = 0
       end
@@ -2914,6 +2915,11 @@ object MainForm: TMainForm
       ImageIndex = 27
       OnExecute = ActExportJSonExecute
     end
+    object ActCreateORMAllTables: TAction
+      Category = 'Tools'
+      Caption = 'ActCreateORMAllTables'
+      OnExecute = ActCreateORMAllTablesExecute
+    end
   end
   object OpenDialog: TOpenDialog
     DefaultExt = '.sql'
@@ -3882,7 +3888,7 @@ object MainForm: TMainForm
       Caption = '-'
     end
     object MenuItem1: TMenuItem
-      Caption = 'Create CRUD'
+      Caption = 'Create ORM'
       Bitmap.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
         2000000000000004000064000000640000000000000000000000000000003333
@@ -7306,5 +7312,13 @@ object MainForm: TMainForm
     FormatSettings.IndentSize = 0
     left = 424
     top = 32
+  end
+  object PpSchemaORM: TPopupMenu
+    left = 480
+    top = 88
+    object MnCreateORMAllTables: TMenuItem
+      Caption = 'Create ORM All Tables'
+      OnClick = MnCreateORMAllTablesClick
+    end
   end
 end
