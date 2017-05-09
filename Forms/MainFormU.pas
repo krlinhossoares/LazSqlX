@@ -2746,6 +2746,7 @@ begin
     ProgressForm.MaxProgress := trvTables.Items.Count;
     For I:= 0 to trvTables.Items.Count -1 do
     begin
+      Application.ProcessMessages;
       dbc := TAsDatabaseCloner.Create(FDBInfo, FDBInfo.Database);
       ti := TAsTableInfos.Create(nil, FDBInfo);
       Item := trvTables.Items[I].Text;
@@ -2759,15 +2760,21 @@ begin
         try
           if not Assigned(FrmModel) then
             FrmModel := TFrmModel.Create(Application);
-          FrmModel.InfoTable := t;
-          FrmModel.InfoCrud := Self.CrudInfo;
+          FrmModel.TablesInfos := ti;
+          FrmModel.InfoTable  := t;
+          FrmModel.InfoCrud   := Self.CrudInfo;
+          FrmModel.SchemaText := CmbSchema.text;
           FrmModel.CreateCodeORM;
           FrmModel.ToolButton2.Click;
         finally
-          dbc.Free;
-          ti.Free;
           FreeAndNil(FrmModel);
+//          FreeAndNil(T);
+//          FreeAndNil(ti);
+//          FreeAndNil(dbc);
         end;
+        Application.ProcessMessages;
+        Sleep(100);
+        Application.ProcessMessages;
       end;
     end;
   finally

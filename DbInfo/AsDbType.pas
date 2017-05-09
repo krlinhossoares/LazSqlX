@@ -1290,7 +1290,7 @@ end;
 class function TAsDbUtils.GetForeignKeys(DbInfo: TAsDbConnectionInfo;
   TableName: string): TAsForeignKeys;
 var
- md:TAsDbMetadata;
+ md: TAsDbMetadata;
 begin
   md := MakeEngine(DbInfo);
   try

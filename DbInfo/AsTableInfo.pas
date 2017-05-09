@@ -1638,7 +1638,6 @@ begin
 
      lstIdentity := TStringList.Create;
      lstPKs := TAsDbUtils.GetPrimaryKeys(FDBinfo,Tablename);
-
      if FDBinfo.DbType=dtSQLite then Schema:='';
      if FDBinfo.DbType = dtSQLite then Schema:='';
      Result.Schema := Schema;

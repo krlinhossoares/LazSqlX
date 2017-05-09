@@ -1,6 +1,6 @@
 object ProgressForm: TProgressForm
   Left = 590
-  Height = 74
+  Height = 95
   Top = 225
   Width = 320
   AlphaBlend = True
@@ -8,12 +8,12 @@ object ProgressForm: TProgressForm
   BorderIcons = [biMinimize, biMaximize]
   BorderStyle = bsDialog
   Caption = 'Please Wait'
-  ClientHeight = 74
+  ClientHeight = 95
   ClientWidth = 320
   FormStyle = fsStayOnTop
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.1.99'
+  LCLVersion = '1.6.2.0'
   object pbProgressBar: TProgressBar
     Left = 16
     Height = 18

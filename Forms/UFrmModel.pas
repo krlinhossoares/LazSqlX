@@ -54,6 +54,8 @@ type
     procedure GeneratorCodeGetTableNameAttributes;
     procedure GeneratorCodeGetIsPrimaryKey;
     procedure GeneratorCodeGetIsFieldReadOnly;
+    procedure GeneratorCodeValidateValues;
+    procedure GenaratorCodeExecuteGenerator;
     procedure GeneratorDAOClass;
     procedure GeneratorPascalClass;
     function IFNull(FieldInfo: TAsFieldInfo): string;
@@ -480,6 +482,7 @@ begin
       SynEditModel.Lines.Add(Ident + Ident + '//Uses unidades Lazy ');
       for I := 0 to InfoTable.ImportedKeys.Count - 1 do
       begin
+        aux := InfoTable.ImportedKeys[I].ForeignTableName;
         if UnitLazyAnt <> InfoTable.ImportedKeys[I].ForeignTableName then
         begin
           InfoTableAux := TablesInfos.LoadTable(SchemaText,
@@ -504,12 +507,6 @@ begin
   SynEditModel.Lines.Add(ident + ClassNameModel + '= class');
   //SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(ident + 'private');
-
-  SynEditModel.Lines.Add(ident + ident + 'F' +
-    Trim(StringReplace(InfoCrud.Connection, 'var', '', [rfReplaceAll])) + ';');
-  if Trim(InfoCrud.ReturnException) <> '' then
-    SynEditModel.Lines.Add(ident + ident + 'F' +
-      Trim(StringReplace(InfoCrud.ReturnException, 'var', '', [rfReplaceAll])) + ';');
 
   //Cria Variaveis das Propriedades.
   for I := 0 to InfoTable.AllFields.Count - 1 do
@@ -592,6 +589,11 @@ begin
   end;
   SynEditModel.Lines.Add(ident + 'published');
   //Cria Propriedades.
+  SynEditModel.Lines.Add(ident + ident + 'F' +
+      Trim(StringReplace(InfoCrud.Connection, 'var', '', [rfReplaceAll])) + ';');
+  if Trim(InfoCrud.ReturnException) <> '' then
+    SynEditModel.Lines.Add(ident + ident + 'F' +
+      Trim(StringReplace(InfoCrud.ReturnException, 'var', '', [rfReplaceAll])) + ';');
   SynEditModel.Lines.Add(Ident + Ident + '//Propertys Model');
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
@@ -664,149 +666,34 @@ begin
 
   if InfoCrud.ProcInsert.Enable then
   begin
-    StrFunctionNameInsert := InfoCrud.ProcInsert.ProcName + '(';
-    if StrFunctionNameInsert <> InfoCrud.ProcInsert.ProcName + '(' then
-      StrFunctionNameInsert := StrFunctionNameInsert + ';' + InfoCrud.Connection
-    else
-      StrFunctionNameInsert := StrFunctionNameInsert + InfoCrud.Connection;
-
-    if StrFunctionNameInsert <> InfoCrud.ProcInsert.ProcName + '(' then
-      StrFunctionNameInsert :=
-        StrFunctionNameInsert + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
-    else
-      StrFunctionNameInsert :=
-        StrFunctionNameInsert + WithVar(VarModel) + ': ' + ClassNameModel;
-
-    if (StrFunctionNameInsert <> InfoCrud.ProcInsert.ProcName + '(') and
-      (InfoCrud.HasReturnException) then
-      StrFunctionNameInsert :=
-        StrFunctionNameInsert + ';' + WithVar(InfoCrud.ReturnException)
-    else
-      StrFunctionNameInsert :=
-        StrFunctionNameInsert + WithVar(InfoCrud.ReturnException);
-
-    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameInsert +
-      '):Boolean;');
-    StrFunctionNameInsert :=
-      'function ' + ClassNameModel + '.' + StrFunctionNameInsert + '):Boolean;';
-
+    StrFunctionNameInsert := InfoCrud.ProcInsert.ProcName;
+    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameInsert +':Boolean;');
+    StrFunctionNameInsert := 'function ' + ClassNameModel + '.' + StrFunctionNameInsert + ':Boolean;';
   end;
-
   if InfoCrud.ProcUpdate.Enable then
   begin
-    StrFunctionNameUpdate := InfoCrud.ProcUpdate.ProcName + '(';
-
-    if StrFunctionNameUpdate <> InfoCrud.ProcUpdate.ProcName + '(' then
-      StrFunctionNameUpdate := StrFunctionNameUpdate + ';' + InfoCrud.Connection
-    else
-      StrFunctionNameUpdate := StrFunctionNameUpdate + InfoCrud.Connection;
-
-    if StrFunctionNameUpdate <> InfoCrud.ProcUpdate.ProcName + '(' then
-      StrFunctionNameUpdate :=
-        StrFunctionNameUpdate + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
-    else
-      StrFunctionNameUpdate :=
-        StrFunctionNameUpdate + WithVar(VarModel) + ': ' + ClassNameModel;
-
-    if (StrFunctionNameUpdate <> InfoCrud.ProcUpdate.ProcName + '(') and
-      (InfoCrud.HasReturnException) then
-      StrFunctionNameUpdate :=
-        StrFunctionNameUpdate + ';' + WithVar(InfoCrud.ReturnException)
-    else
-      StrFunctionNameUpdate := StrFunctionNameUpdate + WithVar(InfoCrud.ReturnException);
-
-    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameUpdate +
-      '):Boolean;');
-    StrFunctionNameUpdate := 'function ' + ClassNameModel +
-      '.' + StrFunctionNameUpdate + '):Boolean;';
-
+    StrFunctionNameUpdate := InfoCrud.ProcUpdate.ProcName;
+    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameUpdate +':Boolean;');
+    StrFunctionNameUpdate := 'function ' + ClassNameModel +'.' + StrFunctionNameUpdate + ':Boolean;';
   end;
-
   if InfoCrud.ProcDelete.Enable then
   begin
-    StrFunctionNameDelete := InfoCrud.ProcDelete.ProcName + '(';
-    if StrFunctionNameDelete <> InfoCrud.ProcDelete.ProcName + '(' then
-      StrFunctionNameDelete := StrFunctionNameDelete + ';' + InfoCrud.Connection
-    else
-      StrFunctionNameDelete := StrFunctionNameDelete + InfoCrud.Connection;
-
-    if StrFunctionNameDelete <> InfoCrud.ProcDelete.ProcName + '(' then
-      StrFunctionNameDelete :=
-        StrFunctionNameDelete + '; ' + WithVar(VarModel) + ': ' + ClassNameModel
-    else
-      StrFunctionNameDelete :=
-        StrFunctionNameDelete + WithVar(VarModel) + ': ' + ClassNameModel;
-
-    if (StrFunctionNameDelete <> InfoCrud.ProcDelete.ProcName + '(') and
-      (InfoCrud.HasReturnException) then
-      StrFunctionNameDelete :=
-        StrFunctionNameDelete + ';' + WithVar(InfoCrud.ReturnException)
-    else
-      StrFunctionNameDelete := StrFunctionNameDelete + WithVar(InfoCrud.ReturnException);
-
-    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameDelete +
-      '):Boolean;');
-    StrFunctionNameDelete := 'function ' + ClassNameModel + '.' +
-      StrFunctionNameDelete + '):Boolean;';
-
+    StrFunctionNameDelete := InfoCrud.ProcDelete.ProcName ;
+    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameDelete + ':Boolean;');
+    StrFunctionNameDelete := 'function ' + ClassNameModel + '.' + StrFunctionNameDelete + ':Boolean;';
   end;
-
   if InfoCrud.ProcGetRecord.Enable then
   begin
-    StrFunctionNameGet := InfoCrud.ProcGetRecord.ProcName + '(';
-
-    if StrFunctionNameGet <> InfoCrud.ProcGetRecord.ProcName + '(' then
-      StrFunctionNameGet := StrFunctionNameGet + ';' + InfoCrud.Connection
-    else
-      StrFunctionNameGet := StrFunctionNameGet + InfoCrud.Connection;
-
-    if StrFunctionNameGet <> InfoCrud.ProcGetRecord.ProcName + '(' then
-      StrFunctionNameGet := StrFunctionNameGet + '; ' + WithVar(VarModel) +
-        ': ' + ClassNameModel
-    else
-      StrFunctionNameGet := StrFunctionNameGet + WithVar(VarModel) +
-        ': ' + ClassNameModel;
-
-    if (StrFunctionNameGet <> InfoCrud.ProcGetRecord.ProcName + '(') and
-      (InfoCrud.HasReturnException) then
-      StrFunctionNameGet := StrFunctionNameGet + ';' + WithVar(InfoCrud.ReturnException)
-    else
-      StrFunctionNameGet := StrFunctionNameGet + WithVar(InfoCrud.ReturnException);
-
-    SynEditModel.Lines.Add(Ident + Ident + 'function ' +
-      StrFunctionNameGet + '):Boolean;');
-    StrFunctionNameGet := 'function ' + ClassNameModel + '.' + StrFunctionNameGet +
-      '):Boolean;';
-
+    StrFunctionNameGet := InfoCrud.ProcGetRecord.ProcName;
+    SynEditModel.Lines.Add(Ident + Ident + 'function ' + StrFunctionNameGet + ':Boolean;');
+    StrFunctionNameGet := 'function ' + ClassNameModel + '.' + StrFunctionNameGet +':Boolean;';
   end;
-
   if InfoCrud.ProcListRecords.Enable then
   begin
-    StrFunctionNameList := InfoCrud.ProcListRecords.ProcName + '(';
-    if StrFunctionNameList <> InfoCrud.ProcListRecords.ProcName + '(' then
-      StrFunctionNameList := StrFunctionNameList + ';' + InfoCrud.Connection
-    else
-      StrFunctionNameList := StrFunctionNameList + InfoCrud.Connection;
-
-    if StrFunctionNameList <> InfoCrud.ProcListRecords.ProcName + '(' then
-      StrFunctionNameList := StrFunctionNameList + '; out ObjLst: TObjectList; ' +
-        'WhereSQL: String'
-    else
-      StrFunctionNameList := StrFunctionNameList + ' out ObjLst: TObjectList; ' +
-        'WhereSQL: String';
-
-    if (StrFunctionNameList <> InfoCrud.ProcListRecords.ProcName + '(') and
-      (InfoCrud.HasReturnException) then
-      StrFunctionNameList := StrFunctionNameList + ';' +
-        WithVar(InfoCrud.ReturnException)
-    else
-      StrFunctionNameList := StrFunctionNameList + WithVar(InfoCrud.ReturnException);
-
-    SynEditModel.Lines.Add(Ident + Ident + 'class function ' +
-      StrFunctionNameList + '):Boolean;');
-    StrFunctionNameList := 'class function ' + ClassNameModel +
-      '.' + StrFunctionNameList + '):Boolean;';
-
+    StrFunctionNameList := InfoCrud.ProcListRecords.ProcName;
+    StrFunctionNameList := StrFunctionNameList + '(out ObjLst: TObjectList; ' + 'WhereSQL: String';
+    SynEditModel.Lines.Add(Ident + Ident + 'class function ' + StrFunctionNameList + '):Boolean;');
+    StrFunctionNameList := 'class function ' + ClassNameModel + '.' + StrFunctionNameList + '):Boolean;';
   end;
 
   SynEditModel.Lines.Add('');
@@ -849,9 +736,6 @@ begin
       InfoCrud.Connection + '); Overload;');
 
   SynEditModel.Lines.Add(Ident + Ident + 'Destructor Destroy; override; ');
-
-
-
 
   SynEditModel.Lines.Add(ident + 'end; ');
   SynEditModel.Lines.Add(ident + '');
@@ -902,6 +786,7 @@ begin
     SynEditModel.Lines.Add(ident +
       LPad('Self.' + InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) +
       ' := ' + 'A' + InfoTable.PrimaryKeys.Items[I].FieldName + ';');
+
   SynEditModel.Lines.Add(ident + 'Self' + '.' + 'F' +
     Trim(IfThen(Pos('var',
     InfoCrud.Connection) > 0,
@@ -1043,27 +928,28 @@ begin
     if (StrFunctionNameInsert <> Ident + 'Result := ' + ClassNameDAO +
       '.' + InfoCrud.ProcInsert.ProcName + '(') and
       (Trim(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1)) <> '') then
-      StrFunctionNameInsert := StrFunctionNameInsert +
+      StrFunctionNameInsert := StrFunctionNameInsert + 'F' +
         ',' + Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))
     else
-      StrFunctionNameInsert := StrFunctionNameInsert +
+      StrFunctionNameInsert := StrFunctionNameInsert + 'F'+
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1));
 
     if (StrFunctionNameInsert <> Ident + 'Result := ' + ClassNameDAO +
       '.' + InfoCrud.ProcUpdate.ProcName + '(') then
-      StrFunctionNameInsert := StrFunctionNameInsert + ', ' + VarModel
+      StrFunctionNameInsert := StrFunctionNameInsert + ', ' + 'Self'
     else
-      StrFunctionNameInsert := StrFunctionNameInsert + VarModel;
+      StrFunctionNameInsert := StrFunctionNameInsert + 'Self';
 
     if (StrFunctionNameInsert <> Ident + 'Result := ' + ClassNameDAO +
       '.' + InfoCrud.ProcInsert.ProcName + '(') and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <>
       '') then
-      StrFunctionNameInsert := StrFunctionNameInsert + ', ' +
+      StrFunctionNameInsert := StrFunctionNameInsert + ', F' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameInsert := StrFunctionNameInsert +
-        Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
+       if Trim(InfoCrud.ReturnException) <> '' then
+        StrFunctionNameInsert := StrFunctionNameInsert + 'F'+
+          Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameInsert := StrFunctionNameInsert + ');';
     SynEditModel.Lines.Add(StrFunctionNameInsert);
@@ -1080,10 +966,10 @@ begin
     if (StrFunctionNameUpdate <> Ident + 'Result := ' + ClassNameDAO +
       '.' + InfoCrud.ProcUpdate.ProcName + '(') and
       (Trim(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1)) <> '') then
-      StrFunctionNameUpdate := StrFunctionNameUpdate +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + 'F' +
         ',' + Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))
     else
-      StrFunctionNameUpdate := StrFunctionNameUpdate +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + 'F' +
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1));
 
     if (StrFunctionNameUpdate <> Ident + 'Result := ' + ClassNameDAO +
@@ -1120,11 +1006,11 @@ begin
       '.' + InfoCrud.ProcDelete.ProcName + '(')) and
       (Trim(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1)) <> '') then
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + ', ' +
+        StrFunctionNameDelete + ', ' + 'F' +
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))
     else
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + Limpa(Copy(InfoCrud.Connection,
+        StrFunctionNameDelete + 'F' + Limpa(Copy(InfoCrud.Connection,
         1, Pos(':', InfoCrud.Connection) - 1));
 
     if (StrFunctionNameDelete <> Trim(Ident + 'Result := ' + ClassNameDAO +
@@ -1162,10 +1048,10 @@ begin
     if (StrFunctionNameGet <> Ident + 'Result := ' + ClassNameDAO +
       '.' + InfoCrud.ProcGetRecord.ProcName + '(') and
       (Trim(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1)) <> '') then
-      StrFunctionNameGet := StrFunctionNameGet + ', ' +
+      StrFunctionNameGet := StrFunctionNameGet + ', ' +  'F' +
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))
     else
-      StrFunctionNameGet := StrFunctionNameGet +
+      StrFunctionNameGet := StrFunctionNameGet +  'F' +
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1));
 
     if (StrFunctionNameGet <> Ident + 'Result := ' + ClassNameDAO +
@@ -1202,10 +1088,10 @@ begin
     if (StrFunctionNameList <> Ident + 'Result := ' + ClassNameDAO +
       '.' + InfoCrud.ProcListRecords.ProcName + '(') and
       (Trim(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1)) <> '') then
-      StrFunctionNameList := StrFunctionNameList + ', ' +
+      StrFunctionNameList := StrFunctionNameList + ', ' + 'F' +
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))
     else
-      StrFunctionNameList := StrFunctionNameList +
+      StrFunctionNameList := StrFunctionNameList + 'F' +
         Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1));
 
     if (StrFunctionNameList <> Ident + 'Result := ' + ClassNameDAO +
@@ -1432,7 +1318,9 @@ begin
   SynEditDAO.Lines.Add(ident + ident + 'class function GetTableNameAttributes('+VarModel+':' + ClassNameModel+'): String;');
   SynEditDAO.Lines.Add(ident + ident + 'class function IsPrimaryKey(aPropName: String; '+VarModel+':' + ClassNameModel+' ): Boolean;');
   SynEditDAO.Lines.Add(ident + ident + 'class function IsFieldReadOnly(aPropName: String; ' + VarModel+':' + ClassNameModel+' ): Boolean;');
-
+  SynEditDAO.Lines.Add(ident + ident + 'class procedure ValidateValues(var ' + VarModel + ':' + ClassNameModel+');');
+  SynEditDAO.Lines.Add(ident + ident + 'class function ExecuteGenerators(  ' + InfoCrud.Connection +
+   ifThen(Trim(InfoCrud.Connection) <> '', ';' ,'')+ ' var '+ VarModel + ':' + ClassNameModel+'): Boolean;');
 
 
   SynEditDAO.Lines.Add(Ident + Ident + '//Functions and Procedures Model CRUD');
@@ -1578,6 +1466,8 @@ begin
   GeneratorCodeGetTableNameAttributes;
   GeneratorCodeGetIsPrimaryKey;
   GeneratorCodeGetIsFieldReadOnly;
+  GeneratorCodeValidateValues;
+  GenaratorCodeExecuteGenerator;
   //Gerando Functions Code
   GeneratorCodeProcInsert;
   GeneratorCodeProcUpdate;
@@ -1905,11 +1795,12 @@ begin
     SynEditDAO.Lines.Add('begin');
     WriteCreateSQL;
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
+    SynEditDao.Lines.Add(ident + ident + ident + 'ValidateValues('+VarModel+');');
 
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$REGION ''Comando SQL''}');
     GenerateSqlQueryInsert;
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$ENDREGION}');
-
+    SynEditDao.Lines.Add(ident + ident + ident + 'ExecuteGenerators('+Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))+', '+VarModel+');');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$Region ' + QuotedStr('RTTI - Atribui valores para os Paramentros caso necessario ') + '}');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'CtxRtti  := TRttiContext.Create;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'TpRtti   := CtxRtti.GetType(' + VarModel + '.ClassType);');
@@ -2063,6 +1954,7 @@ begin
     SynEditDAO.Lines.Add('begin');
     WriteCreateSQL;
     SynEditDAO.Lines.Add(Ident + Ident + 'try');
+    SynEditDao.Lines.Add(ident + ident + ident + 'ValidateValues('+VarModel+');');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if (' + VarModel + '.IsModify) then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + '{$REGION ''Comando SQL''}');
@@ -2259,6 +2151,86 @@ begin
   SynEditDAO.Lines.Add('        Result :=  oAtt is TFieldReadOnly;');
   SynEditDAO.Lines.Add('        if Result then');
   SynEditDAO.Lines.Add('          Break;');
+  SynEditDAO.Lines.Add('      end;');
+  SynEditDAO.Lines.Add('    end;');
+  SynEditDAO.Lines.Add('    if Result then');
+  SynEditDAO.Lines.Add('      Break;');
+  SynEditDAO.Lines.Add('  end;');
+  SynEditDAO.Lines.Add('end;');
+  SynEditDAO.Lines.Add('');
+end;
+procedure TFrmModel.GeneratorCodeValidateValues;
+var
+  StrFunctionName: string;
+begin
+  {$Region 'Validate Values'}
+  StrFunctionName := 'class procedure ' + ClassNameDAO +
+    '.ValidateValues(var'+VarModel+':' + ClassNameModel+');';
+  SynEditDAO.Lines.Add(StrFunctionName);
+  SynEditDAO.Lines.Add('var');
+  SynEditDAO.Lines.Add('  ctx    : TRttiContext;');
+  SynEditDAO.Lines.Add('  typ    : TRttiType;');
+  SynEditDAO.Lines.Add('  pro    : TRttiProperty;');
+  SynEditDAO.Lines.Add('  oAtt    : TCustomAttribute;');
+  SynEditDAO.Lines.Add('  PropNameRtti: String;');
+  SynEditDAO.Lines.Add('    function GetOldValue: String; ');
+  SynEditDAO.Lines.Add('    var ');
+  SynEditDAO.Lines.Add('      CtxRttiOld: TRttiContext; ');
+  SynEditDAO.Lines.Add('      TpRttiOld: TRttiType; ');
+  SynEditDAO.Lines.Add('      PropRttiOld: TRttiProperty; ');
+  SynEditDAO.Lines.Add('    begin ');
+  SynEditDAO.Lines.Add('      Result := ''; ');
+  SynEditDAO.Lines.Add('      CtxRttiOld  := TRttiContext.Create; ');
+  SynEditDAO.Lines.Add('      TpRttiOld   := CtxRttiOld.GetType('+VarModel+'.Original.ClassType); ');
+  SynEditDAO.Lines.Add('      PropRttiOld := TpRttiOld.GetProperty(PropNameRtti); ');
+  SynEditDAO.Lines.Add('      Result      := VarToStr(PropRttiOld.GetValue('+VarModel+'.Original).AsVariant); ');
+  SynEditDAO.Lines.Add('    end; ');
+  SynEditDAO.Lines.Add('begin');
+  SynEditDAO.Lines.Add('  ctx := TRttiContext.Create;');
+  SynEditDAO.Lines.Add('  typ := ctx.GetType('+VarModel+'.ClassType);');
+  SynEditDAO.Lines.Add('  for pro in typ.GetProperties do');
+  SynEditDAO.Lines.Add('  begin');
+  SynEditDAO.Lines.Add('    PropNameRtti := pro.name;');
+  SynEditDAO.Lines.Add('    for oAtt in pro.GetAttributes do');
+  SynEditDAO.Lines.Add('    begin');
+  SynEditDAO.Lines.Add('      if oAtt is TValidateValue then');
+  SynEditDAO.Lines.Add('      begin');
+  SynEditDAO.Lines.Add('        if (GetOldValue <> pro.GetValue('+VarModel+').ToString) then');
+  SynEditDAO.Lines.Add('          if not TValidateValue(oAtt).Validar(pro.GetValue('+VarModel+').ToString) then');
+  SynEditDAO.Lines.Add('            raise Exception.Create('+QuotedStr('Erro ao validar dados. Valor inválido para o campo:') + '+pro.Name);');
+  SynEditDAO.Lines.Add('      end;');
+  SynEditDAO.Lines.Add('    end;');
+  SynEditDAO.Lines.Add('  end;');
+  SynEditDAO.Lines.Add('end;');
+  SynEditDAO.Lines.Add('');
+  {$ENDREGION}
+end;
+procedure TFrmModel.GenaratorCodeExecuteGenerator;
+var
+  StrFunctionName: string;
+begin
+  StrFunctionName := 'class function '+ClassNameDAO+'.ExecuteGenerators('+InfoCrud.Connection + ifthen(Trim(InfoCrud.Connection)<>'','; ','') +
+    ' var ' + VarModel +':'+ClassNameModel+'):boolean;';
+  SynEditDAO.Lines.Add(StrFunctionName);
+  SynEditDAO.Lines.Add('var');
+  SynEditDAO.Lines.Add('  ctx    : TRttiContext;');
+  SynEditDAO.Lines.Add('  typ    : TRttiType;');
+  SynEditDAO.Lines.Add('  pro    : TRttiProperty;');
+  SynEditDAO.Lines.Add('  oAtt    : TCustomAttribute;');
+  SynEditDAO.Lines.Add('  StrGen: String;');
+  SynEditDAO.Lines.Add('begin');
+  SynEditDAO.Lines.Add('  Result := False;');
+  SynEditDAO.Lines.Add('  ctx := TRttiContext.Create;');
+  SynEditDAO.Lines.Add('  typ := ctx.GetType('+VarModel+'.ClassType);');
+  SynEditDAO.Lines.Add('  for pro in typ.GetProperties do');
+  SynEditDAO.Lines.Add('  begin');
+  SynEditDAO.Lines.Add('    for oAtt in pro.GetAttributes do');
+  SynEditDAO.Lines.Add('    begin');
+  SynEditDAO.Lines.Add('      if oAtt is TGenerator then');
+  SynEditDAO.Lines.Add('      begin');
+  SynEditDAO.Lines.Add('        StrGen := TGenerator(oAtt).GenPrefix + IntToStr('+InfoCrud.SelectDefault1.Value+') +');
+  SynEditDAO.Lines.Add('          TGenerator(oAtt).GenSufix+'',''+IntToStr(TGenerator(oAtt).Increment);');
+  SynEditDAO.Lines.Add('        Pro.SetValue('+VarModel+', TValue.From(BuscaGenerator('+Limpa(Copy(InfoCrud.Connection, 1, Pos(':', InfoCrud.Connection) - 1))+', StrGen)));');
   SynEditDAO.Lines.Add('      end;');
   SynEditDAO.Lines.Add('    end;');
   SynEditDAO.Lines.Add('    if Result then');
