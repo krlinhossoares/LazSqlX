@@ -65,7 +65,7 @@ type
     FSQLConTransaction: String;
     FSQLPropDatabase: String;
     FSQLPropTransaction: String;
-    FUsesDefault: string;
+    FUsesDefault: TStringList;
     function GetHasReturnException: boolean;
   public
     constructor Create;
@@ -73,7 +73,7 @@ type
     procedure LoadFromFile(FileName: String);
 
     property CopyTableName: integer read FCopyTableName write FCopyTableName;
-    property UsesDefault: string read FUsesDefault write FUsesDefault;
+    property UsesDefault: TStringList read FUsesDefault write FUsesDefault;
     property Connection: string read FConnection write FConnection;
     property ReturnException: string read FReturnException write FReturnException;
     property ExceptionCode: TStringList read FExceptionCode write FExceptionCode;
@@ -132,6 +132,7 @@ begin
   ExceptionCode := TStringList.Create;
   CabecalhoCode := TStringList.Create;
   GenerateLazyDependencies:= False;
+  UsesDefault:= TStringList.Create;
 end;
 
 procedure TCRUDInfo.SaveToFile(FileName: String);
@@ -142,7 +143,7 @@ begin
   try
   CrudFile.WriteInteger('CRUD','COPYTABLE', CopyTableName);
   CrudFile.WriteBool('CRUD','GENERATELAZY', GenerateLazyDependencies);
-  CrudFile.WriteString('CRUD','USES', UsesDefault);
+  CrudFile.WriteString('CRUD','USES', UsesDefault.Text);
   CrudFile.WriteString('CRUD','CLASSCONNECTION', Connection);
   CrudFile.WriteString('CRUD','RETURNEXCEPTION', ReturnException);
   CrudFile.WriteBool('CRUD','CREATEINSERT',ProcInsert.Enable);
@@ -211,7 +212,7 @@ begin
   CrudFile := TIniFile.Create(FileName);
   try
     CopyTableName   := CrudFile.ReadInteger('CRUD','COPYTABLE',1);
-    UsesDefault     := CrudFile.ReadString('CRUD','USES', 'Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ZConnection, ZDataset, ContNrs;');
+    UsesDefault.Text := CrudFile.ReadString('CRUD','USES', 'Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, ZConnection, ZDataset, ContNrs;');
     Connection      := CrudFile.ReadString('CRUD','CLASSCONNECTION', 'Con:TZConnection');
     ReturnException := CrudFile.ReadString('CRUD','RETURNEXCEPTION','Erro: String' );
     DirModel        := CrudFile.ReadString('CRUD','DIRMODEL',GetCurrentDir+ PathDelim);
