@@ -436,7 +436,6 @@ var
   StrFunctionNameGet, StrFunctionNameList, vAuxField, vAuxType, vAuxOldType: string;
   Aux, UnitLazyAnt: string;
   InfoTableAux: TAsTableInfo;
-  StrUses, StrUsesAux: String;
 begin
   MaxField := 0;
   MaxType := 0;
@@ -474,22 +473,7 @@ begin
   SynEditModel.Lines.Add('interface');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('uses ');
-
-  StrUses :=  'Rtti, ' + InfoCrud.UsesDefault.Text;
-  StrUsesAux:='';
-  While Trim(StrUses) <> '' do
-  begin
-    StrUsesAux:= StrUsesAux + Copy(StrUses, 1, Pos(',', StrUses));
-    Delete(StrUses,1, Pos(',', StrUses));
-    if (Length(StrUsesAux) > 80) or (Trim(StrUses) = '') then
-    begin
-     if Trim(StrUses) = '' then
-       StrUsesAux[Length(StrUsesAux)] := ';';
-     SynEditModel.Lines.Add(Ident + StrUsesAux);
-     StrUsesAux:= '';
-    end;
-  end;
-
+  SynEditModel.Lines.Add(Ident + 'Rtti, ' + InfoCrud.UsesDefault.Text);
   if InfoCrud.GenerateLazyDependencies then
   begin
     if InfoTable.ImportedKeys.Count > 0 then
@@ -793,7 +777,7 @@ begin
   SynEditModel.Lines.Add(ident + '');
   SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' + 'Create;');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'raise Exception.Create(''Favor utilizar metodo Create passando a classe de conexao como parametro.'');');
+  SynEditModel.Lines.Add(ident + 'raise Exception.Create(' + QuotedStr(ClassNameModel + ' - Favor utilizar metodo Create passando a classe de conexao como parametro.') + ');');
   SynEditModel.Lines.Add('end;');
 
   vAuxField := '';
@@ -1309,7 +1293,6 @@ var
   S: string;
   SQL: TStringList;
   StrFunctionName: string;
-  StrUses, StrUsesAux: String;
 begin
   MaxField := 0;
   MaxType := 0;
@@ -1349,21 +1332,7 @@ begin
   SynEditDAO.Lines.Add('interface');
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('uses ');
-  StrUses := UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault.Text;
-  StrUsesAux:='';
-  While Trim(StrUses) <> '' do
-  begin
-    StrUsesAux:= StrUsesAux + Copy(StrUses, 1, Pos(',', StrUses));
-    Delete(StrUses,1, Pos(',', StrUses));
-    if (Length(StrUsesAux) > 80) or (Trim(StrUses) = '') then
-    begin
-     if Trim(StrUses) = '' then
-      StrUsesAux[Length(StrUsesAux)] := ';';
-     SynEditDAO.Lines.Add(Ident + StrUsesAux);
-     StrUsesAux:= '';
-    end;
-  end;
-
+  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault.Text);
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('type');
   SynEditDAO.Lines.Add(ident + ClassNameDAO + ' = class');
@@ -2771,6 +2740,25 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if Trim(WhereSQL) <> ' +
       QuotedStr('') + ' then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(WhereSQL);');
+
+    SynEditDAO.Lines.Add('');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$REGION ' + QuotedStr('RTTI - Monta Clausula Order By pela Primary Key') + '}');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + '//Ordenações passadas pela clausula where, sobrepoem esta rotina');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not(Pos(LowerCase(WhereSQL), ' + QuotedStr('order by') + ') > 0) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'StrAux := '''';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('order by') + ');');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, ' + VarModel + ') then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'Qry.Sql.Add(StrAux + propRtti.Name);');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'StrAux := '', '';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$EndRegion}');
+   SynEditDAO.Lines.Add('');
+
+
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.' + InfoCrud.QueryCommand + ';');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'Qry.First;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'While not Qry.Eof do ');
