@@ -195,7 +195,7 @@ begin
   ChCkLazy.Checked:= CrudInfo.GenerateLazyDependencies;
 
   MmUses.Lines.Clear;
-  MmUses.Lines.Text := CrudInfo.UsesDefault.Text;
+  MmUses.Lines.Text := CrudInfo.UsesDefault;
   EdtConnection.Text:= CrudInfo.Connection;
   EdtException.Text := CrudInfo.ReturnException;
   EdtDirModel.Text  := CrudInfo.DirModel;
@@ -258,7 +258,7 @@ procedure TFrmCfgCRUD.SalvaCfgCrud;
 begin
   CrudInfo.CopyTableName            := EdtCopyTableName.Value;
   CrudInfo.GenerateLazyDependencies := ChCkLazy.Checked;
-  CrudInfo.UsesDefault.Text              := MmUses.Lines.Text;
+  CrudInfo.UsesDefault              := MmUses.Lines.Text;
   CrudInfo.Connection               := EdtConnection.Text;
   CrudInfo.ReturnException          := EdtException.Text;
 

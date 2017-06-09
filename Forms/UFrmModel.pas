@@ -473,7 +473,7 @@ begin
   SynEditModel.Lines.Add('interface');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('uses ');
-  SynEditModel.Lines.Add(Ident + 'Rtti, ' + InfoCrud.UsesDefault.Text);
+  SynEditModel.Lines.Add(Ident + 'Rtti, ' + InfoCrud.UsesDefault);
   if InfoCrud.GenerateLazyDependencies then
   begin
     if InfoTable.ImportedKeys.Count > 0 then
@@ -1008,10 +1008,10 @@ begin
       '.' + InfoCrud.ProcUpdate.ProcName + '(') and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) -
       1)) <> '') then
-      StrFunctionNameUpdate := StrFunctionNameUpdate + ', ' +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + ', F' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameUpdate := StrFunctionNameUpdate +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + 'F' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameUpdate := StrFunctionNameUpdate + ');';
@@ -1050,11 +1050,11 @@ begin
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <>
       '') then
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + ', ' + Copy(InfoCrud.ReturnException, 1,
+        StrFunctionNameDelete + ', F' + Copy(InfoCrud.ReturnException, 1,
         Pos(':', InfoCrud.ReturnException) - 1)
     else
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + Copy(InfoCrud.ReturnException, 1,
+        StrFunctionNameDelete + 'F' + Copy(InfoCrud.ReturnException, 1,
         Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameDelete := StrFunctionNameDelete + ');';
@@ -1091,10 +1091,10 @@ begin
       '.' + InfoCrud.ProcGetRecord.ProcName + '(')) and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) -
       1)) <> '') then
-      StrFunctionNameGet := StrFunctionNameGet + ', ' +
+      StrFunctionNameGet := StrFunctionNameGet + ', F' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameGet := StrFunctionNameGet +
+      StrFunctionNameGet := StrFunctionNameGet + ' F'+
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameGet := StrFunctionNameGet + ');';
@@ -1332,7 +1332,7 @@ begin
   SynEditDAO.Lines.Add('interface');
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('uses ');
-  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault.Text);
+  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault);
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('type');
   SynEditDAO.Lines.Add(ident + ClassNameDAO + ' = class');
