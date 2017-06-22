@@ -2749,10 +2749,13 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'StrAux := '''';');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('order by') + ');');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'for PropRtti in TpRtti.GetProperties do');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, ' + VarModel + ') then ');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'begin');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'Qry.Sql.Add(StrAux + propRtti.Name);');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'StrAux := '', '';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'PropNameRtti := PropRtti.Name;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'if '+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, ' + VarModel + ') then ');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'begin');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.Sql.Add(StrAux + propRtti.Name);');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'StrAux := '', '';');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$EndRegion}');
