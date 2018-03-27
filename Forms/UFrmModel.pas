@@ -738,6 +738,10 @@ begin
   for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do
     //Metodo Create passando todas as chaves da tabela...
   begin
+
+    if UpperCase(InfoTable.PrimaryKeys.Items[I].FieldName) = 'CDEMPRESA' then
+       Continue;
+
     vAuxType := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
     vAuxField := 'A' + InfoTable.PrimaryKeys.Items[I].FieldName +
       IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
@@ -784,6 +788,10 @@ begin
   vAuxOldType := '';
   for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do
   begin
+
+    if UpperCase(InfoTable.PrimaryKeys.Items[I].FieldName) = 'CDEMPRESA' then
+       Continue;
+
     vAuxType := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
     vAuxField := 'A' + InfoTable.PrimaryKeys.Items[I].FieldName +
       IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
@@ -799,7 +807,7 @@ begin
     SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' +
       'Create(' + InfoCrud.Connection + '; ' + Copy(vAuxField, 1, length(vAuxField) - 2) + '); ');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'Inherited Create;');
+  SynEditModel.Lines.Add(ident + 'Self.Create(Master);');
 
 
   MaxVar := 0;
@@ -809,10 +817,15 @@ begin
 
 
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
+  begin
+    if UpperCase(InfoTable.PrimaryKeys.Items[I].FieldName) = 'CDEMPRESA' then
+       Continue;
+
     SynEditModel.Lines.Add(ident +
       LPad('Self.' + InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) +
       ' := ' + 'A' + InfoTable.PrimaryKeys.Items[I].FieldName + ';');
-
+  end;
+   {
   SynEditModel.Lines.Add(ident + 'Self' + '.' + 'F' +
     Trim(IfThen(Pos('var',
     InfoCrud.Connection) > 0,
@@ -827,7 +840,8 @@ begin
     ' := ' +
     StringReplace(
     Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.Connection) - 1), 'var',
-    '', [rfReplaceAll]) + ';');
+    '', [rfReplaceAll]) + ';');   }
+
   if Trim(InfoCrud.ReturnException) <> '' then
   begin
     SynEditModel.Lines.Add(ident + 'Self' + '.' + 'F' +
@@ -845,6 +859,7 @@ begin
       Copy(InfoCrud.ReturnException, 0, Pos(':', InfoCrud.ReturnException) - 1),
       'var', '', [rfReplaceAll]) + ';');
   end;
+
   SynEditModel.Lines.Add('end;');
 
   {$Region 'Instancia o objeto fazendo um assign '}
@@ -1008,10 +1023,10 @@ begin
       '.' + InfoCrud.ProcUpdate.ProcName + '(') and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) -
       1)) <> '') then
-      StrFunctionNameUpdate := StrFunctionNameUpdate + ', F' +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + ', ' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameUpdate := StrFunctionNameUpdate + 'F' +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + '' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameUpdate := StrFunctionNameUpdate + ');';
@@ -1050,11 +1065,11 @@ begin
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <>
       '') then
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + ', F' + Copy(InfoCrud.ReturnException, 1,
+        StrFunctionNameDelete + ', ' + Copy(InfoCrud.ReturnException, 1,
         Pos(':', InfoCrud.ReturnException) - 1)
     else
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + 'F' + Copy(InfoCrud.ReturnException, 1,
+        StrFunctionNameDelete + '' + Copy(InfoCrud.ReturnException, 1,
         Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameDelete := StrFunctionNameDelete + ');';
@@ -1091,10 +1106,10 @@ begin
       '.' + InfoCrud.ProcGetRecord.ProcName + '(')) and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) -
       1)) <> '') then
-      StrFunctionNameGet := StrFunctionNameGet + ', F' +
+      StrFunctionNameGet := StrFunctionNameGet + ', ' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameGet := StrFunctionNameGet + ' F'+
+      StrFunctionNameGet := StrFunctionNameGet + ' '+
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameGet := StrFunctionNameGet + ');';
@@ -2744,7 +2759,7 @@ begin
     SynEditDAO.Lines.Add('');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$REGION ' + QuotedStr('RTTI - Monta Clausula Order By pela Primary Key') + '}');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '//Ordenações passadas pela clausula where, sobrepoem esta rotina');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not(Pos(LowerCase(WhereSQL), ' + QuotedStr('order by') + ') > 0) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not(ContainsText(LowerCase(WhereSQL), ' + QuotedStr('order by') + ')) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'StrAux := '''';');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('order by') + ');');
