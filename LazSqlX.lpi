@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="10"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -31,7 +31,6 @@
       <RevisionNr Value="2"/>
       <BuildNr Value="1596"/>
       <Language Value="0416"/>
-      <StringTable ProductVersion=""/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Win32" Default="True"/>

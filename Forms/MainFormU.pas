@@ -2180,7 +2180,7 @@ begin
       DatabaseClonerForm.txtDestinationDbName.Text := SqlConnBuilderForm.cmbDatabase.Text
     else
       DatabaseClonerForm.txtDestinationDbName.Text :=
-        ExtractFileNameOnly(SqlConnBuilderForm.cmbDatabase.Text);
+        ExtractFileName(SqlConnBuilderForm.cmbDatabase.Text);
 
 
     if lstErrors.Count > 0 then

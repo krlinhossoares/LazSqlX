@@ -14,7 +14,7 @@ unit FtDetector;
 {$mode objfpc}{$H+}
 interface
 
-uses SysUtils,Classes,fgl,FileUtil,LazSqlXResources;
+uses SysUtils,Classes,fgl,LazFileUtils,LazSqlXResources;
 
 type
 

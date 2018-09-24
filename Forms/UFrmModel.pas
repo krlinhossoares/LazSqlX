@@ -46,6 +46,8 @@ type
     procedure GenerateSqlQueryInsert;
     procedure GenerateSqlQueryListaRecords;
     procedure GenerateSqlQueryUpdate;
+    procedure GenerateUses(Syn: TSynEdit; StrUses: String);
+    procedure GeneratorCodeGetIsNotNull;
     procedure GeneratorCodeProcDelete;
     procedure GeneratorCodeProcGetItem;
     procedure GeneratorCodeProcInsert;
@@ -473,7 +475,7 @@ begin
   SynEditModel.Lines.Add('interface');
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('uses ');
-  SynEditModel.Lines.Add(Ident + 'Rtti, ' + InfoCrud.UsesDefault);
+//  SynEditModel.Lines.Add(Ident + 'Rtti, ' + InfoCrud.UsesDefault);
   if InfoCrud.GenerateLazyDependencies then
   begin
     if InfoTable.ImportedKeys.Count > 0 then
@@ -491,21 +493,14 @@ begin
           try
             UnitLazyAnt := InfoTableAux.Tablename;
             Aux := Aux + 'U' + Copy(InfoTableAux.Tablename, InfoCrud.CopyTableName, Length(InfoTableAux.Tablename)) + ', ';
-            if Length(Aux) > 80 then
-            begin
-              SynEditModel.Lines.Add(Ident + Aux);
-              Aux := '';
-            end;
           finally
             FreeAndNil(InfoTableAux);
           end;
         end;
       end;
-      Aux[Length(Aux) - 1] := ';';
-      SynEditModel.Lines.Add(Ident + Aux);
     end;
   end;
-
+  GenerateUses(SynEditModel, 'Rtti,' + InfoCrud.UsesDefault + Aux);
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add('type');
   SynEditModel.Lines.Add(ident + '[TTableName('+QuotedStr(InfoTable.Tablename)+')]');
@@ -603,7 +598,13 @@ begin
   for I := 0 to InfoTable.AllFields.Count - 1 do
   begin
     if InfoTable.AllFields[I].IsPrimaryKey then
-      SynEditModel.Lines.Add(Ident + Ident + '[TPrimaryKey]');
+      SynEditModel.Lines.Add(Ident + Ident + '[TPrimaryKey]')
+    else
+      if InfoTable.AllFields[I].IsNumeric and (not InfoTable.AllFields[I].AllowNull) then
+        SynEditModel.Lines.Add(Ident + Ident + '[TNotNull(0)]')
+    else
+      if (not InfoTable.AllFields[I].IsNumeric) and (not InfoTable.AllFields[I].AllowNull) then
+        SynEditModel.Lines.Add(Ident + Ident + '[TNotNull('''')]');
     SynEditModel.Lines.Add(Ident + Ident + 'Property ' +
       LPad(InfoTable.AllFields[I].FieldName, ' ', MaxField) + ': ' +
       LPad(TypeDBToTypePascal(InfoTable.AllFields[I].FieldType), ' ', MaxType) +
@@ -730,18 +731,15 @@ begin
   //Metodos Create...
   SynEditModel.Lines.Add('');
   SynEditModel.Lines.Add(Ident + Ident + '//Metodos Construtores e Destrutores');
+  SynEditModel.Lines.Add(Ident + Ident + '{$METHODINFO OFF}');
   SynEditModel.Lines.Add(Ident + Ident + 'Constructor Create;' +
-    ifthen(InfoTable.PrimaryKeys.Count > 0, ' Overload; ', ''));
+    ifthen(InfoTable.PrimaryKeys.Count > 0, ' Overload; deprecated ''Utilize o metodo Create('+InfoCrud.Connection+'...);'';', ''));
 
   vAuxField := '';
   vAuxOldType := '';
   for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do
     //Metodo Create passando todas as chaves da tabela...
   begin
-
-    if UpperCase(InfoTable.PrimaryKeys.Items[I].FieldName) = 'CDEMPRESA' then
-       Continue;
-
     vAuxType := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
     vAuxField := 'A' + InfoTable.PrimaryKeys.Items[I].FieldName +
       IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
@@ -788,10 +786,6 @@ begin
   vAuxOldType := '';
   for I := InfoTable.PrimaryKeys.Count - 1 downto 0 do
   begin
-
-    if UpperCase(InfoTable.PrimaryKeys.Items[I].FieldName) = 'CDEMPRESA' then
-       Continue;
-
     vAuxType := TypeDBToTypePascal(InfoTable.PrimaryKeys.Items[i].FieldType);
     vAuxField := 'A' + InfoTable.PrimaryKeys.Items[I].FieldName +
       IfThen(vAuxType = vAuxOldType, ', ', ': ' + vAuxType + '; ') + vAuxField;
@@ -807,7 +801,7 @@ begin
     SynEditModel.Lines.Add('Constructor ' + ClassNameModel + '.' +
       'Create(' + InfoCrud.Connection + '; ' + Copy(vAuxField, 1, length(vAuxField) - 2) + '); ');
   SynEditModel.Lines.Add('begin');
-  SynEditModel.Lines.Add(ident + 'Self.Create(Master);');
+  SynEditModel.Lines.Add(ident + 'Inherited Create;');
 
 
   MaxVar := 0;
@@ -817,15 +811,10 @@ begin
 
 
   for I := 0 to InfoTable.PrimaryKeys.Count - 1 do
-  begin
-    if UpperCase(InfoTable.PrimaryKeys.Items[I].FieldName) = 'CDEMPRESA' then
-       Continue;
-
     SynEditModel.Lines.Add(ident +
       LPad('Self.' + InfoTable.PrimaryKeys.Items[I].FieldName, ' ', MaxVar) +
       ' := ' + 'A' + InfoTable.PrimaryKeys.Items[I].FieldName + ';');
-  end;
-   {
+
   SynEditModel.Lines.Add(ident + 'Self' + '.' + 'F' +
     Trim(IfThen(Pos('var',
     InfoCrud.Connection) > 0,
@@ -840,8 +829,7 @@ begin
     ' := ' +
     StringReplace(
     Copy(InfoCrud.Connection, 0, Pos(':', InfoCrud.Connection) - 1), 'var',
-    '', [rfReplaceAll]) + ';');   }
-
+    '', [rfReplaceAll]) + ';');
   if Trim(InfoCrud.ReturnException) <> '' then
   begin
     SynEditModel.Lines.Add(ident + 'Self' + '.' + 'F' +
@@ -859,7 +847,6 @@ begin
       Copy(InfoCrud.ReturnException, 0, Pos(':', InfoCrud.ReturnException) - 1),
       'var', '', [rfReplaceAll]) + ';');
   end;
-
   SynEditModel.Lines.Add('end;');
 
   {$Region 'Instancia o objeto fazendo um assign '}
@@ -1023,11 +1010,12 @@ begin
       '.' + InfoCrud.ProcUpdate.ProcName + '(') and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) -
       1)) <> '') then
-      StrFunctionNameUpdate := StrFunctionNameUpdate + ', ' +
+      StrFunctionNameUpdate := StrFunctionNameUpdate + ', F' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameUpdate := StrFunctionNameUpdate + '' +
-        Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
+     if Trim(InfoCrud.ReturnException) <> '' then
+        StrFunctionNameUpdate := StrFunctionNameUpdate + 'F' +
+          Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameUpdate := StrFunctionNameUpdate + ');';
     SynEditModel.Lines.Add(StrFunctionNameUpdate);
@@ -1065,12 +1053,13 @@ begin
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)) <>
       '') then
       StrFunctionNameDelete :=
-        StrFunctionNameDelete + ', ' + Copy(InfoCrud.ReturnException, 1,
+        StrFunctionNameDelete + ', F' + Copy(InfoCrud.ReturnException, 1,
         Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameDelete :=
-        StrFunctionNameDelete + '' + Copy(InfoCrud.ReturnException, 1,
-        Pos(':', InfoCrud.ReturnException) - 1);
+     if Trim(InfoCrud.ReturnException) <> '' then
+       StrFunctionNameDelete :=
+         StrFunctionNameDelete + 'F' + Copy(InfoCrud.ReturnException, 1,
+         Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameDelete := StrFunctionNameDelete + ');';
     SynEditModel.Lines.Add(StrFunctionNameDelete);
@@ -1106,10 +1095,11 @@ begin
       '.' + InfoCrud.ProcGetRecord.ProcName + '(')) and
       (Trim(Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) -
       1)) <> '') then
-      StrFunctionNameGet := StrFunctionNameGet + ', ' +
+      StrFunctionNameGet := StrFunctionNameGet + ', F' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameGet := StrFunctionNameGet + ' '+
+     if Trim(InfoCrud.ReturnException) <> '' then
+       StrFunctionNameGet := StrFunctionNameGet + ' F'+
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameGet := StrFunctionNameGet + ');';
@@ -1148,8 +1138,9 @@ begin
       StrFunctionNameList := StrFunctionNameList + ', ' +
         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1)
     else
-      StrFunctionNameList := StrFunctionNameList +
-        Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
+     if Trim(InfoCrud.ReturnException) <> '' then
+       StrFunctionNameList := StrFunctionNameList +
+         Copy(InfoCrud.ReturnException, 1, Pos(':', InfoCrud.ReturnException) - 1);
 
     StrFunctionNameList := StrFunctionNameList + ');';
     SynEditModel.Lines.Add(StrFunctionNameList);
@@ -1160,7 +1151,6 @@ begin
   SynEditModel.Lines.Add(ident + '');
 
   {$region 'Metodo Assign'}
-  ;
   SynEditModel.Lines.Add('procedure ' + ClassNameModel + '.Assign(const Source: ' +
     ClassNameModel + ');  ');
   SynEditModel.Lines.Add(
@@ -1347,7 +1337,8 @@ begin
   SynEditDAO.Lines.Add('interface');
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('uses ');
-  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault);
+  GenerateUses(SynEditDAO, UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault);
+//  SynEditDAO.Lines.Add(Ident + UnitNameModel + ', ' + 'Rtti, ' + InfoCrud.UsesDefault);
   SynEditDAO.Lines.Add('');
   SynEditDAO.Lines.Add('type');
   SynEditDAO.Lines.Add(ident + ClassNameDAO + ' = class');
@@ -1358,13 +1349,13 @@ begin
   //Cria Funcoes e Procedures CRUD;
   SynEditDAO.Lines.Add(ident + ident + 'class function GetTableNameAttributes('+VarModel+':' + ClassNameModel+'): String;');
   SynEditDAO.Lines.Add(ident + ident + 'class function IsPrimaryKey(aPropName: String; '+VarModel+':' + ClassNameModel+' ): Boolean;');
+  SynEditDAO.Lines.Add(ident + ident + 'class function IsNotNull(aPropName: String; '+VarModel+':' + ClassNameModel+'; var aDefaultValue: String): Boolean;');
   SynEditDAO.Lines.Add(ident + ident + 'class function IsFieldReadOnly(aPropName: String; ' + VarModel+':' + ClassNameModel+' ): Boolean;');
   SynEditDAO.Lines.Add(ident + ident + 'class procedure ValidateValues(var ' + VarModel + ':' + ClassNameModel+');');
   SynEditDAO.Lines.Add(ident + ident + 'class function ExecuteGenerators(  ' + InfoCrud.Connection +
    ifThen(Trim(InfoCrud.Connection) <> '', ';' ,'')+ ' var '+ VarModel + ':' + ClassNameModel+'): Boolean;');
   SynEditDAO.Lines.Add(ident + ident + 'class function ExecuteMaxFieldValues('+InfoCrud.Connection + ifthen(Trim(InfoCrud.Connection)<>'','; ','') +
     ' var ' + VarModel +':'+ClassNameModel+'):boolean;');
-
 
   SynEditDAO.Lines.Add(Ident + Ident + '//Functions and Procedures Model CRUD');
 
@@ -1508,6 +1499,7 @@ begin
   SynEditDAO.Lines.Add(ident + '');
   GeneratorCodeGetTableNameAttributes;
   GeneratorCodeGetIsPrimaryKey;
+  GeneratorCodeGetIsNotNull;
   GeneratorCodeGetIsFieldReadOnly;
   GeneratorCodeValidateValues;
   GenaratorCodeExecuteGenerator;
@@ -1834,6 +1826,7 @@ begin
     SynEditDAO.Lines.Add(Ident + 'TpRtti      : TRttiType;');
     SynEditDAO.Lines.Add(Ident + 'PropRtti    : TRttiProperty;');
     SynEditDAO.Lines.Add(Ident + 'PropNameRtti: String;');
+    SynEditDAO.Lines.Add(Ident + 'sDefaultValue: String;');
     SynEditDAO.Lines.Add(Ident + '{$ENDREGION}');
     {$EndRegion}
     SynEditDAO.Lines.Add('begin');
@@ -1863,7 +1856,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (Trim(PropRtti.GetValue(' + VarModel + ').ToString) <> ' + QuotedStr('') + ') then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := propRtti.GetValue(' + VarModel + ').ToString');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isNotNull(PropNameRtti, ' + VarModel + ', sDefaultValue)) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := sDefaultValue;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkInteger]) then');
@@ -1876,7 +1872,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + '(propRtti.GetValue(' + VarModel + ').ToString <> '''') then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue(' + VarModel + ').AsVariant');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isNotNull(PropNameRtti, ' + VarModel + ', sDefaultValue)) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := sDefaultValue;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'else if (propRtti.PropertyType.TypeKind in [tkFloat]) then');
@@ -1903,7 +1902,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isNotNull(PropNameRtti, ' + VarModel + ', sDefaultValue)) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := sDefaultValue;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'end;');
@@ -1972,6 +1974,7 @@ begin
     SynEditDAO.Lines.Add(Ident + 'TpRtti      : TRttiType;');
     SynEditDAO.Lines.Add(Ident + 'PropRtti    : TRttiProperty;');
     SynEditDAO.Lines.Add(Ident + 'PropNameRtti: String;');
+    SynEditDAO.Lines.Add(Ident + 'sDefaultValue: String;');
     SynEditDAO.Lines.Add(Ident + '{$ENDREGION}');
     {$EndRegion}
     SynEditDAO.Lines.Add(Ident + 'function GetOldValue: String;');
@@ -2035,7 +2038,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (Trim(PropRtti.GetValue(' + VarModel + ').ToString) <> ' + QuotedStr('') + ') then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := propRtti.GetValue(' + VarModel + ').ToString');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isNotNull(PropNameRtti, ' + VarModel + ', sDefaultValue)) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident +'Qry.ParamByName(PropNameRtti).Clear');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := sDefaultValue;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end');
@@ -2051,7 +2057,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + '(propRtti.GetValue(' + VarModel + ').ToString <> '''')) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Value := propRtti.GetValue(' + VarModel + ').AsVariant');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isNotNull(PropNameRtti, ' + VarModel + ', sDefaultValue)) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident +'Qry.ParamByName(PropNameRtti).Clear');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := sDefaultValue;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end');
@@ -2081,7 +2090,10 @@ begin
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsFloat := propRtti.GetValue(' + VarModel + ').AsExtended');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).Clear;');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'if (not '+ClassNameDAO+'.isNotNull(PropNameRtti, ' + VarModel + ', sDefaultValue)) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident +'Qry.ParamByName(PropNameRtti).Clear');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'else');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'Qry.ParamByName(PropNameRtti).AsString := sDefaultValue;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + Ident + Ident + 'end;');
@@ -2161,6 +2173,45 @@ begin
   SynEditDAO.Lines.Add('        Result :=  oAtt is TPrimaryKey;');
   SynEditDAO.Lines.Add('        if Result then');
   SynEditDAO.Lines.Add('          Break;');
+  SynEditDAO.Lines.Add('      end;');
+  SynEditDAO.Lines.Add('    end;');
+  SynEditDAO.Lines.Add('    if Result then');
+  SynEditDAO.Lines.Add('      Break;');
+  SynEditDAO.Lines.Add('  end;');
+  SynEditDAO.Lines.Add('end;');
+  SynEditDAO.Lines.Add('');
+end;
+
+procedure TFrmModel.GeneratorCodeGetIsNotNull;
+var
+  StrFunctionName: string;
+begin
+  {$Region 'Get TableNameAtributtes'}
+  StrFunctionName := 'class function ' + ClassNameDAO +
+    '.IsNotNull(aPropName: String; '+VarModel+':' + ClassNameModel+'; var aDefaultValue: String): Boolean;';
+  SynEditDAO.Lines.Add(StrFunctionName);
+  SynEditDAO.Lines.Add('var');
+  SynEditDAO.Lines.Add('  ctx    : TRttiContext;');
+  SynEditDAO.Lines.Add('  typ    : TRttiType;');
+  SynEditDAO.Lines.Add('  pro    : TRttiProperty;');
+  SynEditDAO.Lines.Add('  oAtt    : TCustomAttribute;');
+  SynEditDAO.Lines.Add('begin');
+  SynEditDAO.Lines.Add('  Result := False;');
+  SynEditDAO.Lines.Add('  aDefaultValue := '''';');
+  SynEditDAO.Lines.Add('  ctx := TRttiContext.Create;');
+  SynEditDAO.Lines.Add('  typ := ctx.GetType('+VarModel+'.ClassType);');
+  SynEditDAO.Lines.Add('  for pro in typ.GetProperties do');
+  SynEditDAO.Lines.Add('  begin');
+  SynEditDAO.Lines.Add('    if aPropName = Pro.Name then');
+  SynEditDAO.Lines.Add('    begin');
+  SynEditDAO.Lines.Add('      for oAtt in pro.GetAttributes do');
+  SynEditDAO.Lines.Add('      begin');
+  SynEditDAO.Lines.Add('        Result :=  oAtt is TNotNull;');
+  SynEditDAO.Lines.Add('        if Result then');
+  SynEditDAO.Lines.Add('        begin');
+  SynEditDAO.Lines.Add('          aDefaultValue := TNotNull(oAtt).DefaultValue;');
+  SynEditDAO.Lines.Add('          Break;');
+  SynEditDAO.Lines.Add('        end;');
   SynEditDAO.Lines.Add('      end;');
   SynEditDAO.Lines.Add('    end;');
   SynEditDAO.Lines.Add('    if Result then');
@@ -2346,8 +2397,15 @@ begin
   SynEditDAO.Lines.Add('      for PropRtti in TpRtti.GetProperties do');
   SynEditDAO.Lines.Add('      begin');
   SynEditDAO.Lines.Add('        PropNameRtti := PropRtti.Name;');
-  SynEditDAO.Lines.Add('        if ('+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, '+VarModel+') OR');
-  SynEditDAO.Lines.Add('           (PropRtti.Name = '+QuotedStr(InfoCrud.SelectDefault1.Field)+')) OR (PropRtti.Name = TMaxValueField(oAtt).WhereField)then');
+  SynEditDAO.Lines.Add('        if ((not TMaxValueField(oAtt).IgnorePrimaryKey) AND');
+  SynEditDAO.Lines.Add('            ('+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, '+VarModel+') AND ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name <> pro.name)) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = '+QuotedStr(InfoCrud.SelectDefault1.Field)+')) OR      ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldA) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldB) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldC) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldD) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldE) then');
   SynEditDAO.Lines.Add('        begin');
   SynEditDAO.Lines.Add('          Qry.SQL.Add(StrAux + propRtti.Name+''= :''+  propRtti.Name);');
   SynEditDAO.Lines.Add('          StrAux := '' AND '';');
@@ -2360,8 +2418,15 @@ begin
   SynEditDAO.Lines.Add('      for PropRtti in TpRtti.GetProperties do');
   SynEditDAO.Lines.Add('      begin');
   SynEditDAO.Lines.Add('        PropNameRtti := PropRtti.Name;');
-  SynEditDAO.Lines.Add('        if ('+ClassNameDAO+'.IsPrimaryKey(PropNameRtti,'+VarModel+') and');
-  SynEditDAO.Lines.Add('            (PropRtti.Name = '+QuotedStr(InfoCrud.SelectDefault1.Field)+')) OR (PropRtti.Name = TMaxValueField(oAtt).WhereField) then');
+  SynEditDAO.Lines.Add('        if ((not TMaxValueField(oAtt).IgnorePrimaryKey) AND');
+  SynEditDAO.Lines.Add('            ('+ClassNameDAO+'.IsPrimaryKey(PropNameRtti, '+VarModel+') AND ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name <> pro.name)) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = '+QuotedStr(InfoCrud.SelectDefault1.Field)+')) OR      ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldA) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldB) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldC) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldD) OR ');
+  SynEditDAO.Lines.Add('            (PropRtti.Name = TMaxValueField(oAtt).WhereFieldE) then');
   SynEditDAO.Lines.Add('        begin');
   SynEditDAO.Lines.Add('          if (PropRtti.PropertyType.TypeKind in [tkUString, tkString, tkChar, tkInteger]) then');
   SynEditDAO.Lines.Add('          begin');
@@ -2759,7 +2824,7 @@ begin
     SynEditDAO.Lines.Add('');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '{$REGION ' + QuotedStr('RTTI - Monta Clausula Order By pela Primary Key') + '}');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + '//Ordenações passadas pela clausula where, sobrepoem esta rotina');
-    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not(ContainsText(LowerCase(WhereSQL), ' + QuotedStr('order by') + ')) then');
+    SynEditDAO.Lines.Add(Ident + Ident + Ident + 'if not(Pos(' + QuotedStr('order by') + ',LowerCase(WhereSQL)) > 0) then');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + 'begin');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'StrAux := '''';');
     SynEditDAO.Lines.Add(Ident + Ident + Ident + Ident + 'Qry.Sql.Add(' + QuotedStr('order by') + ');');
@@ -3100,6 +3165,53 @@ begin
     end;
   end;
   Application.ProcessMessages;
+end;
+
+procedure TFrmModel.GenerateUses(Syn:TSynEdit; StrUses: String);
+var
+  fUses: String;
+  fUnit: String;
+  fLinha: String;
+begin
+  fLinha := '';
+  fUses := StrUses;
+  While fUses <> '' do
+  begin
+    if Pos(',', fUses) > 0 then
+    begin
+      if Trim(fLinha) = '' then
+        fUnit := Copy(fUses,1, Pos(',', fUses)-1)
+      else
+        fUnit := ', ' + Copy(fUses,1, Pos(',', fUses)-1);
+      Delete(fUses,1,Pos(',', fUses)+1);
+    end
+    else
+    if Pos(';', fUses) > 0 then
+    begin
+      if Trim(fLinha) = '' then
+        fUnit := Copy(fUses,1, Pos(';', fUses)-1)
+      else
+        fUnit := ', ' + Copy(fUses,1, Pos(';', fUses)-1);
+      Delete(fUses,1,Pos(';', fUses)+1);
+    end
+    else
+    begin
+      if Trim(fLinha) = '' then
+        fUnit := fUses
+      else
+        fUnit := ', ' + fUses;
+    end;
+    if (Length(fLinha) + Length(fUnit)) < 80 then
+      fLinha := fLinha + fUnit
+    else
+    begin
+      Syn.Lines.Add(Ident +fLinha + ',');
+      fLinha := StringReplace(fUnit,',','',[rfReplaceAll]);
+    end;
+  end;
+  fLinha:= fLinha + ';';
+  if (Trim(fLinha) <> '') then
+    Syn.Lines.Add(Ident +fLinha);
 end;
 
 end.
